@@ -4,13 +4,16 @@ import tailwindcss from '@tailwindcss/vite';
 import dotenv from 'dotenv';
 dotenv.config();
 
+let PORT = 5173
 export default defineConfig({
     server: {
         host: true,
         hmr: {
             host: process.env.VITE_DEV_HOST,
-            port: 5173,
-        }
+            port: PORT,
+        },
+        cors: true,
+        origin: 'http://'+ process.env.VITE_DEV_HOST+':'+ PORT
     },
     plugins: [
         laravel({
