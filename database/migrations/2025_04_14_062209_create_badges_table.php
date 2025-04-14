@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('badge_desc', 128);
             $table->string('badge_color', 6);
             $table->string('badge_icon', 128);
-            $table->timestamps();
         });
     }
 

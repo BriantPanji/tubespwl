@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('comment_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('comment_id')->references('id')->on('comments')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

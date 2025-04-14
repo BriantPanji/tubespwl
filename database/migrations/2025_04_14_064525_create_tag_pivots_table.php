@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('tag_pivots', function (Blueprint $table) {
             $table->foreignId('hashtag_id')->references('id')->on('hashtags')->onDelete('cascade');
             $table->foreignUlid('post_id')->references('id')->on('posts')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('post_attachments', function (Blueprint $table) {
             $table->string('namafile')->unique();
             $table->foreignUlid('post_id')->references('id')->on('posts')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

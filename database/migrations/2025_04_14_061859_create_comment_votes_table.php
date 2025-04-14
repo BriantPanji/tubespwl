@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('comment_votes', function (Blueprint $table) {
             $table->boolean('is_upvoted')->nullable()->default(null);
             $table->foreignId('comment_id')->references('id')->on('comments')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

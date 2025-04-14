@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('post_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignUlid('post_id')->references('id')->on('posts')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

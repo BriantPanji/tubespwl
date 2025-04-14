@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('badge_pivots', function (Blueprint $table) {
             $table->foreignId('badge_id')->references('id')->on('badges')->onDelete('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 
