@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
-    use HasFactory;
-
+    use HasFactory, HasUlids;
+    protected $keyType = 'string'; // ULID adalah string
+    public $incrementing = false;  // Karena bukan auto-increment
     protected $guarded = [];
 
     public function user() {
@@ -29,7 +31,7 @@ class Post extends Model
     }
     
     public function tag() {
-        return $this->belongsToMany(Tag::class, 'tag_pivots', 'post_id', 'tag_id');
+        return $this->belongsToMany(Tag::class, 'tag_pivots', 'post_id', 'hashtag_id');
     }
 
     public function reportedBy() {

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('badge_name', 32);
             $table->string('badge_desc', 128);
-            $table->string('badge_color', 6);
+            $table->string('badge_color', 7);
             $table->string('badge_icon', 128);
         });
     }

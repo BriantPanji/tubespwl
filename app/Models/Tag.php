@@ -15,6 +15,6 @@ class Tag extends Model
     protected $guarded = [];
 
     public function taggedPost() {
-        return $this->belongsToMany(Post::class, 'tag_pivots', 'tag_id', 'post_id');
+        return $this->belongsToMany(Post::class, 'tag_pivots', 'hashtag_id', 'post_id');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class CommentVotesFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'is_upvoted'=>fake()->boolean(),
+            'comment_id'=>Comment::inRandomOrder()->first()->id,
+            'user_id'=>User::inRandomOrder()->first()->id
         ];
     }
 }

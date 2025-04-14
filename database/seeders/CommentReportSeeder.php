@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CommentReport;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,6 @@ class CommentReportSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        CommentReport::factory(4)->create();
     }
 }

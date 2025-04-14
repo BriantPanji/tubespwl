@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\PostReport;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,6 @@ class PostReportSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        PostReport::factory(6)->create();
     }
 }
