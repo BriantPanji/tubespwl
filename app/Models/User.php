@@ -35,6 +35,25 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function post() {
+        return $this->hasMany(Post::class);
+    }
+
+    public function votedPost() {
+        return $this->belongsToMany(Post::class, 'post_votes', 'user_id', 'post_id');
+    }
+
+    public function comment() {
+        return $this->hasMany(Comment::class);
+    }
+    public function votedComment() {
+        return $this->belongsToMany(Comment::class, 'comment_votes', 'user_id', 'comment_id');
+    }
+
+    public function badges() {
+        return $this->belongsToMany(Badge::class, 'badge_pivots', 'user_id', 'badge_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
