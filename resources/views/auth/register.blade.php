@@ -4,8 +4,8 @@
     </x-slot:title>
     <main class="bg-sl-base min-w-full max-w-full min-h-screen h-screen text-sl-text">
         <section class="bg-sl-base min-w-full max-w-full min-h-screen flex flex-col justify-center py-10 px-7 xs:px-20 sm:px-32 md:px-48 lg:px-72 xl:px-92 2xl:px-124">
-            <div class=" min-w-full max-w-full min-h-[30vh] max-h-[30vh] text-center flex items-center justify-center font-extrabold tracking-wider text-5xl">
-                <a href="/">SudutLain</a>
+            <div class=" min-w-full max-w-full min-h-[30vh] max-h-[30vh] text-center flex items-center justify-center font-extrabold tracking-wider text-2xl">
+                <a href="/"><img src="{{ asset('img/logo/sudutlain_wm.png') }}" alt="SudutLain"></a>
             </div>
             <div class="min-w-full max-w-full min-h-fit flex flex-col justify-center items-center">
                 <fieldset class="min-w-full max-w-full flex flex-col justify-center items-center text-center">
