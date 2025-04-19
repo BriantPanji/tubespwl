@@ -25,6 +25,12 @@ class Post extends Model
     public function votedBy() {
         return $this->belongsToMany(User::class, 'post_votes', 'post_id', 'user_id');
     }
+    public function upvotedBy() {
+        return $this->belongsToMany(User::class, 'post_votes', 'post_id', 'user_id')->where('is_upvoted', 1);
+    }
+    public function downvotedBy() {
+        return $this->belongsToMany(User::class, 'post_votes', 'post_id', 'user_id')->where('is_upvoted', -1);
+    }
 
     public function attachments() {
         return $this->hasMany(PostAttachment::class, 'post_id');
@@ -34,7 +40,10 @@ class Post extends Model
         return $this->belongsToMany(Tag::class, 'tag_pivots', 'post_id', 'hashtag_id');
     }
 
-    public function reportedBy() {
+    public function reports() {
         return $this->hasMany(PostReport::class, 'post_id');
+    }
+    public function bookmarks() {
+        return $this->hasMany(Bookmarks::class, 'post_id');
     }
 }

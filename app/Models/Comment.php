@@ -21,7 +21,7 @@ class Comment extends Model
     public function commentedBy() {
         return $this->hasMany(CommentVotes::class, 'comment_id');
     }
-    public function reported() {
+    public function reports() {
         return $this->hasMany(CommentReport::class, 'comment_id');
     }
     

@@ -54,6 +54,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Badge::class, 'badge_pivots', 'user_id', 'badge_id');
     }
 
+    public function reportedPosts() {
+        return $this->hasMany(PostReport::class, 'user_id');
+    }
+    public function reportedComments() {
+        return $this->hasMany(CommentReport::class, 'user_id');
+    }
+    public function bookmarks() {
+        return $this->hasMany(Bookmarks::class, 'user_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

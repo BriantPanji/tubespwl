@@ -18,9 +18,9 @@ class BadgeFactory extends Factory
     {
         return [
             'badge_name'=>fake()->word(),
-            'badge_desc'=>fake()->sentence(1),
+            'badge_desc'=>fake()->sentence(5),
             'badge_color'=>fake()->hexColor(),
-            'badge_icon'=> '<i class="fa-solid fa-play langkahPertama lv3"></i>',
+            'badge_icon'=> '<i class="fa-thin' . ' fa-' . fake()->word() . ' ' . fake()->word() . ' lv' . fake()->numberBetween(1, 3) . '"></i>',
         ];
     }
 }

@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Comment;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CommentReport>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Bookmarks>
  */
-class CommentReportFactory extends Factory
+class BookmarksFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,8 +19,9 @@ class CommentReportFactory extends Factory
     public function definition(): array
     {
         return [
-            'comment_id'=>Comment::inRandomOrder()->first()->id,
-            'user_id'=>User::inRandomOrder()->first()->id
+            'user_id' => User::inRandomOrder()->first()->id,
+            'post_id' => Post::inRandomOrder()->first()->id,
+            
         ];
     }
 }
