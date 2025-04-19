@@ -19,7 +19,7 @@ class PostAttachmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'namafile'=> Str::random(),
+            'namafile'=> Str::lower(Str::random()) . '.jpg',
             'post_id'=>Post::inRandomOrder()->first()->id
         ];
     }

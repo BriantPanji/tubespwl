@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,8 @@ class PostReportFactory extends Factory
     public function definition(): array
     {
         return [
-            'post_id'=> Post::inRandomOrder()->first()->id
+            'post_id'=> Post::inRandomOrder()->first()->id,
+            'user_id'=> User::inRandomOrder()->first()->id
         ];
     }
 }

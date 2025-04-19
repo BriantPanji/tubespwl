@@ -32,7 +32,8 @@ class DatabaseSeeder extends Seeder
             PostReportSeeder::class,
             PostVotesSeeder::class,
             PostVotesSeeder::class,
-            TagSeeder::class
+            TagSeeder::class,
+            BookmarkSeeder::class,
         ]);
     }
 }
