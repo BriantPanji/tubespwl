@@ -8,14 +8,12 @@ use Illuminate\Validation\ValidationException;
 
 class SessionController extends Controller
 {
-    public function create()
-    {
+    public function create() {
         if (Auth::check()) return redirect('/');
         return view('auth.login');
     }
 
-    public function store()
-    {
+    public function store() {
         if (Auth::check()) {
             return response()->json([
                 'success' => false,
@@ -25,23 +23,22 @@ class SessionController extends Controller
         }
 
         $attrs = request()->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required']
+            'email'=>['required', 'email'],
+            'password'=>['required']
         ]);
 
         if (!Auth::attempt($attrs)) {
             throw ValidationException::withMessages([
-                'email' => 'Maaf, email atau password yang anda masukkan salah.'
+                'email'=> 'Maaf, email atau password yang anda masukkan salah.'
             ]);
         }
 
         request()->session()->regenerate();
 
-        return redirect('/home');
+        return redirect('/');
     }
 
-    public function destroy()
-    {
+    public function destroy() {
         // if (Auth::guest()) {
         //     return response()->json([
         //         'success' => false,
