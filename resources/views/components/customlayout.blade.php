@@ -15,9 +15,7 @@
 </head>
 <body x-init="console.log('ALPINEJS INITIALIZE')" class="min-w-full max-w-full min-h-screen w-full h-screen bg-sl-base text-sl-text">
     <x-header></x-header>
-    <main class=" px-5 pt-1 pb-7 min-w-full max-w-full min-h-screen w-full h-auto bg-sl-base text-sl-text xs:px-12 sm:px-22 md:px-34 lg:px-62 xl:px-90 2xl:px-110 flex flex-col gap-y-3">
         {{ $slot }}
-    </main>
     <x-footer></x-footer>
     <script src="{{ asset('js/swaldef.js') }}" defer></script>
 </body>
