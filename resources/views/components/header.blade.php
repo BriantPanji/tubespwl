@@ -1,0 +1,77 @@
+<header
+    x-data="{open: false, inputValue: '', scrolled: false}"
+    x-init="scrolled = window.scrollY > 15"
+    @scroll.window="scrolled = window.scrollY > 15"
+    :class="scrolled ? 'bg-sl-base/10 backdrop-blur-xs shadow-md' : 'bg-sl-base shadow-none'"
+    class="transition-all min-w-full !max-w-full w-full min-h-19 h-19 max-h-19 sticky top-0 z-100 flex items-center justify-between px-5 xs:px-10 lg:px-20 xl:px-32 2xl:px-40"
+    >
+
+        {{-- POPUP MODAL UNTUK KETIKA SEARCHBAR DITEKAN, KENAPA DIPISAH? BIAR GAMPANG AJA NGODINGNYA AWIKWOK --}}
+        <div
+            @click.outside="open=!open"
+            x-show="open"
+            x-cloak
+            class="bg-sl-tertiary !absolute z-50 top-0 right-0 pt-2 flex flex-col  max-w-6/7 min-h-2 w-6/7 xs:w-4/5 sm:w-2/3 md:w-3/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 rounded-bl-lg shadow-2xl gap-y-3"
+            >
+                <form method="GET" action="/search" class="flex items-center gap-5 px-4 py-2 text-2xl">
+                    <button @click="open=!open" type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-arrow-left"></i></button>
+                    <input x-model="inputValue" x-ref="searchbar" class="bg-white/8 w-full h-10 px-4 text-lg rounded-xl border-transparent outline-none font-light" type="search" name="search" id="search" placeholder="Cari..." required autocomplete="off">
+                    <button type="submit" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-magnifying-glass"></i></button>
+                </form>
+                <article class="min-w-full max-w-full min-h-2 flex flex-col">
+                    <div class="flex items-center justify-between px-4 py-2 text-sm text-sl-text/60 shadow-xs">
+                        <span>Terbaru</span>
+                        <span class="text-xs">Hapus</span>
+                    </div>
+                    <div class="min-w-full max-w-full min-h-2 max-h-62 h-auto overflow-y-auto overflow-x-clip customScrollbar">
+                        <div class="flex flex-col min-w-full w-full max-w-full min-h-2 pr-3 *:!text-sm">
+{{--                            CONTOH:: --}}
+                            {{--<div class="flex items-center justify-between px-4 py-2 text-sl-text/95">
+                                <span class="cursor-pointer hover:text-sl-text hover:underline">TEKS DISINI</span>
+                                <button @click="window.location.href='/search?search=PENCARIAN DISINI'" type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-times"></i></button>
+                            </div>--}}
+                            <div class="flex items-center justify-between px-4 py-2 text-sl-text/95">
+                                <span class="cursor-pointer hover:text-sl-text hover:underline">Kopi anak indo</span>
+                                <button @click="window.location.href='/search?search=PENCARIAN DISINI'" type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-times"></i></button>
+                            </div>
+                            <div class="flex items-center justify-between px-4 py-2 text-sl-text/95">
+                                <span class="cursor-pointer hover:text-sl-text hover:underline">Inter Cafe</span>
+                                <button @click="window.location.href='/search?search=PENCARIAN DISINI'" type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-times"></i></button>
+                            </div>
+                            <div class="flex items-center justify-between px-4 py-2 text-sl-text/95">
+                                <span class="cursor-pointer hover:text-sl-text hover:underline">warbeng</span>
+                                <button @click="window.location.href='/search?search=PENCARIAN DISINI'" type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-times"></i></button>
+                            </div>
+                            <div class="flex items-center justify-between px-4 py-2 text-sl-text/95">
+                                <span class="cursor-pointer hover:text-sl-text hover:underline">kantin fasilkom</span>
+                                <button @click="window.location.href='/search?search=PENCARIAN DISINI'" type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-times"></i></button>
+                            </div>
+
+                        </div>
+                    </div>
+                </article>
+        </div>
+
+        {{-- BAGIAN KIRI HEADER: PP DAN LOGO --}}
+        <section class="flex items-center justify-start min-w-[25%]">
+            @auth
+                <a href="/profile" class="cursor-pointer"><img class="w-9 h-9 rounded-full" src="{{ asset('img/blankprofile.png') }}" alt="profilepicture.jpg"></a>
+            @endauth
+            @guest
+                <a href="/login" class="cursor-pointer"><img class="w-9 h-9 rounded-full" src="{{ asset('img/blankprofile.png') }}" alt="profilepicture.jpg"></a>
+            @endguest
+            <a href="/" class="cursor-pointer"><img class="h-9 max-h-9" src="{{ asset('img/logo/sudutlain_wm.png') }}" alt=""></a>
+        </section>
+
+        {{-- BAGIAN KANAN HEADER: LOGO SEARCH DAN ADD POST --}}
+        <section class="flex items-center justify-end gap-8 text-2xl !max-w-[25%] w-[25%] sm:!max-w-[60%] sm:w-auto sm:justify-between transition-all relative">
+            <button @click="open=!open" type="button" class="cursor-pointer flex items-center justify-center w-fit sm:hidden"><i class="fa-light fa-magnifying-glass"></i></button>
+            <form @click="open = !open; $nextTick(() => $refs.searchbar.focus())" method="GET" class="w-full hidden sm:flex items-center gap-5 px-4 py-2 rounded-md">
+                <input x-model="inputValue" :class="scrolled ? 'backdrop-blur-xs bg-sl-tertiary/70' : 'backdrop-blur-none bg-sl-tertiary'" class=" w-full h-10 px-4 text-lg rounded-xl border-transparent outline-none font-light" type="search" name="search" id="search" placeholder="Cari..." required autocomplete="off">
+                <button type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-magnifying-glass"></i></button>
+            </form>
+
+            <a href="/post/add" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-square-plus"></i></i></a>
+        </section>
+
+</header>

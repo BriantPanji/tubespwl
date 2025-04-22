@@ -1,4 +1,4 @@
-<x-layout>
+<x-authlayout>
     <x-slot:title>
         Masuk ke SudutLain
     </x-slot:title>
@@ -42,4 +42,4 @@
             </div>
         </section>
     </main>
-</x-layout>
+</x-authlayout>

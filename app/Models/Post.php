@@ -35,7 +35,7 @@ class Post extends Model
     public function attachments() {
         return $this->hasMany(PostAttachment::class, 'post_id');
     }
-    
+
     public function tag() {
         return $this->belongsToMany(Tag::class, 'tag_pivots', 'post_id', 'hashtag_id');
     }
@@ -43,7 +43,7 @@ class Post extends Model
     public function reports() {
         return $this->hasMany(PostReport::class, 'post_id');
     }
-    public function bookmarks() {
-        return $this->hasMany(Bookmarks::class, 'post_id');
+    public function bookmarkedBy() {
+        return $this->belongsToMany(User::class, 'bookmarks', 'post_id', 'user_id');
     }
 }
