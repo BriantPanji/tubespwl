@@ -18,11 +18,11 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'displayName',
+        'display_name',
         'username',
         'email',
         'password',
-        'isAdmin',
+        'is_admin',
     ];
 
     /**
@@ -35,7 +35,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function post() {
+    public function posts() {
         return $this->hasMany(Post::class);
     }
 
@@ -43,7 +43,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Post::class, 'post_votes', 'user_id', 'post_id');
     }
 
-    public function comment() {
+    public function comments() {
         return $this->hasMany(Comment::class);
     }
     public function votedComment() {
@@ -61,7 +61,7 @@ class User extends Authenticatable
         return $this->hasMany(CommentReport::class, 'user_id');
     }
     public function bookmarks() {
-        return $this->hasMany(Bookmarks::class, 'user_id');
+        return $this->belongsToMany(Post::class, 'bookmarks', 'user_id', 'post_id');
     }
 
     /**
