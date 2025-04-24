@@ -51,3 +51,13 @@ Route::get('/my/comments', function () {
 
     return view('dashboard.comment', compact('posts'));
 })->middleware('auth');
+
+Route::get('/my/bookmarks', function () {
+    $bookmarks = auth()->user()->bookmarks()->with('post.user')->get();
+    return view('dashboard.bookmarks', compact('bookmarks'));
+})->middleware('auth')->name('bookmarks');
+    
+Route::get('/my/post', function () {
+    $myposts = auth()->user()->posts()->with('user')->get();
+    return view('dashboard.mypost', compact('myposts'));
+})->middleware('auth')->name('mypost');
