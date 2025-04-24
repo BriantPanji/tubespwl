@@ -11,7 +11,8 @@
             @click.outside="open=!open"
             x-show="open"
             x-cloak
-            class="bg-sl-tertiary !absolute z-50 top-0 right-0 pt-2 flex flex-col  max-w-6/7 min-h-2 w-6/7 xs:w-4/5 sm:w-2/3 md:w-3/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 rounded-bl-lg shadow-2xl gap-y-3"
+            :class="scrolled ? 'bg-sl-tertiary/80 backdrop-blur-xs' : 'bg-sl-tertiary backdrop-blur-none'"
+            class="transition-all border-b-2 border-l-2 border-sl-tertiary !absolute z-50 top-0 right-0 pt-2 flex flex-col  max-w-6/7 min-h-2 w-6/7 xs:w-4/5 sm:w-2/3 md:w-3/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 rounded-bl-lg shadow-2xl gap-y-3"
             >
                 <form method="GET" action="/search" class="flex items-center gap-5 px-4 py-2 text-2xl">
                     <button @click="open=!open" type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-arrow-left"></i></button>
@@ -71,7 +72,9 @@
                 <button type="button" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-magnifying-glass"></i></button>
             </form>
 
-            <a href="/post/add" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-square-plus"></i></i></a>
+            @if(!(Request::is('post/add')))
+                <a href="{{ route('post.create') }}" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-square-plus"></i></a>
+            @endif
         </section>
 
 </header>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
 
 
 //TES BERANDA
@@ -21,3 +22,5 @@ Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth'
 Route::get('/tes', function () {
     return view('welcome');
 });
+
+Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
