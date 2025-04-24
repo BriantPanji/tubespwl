@@ -8,8 +8,7 @@ use App\Http\Controllers\RegisterUserController;
 
 //Beranda
 Route::get('/', [PostController::class, 'posts_view']);
-
-Route::get('/post/{post}', [PostController::class, 'post_detail'])->middleware('auth');
+Route::get('/post/{post}', [PostController::class, 'post_detail']);
 
 //TES PROFILE
 Route::get('/profile', function () {
