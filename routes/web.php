@@ -10,7 +10,33 @@ Route::get('/', [PostController::class, 'posts_view']);
 
 Route::get('/post/{post}', [PostController::class, 'post_detail']);
 
-// Auth
+//TES BERANDA
+Route::get('/', function () {
+    return view('tes');
+});
+
+//TES PROFILE
+Route::get('/profile', function () {
+    $user = Auth::user();
+
+    // Hitung jumlah postingan, komentar,badge, bookmark dan postvotes
+    $postCount = $user->posts()->count();
+    $commentCount = $user->comments()->count();
+    $badgeCount = $user->badges()->count();
+    $postVoteCount = $user->votedPost()->count();
+    $bookmarkCount = $user->bookmarks()->count();
+
+    return view('profile', [
+        'user' => $user,
+        'postCount' => $postCount,
+        'commentCount' => $commentCount,
+        'badgeCount' => $badgeCount,
+        'postVoteCount' => $postVoteCount, 
+        'bookmarkCount' => $bookmarkCount, 
+    ]);
+})->middleware('auth');
+
+    
 Route::get('/login', [SessionController::class, 'create'])->name('login');
 Route::post('/login', [SessionController::class, 'store']);
 Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
