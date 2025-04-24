@@ -1,23 +1,45 @@
 <?php
 
-use App\Http\Controllers\RegisterUserController;
-use App\Http\Controllers\SessionController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\RegisterUserController;
 
+//Beranda
+Route::get('/', [PostController::class, 'posts_view']);
 
-//TES BERANDA
-Route::get('/', function () {
-    return view('tes');
-});
+Route::get('/post/{post}', [PostController::class, 'post_detail'])->middleware('auth');
 
+//TES PROFILE
+Route::get('/profile', function () {
+    $user = Auth::user();
 
+    // Hitung jumlah postingan, komentar,badge, bookmark dan postvotes
+    $postCount = $user->posts()->count();
+    $commentCount = $user->comments()->count();
+    $badgeCount = $user->badges()->count();
+    $postVoteCount = $user->votedPost()->count();
+    $bookmarkCount = $user->bookmarks()->count();
+
+    return view('profile', [
+        'user' => $user,
+        'postCount' => $postCount,
+        'commentCount' => $commentCount,
+        'badgeCount' => $badgeCount,
+        'postVoteCount' => $postVoteCount, 
+        'bookmarkCount' => $bookmarkCount, 
+    ]);
+})->middleware('auth');
+
+    
 Route::get('/login', [SessionController::class, 'create'])->name('login');
 Route::post('/login', [SessionController::class, 'store']);
 Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisterUserController::class, 'store']);
-
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth')->name('logout');
+
+// Post
 
 Route::get('/tes', function () {
     return view('welcome');
