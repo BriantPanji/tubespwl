@@ -112,38 +112,38 @@
                 @endguest
 
                 {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
-                <div class="flex w-[35%] md:w-[30%] justify-between">
-                    <span class="h-full flex items-center sm:w-[40%]">
+                @auth
+                    <div class="flex w-[35%] md:w-[30%] justify-between">
+                        <span class="h-full flex items-center sm:w-[40%]">
 
-                        <button @click="window.location.href = '/login'"
-                            class="text-2xl cursor-pointer hover:text-emerald-500"><i
-                                class="fa-light fa-up "></i></button>
+                            <button class="text-2xl cursor-pointer hover:text-emerald-500"><i
+                                    class="fa-light fa-up "></i></button>
 
-                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
-                    </span>
+                            <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
+                        </span>
 
-                    <button @click="window.location.href = '/login'"
-                        class="text-2xl cursor-pointer hover:text-red-700"><i class="fa-light fa-down"></i></button>
+                        <button class="text-2xl cursor-pointer hover:text-red-700"><i class="fa-light fa-down"></i></button>
 
-                </div>
-                <div class="flex w-[53%] justify-between items-center">
-                    <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
+                    </div>
+                    <div class="flex w-[53%] justify-between items-center">
+                        <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
 
-                        <button @click="window.location.href = '/login'"
-                            class="text-2xl cursor-pointer hover:text-yellow-500"><i
-                                class="fa-light fa-comment "></i></button>
+                            <button class="text-2xl cursor-pointer hover:text-yellow-500"><i
+                                    class="fa-light fa-comment "></i></button>
 
-                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">21</div>
-                    </span>
+                            <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">21</div>
+                        </span>
 
-                    <button @click="window.location.href = '/login'"
-                        class="text-xl cursor-pointer hover:text-cyan-700"><i class="fa-light fa-bookmark"></i></button>
+                        <button class="text-xl cursor-pointer hover:text-cyan-700"><i
+                                class="fa-light fa-bookmark"></i></button>
 
-                    <button onclick="copyLink('{{ url('/post/' . $post->id) }}')"
-                        class="text-xl cursor-pointer hover:scale-101">
-                        <i class="fa-light fa-share-from-square "></i>
-                    </button>
-                </div>
+                        <button onclick="copyLink('{{ url('/post/' . $post->id) }}')"
+                            class="text-xl cursor-pointer hover:scale-101">
+                            <i class="fa-light fa-share-from-square "></i>
+                        </button>
+                    </div>
+                @endauth
+
             </section>
         </article>
     @endforeach
