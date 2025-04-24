@@ -65,28 +65,62 @@
         </section>
         <section
             class="w-full min-h-3 h-10 flex items-center bg-[#42394a] mt-1 rounded-md px-3 md:px-5 xl:px-8 2xl:px-10 text-2xl justify-between">
-            {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
-            <div class="flex w-[35%] md:w-[30%] justify-between">
-                <span class="h-full flex items-center sm:w-[40%]">
-                    <button @click="window.location.href = '/'"
-                        class="text-2xl cursor-pointer hover:text-emerald-500"><i class="fa-light fa-up "></i></button>
-                    <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
-                </span>
-                <button @click="window.location.href = '/'" class="text-2xl cursor-pointer hover:text-red-700"><i
-                        class="fa-light fa-down"></i></button>
-            </div>
-            <div class="flex w-[53%] justify-between items-center">
-                <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
-                    <button @click="window.location.href = '/'" class="text-2xl cursor-pointer hover:text-yellow-500"><i
-                            class="fa-light fa-comment "></i></button>
-                    <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">21</div>
-                </span>
+            @guest
 
-                <button @click="window.location.href = '/'" class="text-xl cursor-pointer hover:text-cyan-700"><i
-                        class="fa-light fa-bookmark"></i></button>
-                <button class="text-xl cursor-pointer hover:scale-101"><i
-                        class="fa-light fa-share-from-square "></i></button>
-            </div>
+                {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
+                <div class="flex w-[35%] md:w-[30%] justify-between">
+                    <span class="h-full flex items-center sm:w-[40%]">
+
+                        <button @click="window.location.href = '/login'"
+                            class="text-2xl cursor-pointer hover:text-emerald-500"><i class="fa-light fa-up "></i></button>
+
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
+                    </span>
+
+                    <button @click="window.location.href = '/login'" class="text-2xl cursor-pointer hover:text-red-700"><i
+                            class="fa-light fa-down"></i></button>
+
+                </div>
+                <div class="flex w-[53%] justify-between items-center">
+                    <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
+
+                        <button @click="window.location.href = '/login'"
+                            class="text-2xl cursor-pointer hover:text-yellow-500"><i
+                                class="fa-light fa-comment "></i></button>
+
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">21</div>
+                    </span>
+
+                    <button @click="window.location.href = '/login'" class="text-xl cursor-pointer hover:text-cyan-700"><i
+                            class="fa-light fa-bookmark"></i></button>
+
+                    <button class="text-xl cursor-pointer hover:scale-101"><i
+                            class="fa-light fa-share-from-square "></i></button>
+                </div>
+            @endguest
+            @auth
+
+                {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
+                <div class="flex w-[35%] md:w-[30%] justify-between">
+                    <span class="h-full flex items-center sm:w-[40%]">
+                        <button class="text-2xl cursor-pointer hover:text-emerald-500"><i
+                                class="fa-light fa-up "></i></button>
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
+                    </span>
+                    <button class="text-2xl cursor-pointer hover:text-red-700"><i class="fa-light fa-down"></i></button>
+                </div>
+                <div class="flex w-[53%] justify-between items-center">
+                    <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
+                        <button class="text-2xl cursor-pointer hover:text-yellow-500"><i
+                                class="fa-light fa-comment "></i></button>
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">21</div>
+                    </span>
+
+                    <button class="text-xl cursor-pointer hover:text-cyan-700"><i class="fa-light fa-bookmark"></i></button>
+                    <button class="text-xl cursor-pointer hover:scale-101"><i
+                            class="fa-light fa-share-from-square "></i></button>
+                </div>
+            @endauth
         </section>
     </article>
 
