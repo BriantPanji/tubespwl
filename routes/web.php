@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\SessionController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KomentarController;
+use App\Http\Controllers\PostController;
 
 
 //TES BERANDA
@@ -21,3 +24,10 @@ Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth'
 Route::get('/tes', function () {
     return view('welcome');
 });
+
+Route::get('/my/comments', function () {
+    // $comments = User::with('comments')->get();
+    $posts = Auth::user()->comments()->with('post.user')->get()->pluck('post');
+    
+    return view('dashboard.comment', compact('posts'));
+})->middleware('auth');
