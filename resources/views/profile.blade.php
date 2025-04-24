@@ -94,12 +94,13 @@
     </section>
 
     {{-- Tombol Logout Absolut --}}
-    <form action="{{ route('logout') }}" method="POST" class="absolute bottom-0 left-0 right-0 mx-auto w-full">
-        @csrf
-        <button
-            type="submit"
-            class="w-full bg-transparent border-2 border-sl-tertiary hover:bg-sl-tertiary text-sm text-sl-text/90 px-4 py-2 rounded-b-md">
-            Logout
-        </button>
-    </form>
+    <div class="relative">
+        <form action="{{ route('logout') }}" method="POST" class="absolute bottom-0 left-0 right-0 mx-auto w-full">
+            @csrf
+            <button type="submit"
+                class="w-full bg-transparent border border-sl-primary hover:bg-red-900 hover:border-transparent font-semibold text-sm text-sl-text/90 px-4 py-2 rounded-md">
+                Logout
+            </button>
+        </form>
+    </div>
 </x-layout>
