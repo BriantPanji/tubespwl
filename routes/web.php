@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SessionController;
@@ -43,3 +44,10 @@ Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth'
 Route::get('/tes', function () {
     return view('welcome');
 });
+
+Route::get('/my/comments', function () {
+    // $comments = User::with('comments')->get();
+    $posts = Auth::user()->comments()->with('post.user')->get()->pluck('post');
+
+    return view('dashboard.comment', compact('posts'));
+})->middleware('auth');
