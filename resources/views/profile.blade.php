@@ -85,7 +85,7 @@
                     class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm w-48 text-center">
                     Lihat Votinganmu
                 </a>
-                <a href="/my/bookmark"
+                <a href="/my/bookmarks"
                     class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm w-48 text-center">
                     Lihat Bookmarksmu
                 </a>
