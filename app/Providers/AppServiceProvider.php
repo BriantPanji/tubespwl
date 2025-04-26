@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        Gate::define('admin', function (?User $user) {
+            return $user && $user->is_admin;
+        });
+
         Validator::extend('alpha_space', function ($attribute, $value) {
 
             // This will only accept alpha and spaces.
