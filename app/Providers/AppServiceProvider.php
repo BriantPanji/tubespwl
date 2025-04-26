@@ -22,10 +22,17 @@ class AppServiceProvider extends ServiceProvider
     {
         Validator::extend('alpha_space', function ($attribute, $value) {
 
-            // This will only accept alpha and spaces. 
+            // This will only accept alpha and spaces.
             // If you want to accept hyphens use: /^[\pL\s-]+$/u.
-            return preg_match('/^[\pL\s]+$/u', $value); 
-    
+            return preg_match('/^[\pL\s]+$/u', $value);
+
         }, "The :attribute must only contain letters and spaces");
+        Validator::extend('hashtag', function ($attribute, $value) {
+
+            // This will only accept alpha and spaces.
+            // If you want to accept hyphens use: /^[\pL\s-]+$/u.
+            return preg_match('/^(?!\d+$)([a-zA-Z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?)(?:,\s*([a-zA-Z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?))*[,]?$/', $value);
+
+        }, "The :attribute must only contain letters, numbers after letter, underscores and space after comma");
     }
 }

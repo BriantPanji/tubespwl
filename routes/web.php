@@ -6,9 +6,10 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\RegisterUserController;
 
+
 //Beranda
-Route::get('/', [PostController::class, 'posts_view']);
-Route::get('/post/{post}', [PostController::class, 'post_detail']);
+Route::get('/', [PostController::class, 'index']);
+Route::get('/post/{post}', [PostController::class, 'show']);
 
 //TES PROFILE
 Route::get('/profile', function () {
@@ -44,6 +45,9 @@ Route::get('/tes', function () {
     return view('welcome');
 });
 
+Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
+Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
+
 Route::get('/my/comments', function () {
     // $comments = User::with('comments')->get();
     $posts = Auth::user()->comments()->with('post.user')->get()->pluck('post');
@@ -60,3 +64,4 @@ Route::get('/my/post', function () {
     $myposts = auth()->user()->posts()->with('user')->get();
     return view('dashboard.mypost', compact('myposts'));
 })->middleware('auth')->name('mypost');
+
