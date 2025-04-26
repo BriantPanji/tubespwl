@@ -41,7 +41,7 @@ class Post extends Model
     }
 
     public function reports() {
-        return $this->hasMany(PostReport::class, 'post_id');
+        return $this->belongsToMany(User::class, 'post_reports', 'post_id', 'user_id');
     }
     public function bookmarkedBy() {
         return $this->belongsToMany(User::class, 'bookmarks', 'post_id', 'user_id');

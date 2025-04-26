@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('post_reports', function (Blueprint $table) {
-            $table->id();
             $table->foreignUlid('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unique(['post_id', 'user_id']);
         });
     }
 
