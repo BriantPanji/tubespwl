@@ -1,17 +1,30 @@
 <header
-    x-data="{open: false, inputValue: '', scrolled: false}"
-    x-init="scrolled = window.scrollY > 15"
-    @scroll.window="scrolled = window.scrollY > 15"
-    :class="scrolled ? 'bg-sl-base/10 backdrop-blur-xs shadow-md' : 'bg-sl-base shadow-none'"
-    class="transition-all min-w-full !max-w-full w-full min-h-19 h-19 max-h-19 sticky top-0 z-100 flex items-center justify-between px-5 xs:px-10 lg:px-20 xl:px-32 2xl:px-40"
+    x-data="{open: false, inputValue: '', scrolled: false, lastScrollTop: 0, hideHeader: false}"
+    x-init="
+    scrolled = window.scrollY > 15;
+    lastScrollTop = window.scrollY;
+        window.addEventListener('scroll', () => {
+            scrolled = window.scrollY > 15;
+            let currentScroll = window.scrollY;
+            hideHeader=currentScroll > lastScrollTop && currentScroll > 50;
+            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // prevent negative
+        })
+    "
+    :class="{
+        '-translate-y-full': hideHeader,
+        'translate-y-0': !hideHeader,
+        'bg-sl-base/10 backdrop-blur-xs shadow-md': scrolled,
+        'bg-sl-base shadow-none': !scrolled
+    }"
+    class="transition-all duration-300 min-w-full !max-w-full w-full min-h-19 h-19 max-h-19 sticky top-0 z-100 flex items-center justify-between px-5 xs:px-10 lg:px-20 xl:px-32 2xl:px-40"
     >
 
         {{-- POPUP MODAL UNTUK KETIKA SEARCHBAR DITEKAN, KENAPA DIPISAH? BIAR GAMPANG AJA NGODINGNYA AWIKWOK --}}
         <div
             @click.outside="open=!open"
-            x-show="open"
+            x-show="open & !hideHeader"
             x-cloak
-            :class="scrolled ? 'bg-sl-tertiary/80 backdrop-blur-xs' : 'bg-sl-tertiary backdrop-blur-none'"
+            :class="scrolled ? 'bg-sl-tertiary opacity-[.97] backdrop-blur-xs' : 'bg-sl-tertiary opacity-100 backdrop-blur-none'"
             class="transition-all border-b-2 border-l-2 border-sl-tertiary !absolute z-50 top-0 right-0 pt-2 flex flex-col  max-w-6/7 min-h-2 w-6/7 xs:w-4/5 sm:w-2/3 md:w-3/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 rounded-bl-lg shadow-2xl gap-y-3"
             >
                 <form method="GET" action="/search" class="flex items-center gap-5 px-4 py-2 text-2xl">
