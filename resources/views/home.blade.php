@@ -1,5 +1,5 @@
 <x-layout>
-    <x-slot:title>Komentar saya</x-slot:title>
+    <x-slot:title>SudutLain - Beranda</x-slot:title>
 
     @foreach ($posts as $post)
         <article
@@ -54,18 +54,28 @@
                     {{-- JUDUL POST --}}
                     {{ $post->title }}
                 </a>
-                <div class="w-full font-light text-xs md:text-sm relative ">
-                    <p class="line-clamp-4">
+                <div class="w-full font-light text-xs md:text-sm relative " x-data="{ showMore: false }"
+                     x-init="
+                     $nextTick(() => {
+        const p = $refs.content;
+        const lineHeight = parseFloat(getComputedStyle(p).lineHeight);
+        const maxHeight = lineHeight * 4; // 4 baris
+        showMore = p.scrollHeight > maxHeight;
+    })
+        ">
+                    <p class="line-clamp-4" x-ref="content">
                         {{-- CONTENT POST --}}
                         {{ $post->content }}
 
                     </p>
-                    <div class="absolute mt-10 bottom-0 right-1 w-full text-right cursor-text">
-                        <a class="text-blue-500 text-xs font-medium hover:underline bg-sl-tertiary"
+                    <template x-if="showMore">
+                    <div class="absolute mt-10 bottom-0 right-1 md:right-0 w-full text-right cursor-text">
+                        <a class="text-blue-500 font-medium hover:underline bg-sl-tertiary"
                             href="/post/{{ $post->id }}">
                             ...lihat selengkapnya
                         </a>
                     </div>
+                    </template>
                 </div>
             </section>
             <section class="w-full h-auto">
