@@ -15,6 +15,8 @@ return new class extends Migration
             $table->boolean('is_upvoted')->nullable()->default(null);
             $table->foreignUlid('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unique(['post_id', 'user_id']);
         });
     }
 

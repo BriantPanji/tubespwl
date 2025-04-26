@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\PostVotes;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +14,13 @@ class PostVotesSeeder extends Seeder
      */
     public function run(): void
     {
-        PostVotes::factory(10)->create();
+        $posts = Post::factory()->count(3)->create();
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $user->votedPost()->attach($posts->random(2), [
+                'is_upvoted' => rand(0, 1)
+            ]);
+        }
     }
 }

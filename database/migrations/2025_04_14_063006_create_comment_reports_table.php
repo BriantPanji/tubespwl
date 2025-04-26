@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comment_reports', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('comment_id')->references('id')->on('comments')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unique(['comment_id', 'user_id']);
         });
     }
 

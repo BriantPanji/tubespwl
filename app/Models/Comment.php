@@ -18,12 +18,14 @@ class Comment extends Model
     public function votes() {
         return $this->belongsToMany(User::class, 'comment_votes', 'comment_id', 'user_id');
     }
-    public function commentedBy() {
-        return $this->hasMany(CommentVotes::class, 'comment_id');
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
+
     public function reports() {
-        return $this->hasMany(CommentReport::class, 'comment_id');
+        return $this->belongsToMany(User::class, 'comment_reports', 'comment_id', 'user_id');
     }
-    
+
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Post;
 use App\Models\PostAttachment;
 use App\Models\Tag;
@@ -15,7 +16,13 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::with('user')->get();
+        $badges = User::with('badges')->get();
+
+        return view('home', [
+            'posts' => $posts,
+            'badges' => $badges,
+        ]);
     }
 
     /**
@@ -85,9 +92,17 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($postId)
     {
-        //
+        $post = Post::with('user')->findOrFail($postId);
+        $badges = User::with('badges');
+        $comments = User::with('comments')->findOrFail($postId);
+
+        return view('post_detail', [
+            'post' => $post,
+            'badges' => $badges,
+            'comments' => $comments,
+        ]);
     }
 
     /**
