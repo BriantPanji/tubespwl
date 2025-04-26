@@ -26,12 +26,12 @@ Route::get('/profile', function () {
         'postCount' => $postCount,
         'commentCount' => $commentCount,
         'badgeCount' => $badgeCount,
-        'postVoteCount' => $postVoteCount, 
-        'bookmarkCount' => $bookmarkCount, 
+        'postVoteCount' => $postVoteCount,
+        'bookmarkCount' => $bookmarkCount,
     ]);
 })->middleware('auth');
 
-    
+
 Route::get('/login', [SessionController::class, 'create'])->name('login');
 Route::post('/login', [SessionController::class, 'store']);
 Route::get('/register', [RegisterUserController::class, 'create'])->name('register');

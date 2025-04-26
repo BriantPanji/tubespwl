@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\CommentReport;
+use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +14,11 @@ class CommentReportSeeder extends Seeder
      */
     public function run(): void
     {
-        CommentReport::factory(4)->create();
+        $comments = Comment::factory()->count(3)->create();
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $user->reportedComments()->attach($comments->random(2));
+        }
     }
 }

@@ -46,7 +46,7 @@ class User extends Authenticatable
     public function comments() {
         return $this->hasMany(Comment::class);
     }
-    public function votedComment() {
+    public function votedComments() {
         return $this->belongsToMany(Comment::class, 'comment_votes', 'user_id', 'comment_id');
     }
 
@@ -55,10 +55,10 @@ class User extends Authenticatable
     }
 
     public function reportedPosts() {
-        return $this->hasMany(PostReport::class, 'user_id');
+        return $this->belongsToMany(Post::class, 'post_reports', 'user_id', 'post_id');
     }
     public function reportedComments() {
-        return $this->hasMany(CommentReport::class, 'user_id');
+        return $this->belongsToMany(Comment::class, 'comment_reports', 'user_id', 'comment_id');
     }
     public function bookmarks() {
         return $this->belongsToMany(Post::class, 'bookmarks', 'user_id', 'post_id');

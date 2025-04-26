@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\PostReport;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +14,11 @@ class PostReportSeeder extends Seeder
      */
     public function run(): void
     {
-        PostReport::factory(6)->create();
+        $posts = Post::factory()->count(3)->create();
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $user->reportedPosts()->attach($posts->random(2));
+        }
     }
 }
