@@ -24,3 +24,4 @@ Route::get('/tes', function () {
 });
 
 Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
+Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
