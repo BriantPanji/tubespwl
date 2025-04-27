@@ -7,12 +7,6 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\RegisterUserController;
 
 
-// Route untuk tampilkan form edit profile
-Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
-Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');
-
-
-
 //Beranda
 Route::get('/', [PostController::class, 'index']);
 Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
@@ -38,7 +32,10 @@ Route::get('/profile', function () {
         'postVoteCount' => $postVoteCount,
         'bookmarkCount' => $bookmarkCount,
     ]);
-})->middleware('auth');
+})->middleware('auth')->name('profile');
+// Route untuk tampilkan form edit profile
+Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
+Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');
 
 
 Route::get('/login', [SessionController::class, 'create'])->name('login');
@@ -56,16 +53,20 @@ Route::get('/tes', function () {
 Route::get('/my/comments', function () {
     // $comments = User::with('comments')->get();
     $posts = Auth::user()->comments()->with('post.user')->get()->pluck('post');
-
     return view('dashboard.comment', compact('posts'));
-})->middleware('auth');
+})->middleware('auth')->name('profile.comment');
 
 Route::get('/my/bookmarks', function () {
     $bookmarks = auth()->user()->bookmarks()->with('post.user')->get();
     return view('dashboard.bookmarks', compact('bookmarks'));
-})->middleware('auth')->name('bookmarks');
+})->middleware('auth')->name('profile.bookmark');
 
-Route::get('/my/post', function () {
+Route::get('/my/posts', function () {
     $myposts = auth()->user()->posts()->with('user')->get();
     return view('dashboard.mypost', compact('myposts'));
-})->middleware('auth')->name('mypost');
+})->middleware('auth')->name('profile.post');
+
+Route::get('/my/votes', function () {
+    $myposts = auth()->user()->posts()->with('user')->get();
+    return view('dashboard.mypost', compact('myposts'));
+})->middleware('auth')->name('profile.vote');

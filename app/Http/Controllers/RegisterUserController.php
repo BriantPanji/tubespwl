@@ -42,26 +42,22 @@ class RegisterUserController extends Controller
     // Method untuk update data profile
     public function update(Request $request)
     {   
-        // dd('tes');
         $user = Auth::user();
 
         // Validasi inputan
         $validated = $request->validate([
             'display_name' => ['required', 'alpha_space'],
             'username' => ['required', 'unique:users,username,' . $user->id, 'alpha_dash'],
-            'email' => ['required', 'email'],
-            'password' => ['nullable', Password::min(8)->letters()->numbers()],
-
+            'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // avatar tidak wajib
         ]);
-        dd('tes');
 
 
 
-        // Update data profil: display_name, username, email
+        // Update data profil: display_name, username
         $user->update([
             'display_name' => $validated['display_name'],
             'username' => $validated['username'],
-            'email' => $validated['email'],
         ]);
 
         // Update password jika diisi
@@ -80,6 +76,6 @@ class RegisterUserController extends Controller
         }
 
         // Setelah berhasil, redirect ke halaman edit profile dengan pesan sukses
-        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully!');
+        return redirect()->route('profile')->with('success', 'Profil berhasil diperbarui !');
     }
 }
