@@ -7,6 +7,12 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\RegisterUserController;
 
 
+// Route untuk tampilkan form edit profile
+Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
+Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');
+
+
+
 //Beranda
 Route::get('/', [PostController::class, 'index']);
 Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
@@ -63,4 +69,3 @@ Route::get('/my/post', function () {
     $myposts = auth()->user()->posts()->with('user')->get();
     return view('dashboard.mypost', compact('myposts'));
 })->middleware('auth')->name('mypost');
-
