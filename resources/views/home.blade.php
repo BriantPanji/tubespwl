@@ -79,7 +79,7 @@
                 </div>
             </section>
             <section class="w-full h-auto">
-                <img class="!aspect-video rounded-xl" src="{{ asset('img/contohgmb.jpg') }}"> {{-- FOTO PERTAMA DARI POST --}}
+                <img class="!aspect-video rounded-xl object-cover" src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}">
             </section>
             <section
                 class="w-full min-h-3 h-10 flex items-center bg-white/10 mt-1 rounded-md px-3 md:px-5 xl:px-8 2xl:px-10 text-2xl justify-between">
@@ -123,16 +123,53 @@
 
                 {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
                 @auth
-                    <div class="flex w-[35%] md:w-[30%] justify-between">
+                    <div
+                        x-data="{
+                            upvoted: {{ auth()->user()->hasUpvotedPost($post) ? 'true' : 'false' }},
+                            downvoted: {{ auth()->user()->hasDownvotedPost($post) ? 'true' : 'false' }},
+                            loading: false,
+                            toggleUpvote() {
+                                if (this.loading) return;
+                                this.loading = true;
+                                axios.post('/post/{{ $post->id }}/upvote', { _token: '{{ csrf_token() }}' })
+                                    .then(() => {
+                                        this.upvoted = !this.upvoted;
+                                        if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
+                                    })
+                                    .catch(err => console.error(err))
+                                    .finally(() => this.loading = false );
+                            },
+                            toggleDownvote() {
+                                if (this.loading) return;
+                                this.loading = true;
+                                axios.post('/post/{{ $post->id }}/downvote', { _token: '{{ csrf_token() }}' })
+                                    .then(() => {
+                                        this.downvoted = !this.downvoted;
+                                        if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
+                                    })
+                                    .catch(err => console.error(err))
+                                    .finally(() => this.loading = false );
+                            }
+                        }"
+                        class="flex w-[35%] md:w-[30%] justify-between">
                         <span class="h-full flex items-center sm:w-[40%]">
 
-                            <button class="text-2xl cursor-pointer hover:text-emerald-500"><i
-                                    class="fa-light fa-up "></i></button>
+                            <button
+                                @click="toggleUpvote"
+                                :class="upvoted ? 'text-emerald-500 hover:text-emerald-700' : 'text-sl-text hover:text-emerald-500'"
+                                class="text-2xl cursor-pointer">
+                                    <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
+                            </button>
 
-                            <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
+                            <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block"></div>
                         </span>
 
-                        <button class="text-2xl cursor-pointer hover:text-red-700"><i class="fa-light fa-down"></i></button>
+                        <button
+                            @click="toggleDownvote"
+                            :class="downvoted ? 'text-red-700 hover:text-red-500' : 'text-sl-text hover:text-red-700'"
+                            class="text-2xl cursor-pointer">
+                                <i :class="downvoted ? 'fa-solid' : 'fa-light'" class="fa-light fa-down"></i>
+                        </button>
 
                     </div>
                     <div class="flex w-[53%] justify-between items-center">

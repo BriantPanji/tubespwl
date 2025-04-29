@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('post_attachments', function (Blueprint $table) {
-            $table->string('namafile')->unique();
+            $table->string('namafile');
             $table->foreignUlid('post_id')->references('id')->on('posts')->onDelete('cascade');
         });
     }

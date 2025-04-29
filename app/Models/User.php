@@ -65,6 +65,32 @@ class User extends Authenticatable
         return $this->belongsToMany(Post::class, 'bookmarks', 'user_id', 'post_id');
     }
 
+    public function hasVotedPost(Post $post)
+    {
+        return $this->votedPost()->where('post_id', $post->id)->exists();
+    }
+
+    public function hasUpvotedPost(Post $post)
+    {
+        return $this->votedPost()->where('post_id', $post->id)->where('is_upvoted', true)->exists();
+    }
+    public function hasDownvotedPost(Post $post)
+    {
+        return $this->votedPost()->where('post_id', $post->id)->where('is_upvoted', false)->exists();
+    }
+
+    public function hasVotedComment(Comment $comment) {
+        return $this->votedComments()->where('comment_id', $comment->id)->exists();
+    }
+    public function hasUpvotedComment(Comment $comment)
+    {
+        return $this->votedComments()->where('comment_id', $comment->id)->where('is_upvoted', true)->exists();
+    }
+    public function hasDownvotedComment(Comment $comment)
+    {
+        return $this->votedComments()->where('comment_id', $comment->id)->where('is_upvoted', false)->exists();
+    }
+
     /**
      * Get the attributes that should be cast.
      *

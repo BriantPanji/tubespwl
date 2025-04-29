@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PostAttachment>
@@ -19,7 +18,7 @@ class PostAttachmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'namafile'=> Str::lower(Str::random()) . '.jpg',
+            'namafile'=> 'blankimage.png',
             'post_id'=>Post::inRandomOrder()->first()->id
         ];
     }

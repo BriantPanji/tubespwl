@@ -16,8 +16,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user')->get();
+        $posts = Post::with('user')->with('attachments')->get();
         $badges = User::with('badges')->get();
+        // dd($posts[0]->attachments[0]->namafile);
 
         return view('home', [
             'posts' => $posts,
@@ -127,5 +128,45 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function upvote(Request $request, Post $post)
+    {
+        $user = auth()->user();
+
+        if ($user->hasDownvotedPost($post)) {
+            $user->votedPost()->detach($post);
+            $user->votedPost()->attach($post, ['is_upvoted' => true]);
+            return response()->json(['message' => 'Downvote removed and upvote added successfully.']);
+        }
+
+        if ($user->hasUpvotedPost($post)) {
+            $user->votedPost()->detach($post);
+            return response()->json(['message' => 'Upvote removed successfully.']);
+        }
+
+        $user->votedPost()->attach($post, ['is_upvoted' => true]);
+
+        return response()->json(['message' => 'Post upvoted successfully.']);
+    }
+
+    public function downvote(Request $request, Post $post)
+    {
+        $user = auth()->user();
+
+        if ($user->hasUpvotedPost($post)) {
+            $user->votedPost()->detach($post);
+            $user->votedPost()->attach($post, ['is_upvoted' => false]);
+            return response()->json(['message' => 'Upvote removed and downvote added successfully.']);
+        }
+
+        if ($user->hasDownvotedPost($post)) {
+            $user->votedPost()->detach($post);
+            return response()->json(['message' => 'Downvote removed successfully.']);
+        }
+
+        $user->votedPost()->attach($post, ['is_upvoted' => false]);
+
+        return response()->json(['message' => 'Post downvoted successfully.']);
     }
 }

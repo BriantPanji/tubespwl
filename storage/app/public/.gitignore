@@ -1,2 +1,7 @@
 *
+!posts/
+!posts/blankimage.png
+!posts/notfound.png
+!avatars/
+!avatars/blankprofile.png
 !.gitignore

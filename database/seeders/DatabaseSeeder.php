@@ -28,11 +28,11 @@ class DatabaseSeeder extends Seeder
             BadgeSeeder::class,
             CommentReportSeeder::class,
             CommentVotesSeeder::class,
-            PostAttachmentSeeder::class,
             PostReportSeeder::class,
             PostVotesSeeder::class,
             TagSeeder::class,
             BookmarkSeeder::class,
+            PostAttachmentSeeder::class,
         ]);
     }
 }
