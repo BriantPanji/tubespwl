@@ -14,6 +14,7 @@ Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')-
 Route::get('/post/{post}', [PostController::class, 'show']);
 Route::post('/post/{post}/upvote', [PostController::class, 'upvote'])->middleware('auth')->name('post.upvote');
 Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middleware('auth')->name('post.downvote');
+Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
 
 //TES PROFILE
 Route::get('/profile', function () {
@@ -35,6 +36,7 @@ Route::get('/profile', function () {
         'bookmarkCount' => $bookmarkCount,
     ]);
 })->middleware('auth')->name('profile');
+
 // Route untuk tampilkan form edit profile
 Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
 Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');

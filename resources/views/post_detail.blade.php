@@ -1,16 +1,18 @@
-{{-- @dd($comments) --}}
 <x-layout>
+
+    {{-- @dd($comments[0]->user) --}}
     <x-slot:title>Detail Postingan</x-slot:title>
 
     <article class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
         <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
             <div class="max-w-[75%] h-full flex items-center gap-2">
-                <a href=""><img class="w-9 h-9 rounded-full" src="{{ asset('img/' . $post->user->avatar) }}"></a>
+                <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full"
+                        src="{{ asset('img/' . $post->user->avatar) }}"></a>
                 {{-- FOTO PROFIL USER --}}
                 <div class="flex flex-col h-full justify-center">
-                    <a href="" class="text-sm lg:text-base font-semibold text-sl-text/90">
+                    <a href="/profile/{{ $post->user_id }}" class="text-sm lg:text-base font-semibold text-sl-text/90">
                         @php
-                            $display_name = $post->user->badges->first();
+                            $display_name = $post->user->first();
                         @endphp
 
                         @if ($display_name)
@@ -20,7 +22,7 @@
                         @endif
 
                     </a>
-                    <a href="" class="text-[.65rem] lg:text-xs text-emerald-500/70">
+                    <div href="" class="text-[.65rem] lg:text-xs text-emerald-500/70">
                         @php
                             $firstBadge = $post->user->badges->first();
                         @endphp
@@ -30,7 +32,7 @@
                                 {{ $firstBadge->badge_name }}
                             </span>
                         @endif
-                    </a>
+                    </div>
                 </div>
             </div>
             <div class="max-w-[20%] h-full flex items-center gap-2 text-2xl pr-2">
@@ -47,11 +49,10 @@
 
         <section class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
             {{-- URL MENUJU DETAIL POST INI --}}
-            <a href=""
-                class="w-full h-full max-w-full max-h-full truncate font-bold text-base md:text-lg hover:underline">
+            <div class="w-full h-full max-w-full max-h-full truncate font-bold text-base md:text-lg">
                 {{-- JUDUL POST --}}
                 {{ $post->title }}
-            </a>
+            </div>
             <div class="w-full font-light text-xs md:text-sm relative ">
                 <p class="line-clamp-4">
                     {{-- CONTENT POST --}}
@@ -74,7 +75,7 @@
                         <button @click="window.location.href = '/login'"
                             class="text-2xl cursor-pointer hover:text-emerald-500"><i class="fa-light fa-up "></i></button>
 
-                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block"></div>
                     </span>
 
                     <button @click="window.location.href = '/login'" class="text-2xl cursor-pointer hover:text-red-700"><i
@@ -84,11 +85,11 @@
                 <div class="flex w-[53%] justify-between items-center">
                     <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
 
-                        <button @click="window.location.href = '/login'"
-                            class="text-2xl cursor-pointer hover:text-yellow-500"><i
+                        <button id="commentButton" class="text-2xl cursor-pointer hover:text-yellow-500"><i
                                 class="fa-light fa-comment "></i></button>
 
-                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">21</div>
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                            {{ $post->comments->count() }}</div>
                     </span>
 
                     <button @click="window.location.href = '/login'" class="text-xl cursor-pointer hover:text-cyan-700"><i
@@ -98,25 +99,81 @@
                             class="fa-light fa-share-from-square "></i></button>
                 </div>
             @endguest
+
             @auth
 
                 {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
-                <div class="flex w-[35%] md:w-[30%] justify-between">
+                <div x-data="{
+                    upvoted: {{ auth()->user()->hasUpvotedPost($post) ? 'true' : 'false' }},
+                    downvoted: {{ auth()->user()->hasDownvotedPost($post) ? 'true' : 'false' }},
+                    loading: false,
+                    toggleUpvote() {
+                        if (this.loading) return;
+                        this.loading = true;
+                        axios.post('/post/{{ $post->id }}/upvote', { _token: '{{ csrf_token() }}' })
+                            .then(() => {
+                                this.upvoted = !this.upvoted;
+                                if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
+                            })
+                            .catch(err => console.error(err))
+                            .finally(() => this.loading = false);
+                    },
+                    toggleDownvote() {
+                        if (this.loading) return;
+                        this.loading = true;
+                        axios.post('/post/{{ $post->id }}/downvote', { _token: '{{ csrf_token() }}' })
+                            .then(() => {
+                                this.downvoted = !this.downvoted;
+                                if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
+                            })
+                            .catch(err => console.error(err))
+                            .finally(() => this.loading = false);
+                    }
+                }" class="flex w-[35%] md:w-[30%] justify-between">
                     <span class="h-full flex items-center sm:w-[40%]">
-                        <button class="text-2xl cursor-pointer hover:text-emerald-500"><i
-                                class="fa-light fa-up "></i></button>
-                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">5.3rb</div>
+                        <button @click="toggleUpvote"
+                            :class="upvoted ? 'text-emerald-500 hover:text-emerald-700' :
+                                'text-sl-text hover:text-emerald-500'"
+                            class="text-2xl cursor-pointer">
+                            <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
+                        </button>
+
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                            {{ $post->voted_by_count }}</div>
                     </span>
-                    <button class="text-2xl cursor-pointer hover:text-red-700"><i class="fa-light fa-down"></i></button>
+                    <button @click="toggleDownvote"
+                        :class="downvoted ? 'text-red-700 hover:text-red-500' : 'text-sl-text hover:text-red-700'"
+                        class="text-2xl cursor-pointer">
+                        <i :class="downvoted ? 'fa-solid' : 'fa-light'" class="fa-light fa-down"></i>
+                    </button>
                 </div>
                 <div class="flex w-[53%] justify-between items-center">
                     <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
-                        <button class="text-2xl cursor-pointer hover:text-yellow-500"><i
+                        <button id="commentButton" class="text-2xl cursor-pointer hover:text-yellow-500"><i
                                 class="fa-light fa-comment "></i></button>
-                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">21</div>
+                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                            {{ $post->comments->count() }}</div>
                     </span>
 
-                    <button class="text-xl cursor-pointer hover:text-cyan-700"><i class="fa-light fa-bookmark"></i></button>
+                    <button x-data="{
+                        bookmarked: {{ auth()->user()->hasBookmarkedPost($post) ? 'true' : 'false' }},
+                        loading: false,
+                        toggleBookmark() {
+                            if (this.loading) return;
+                            this.loading = true;
+                            axios.post('/post/{{ $post->id }}/bookmark', { _token: '{{ csrf_token() }}' })
+                                .then(() => {
+                                    this.bookmarked = !this.bookmarked;
+                                })
+                                .catch(err => console.error(err))
+                                .finally(() => this.loading = false);
+                        },
+                    }" @click="toggleBookmark"
+                        :class="bookmarked ? 'text-cyan-500 hover:text-cyan-700' :
+                            'text-sl-text hover:text-cyan-500'"
+                        class="text-xl cursor-pointer hover:text-cyan-700">
+                        <i :class="bookmarked ? 'fa-solid' : 'fa-light'" class="fa-bookmark"></i></button>
+
                     <button class="text-xl cursor-pointer hover:scale-101"><i
                             class="fa-light fa-share-from-square "></i></button>
                 </div>
@@ -130,7 +187,8 @@
         <div class="">
             <div class="flex justify-between items-center">
                 <img src="{{ asset('img/' . $post->user->avatar) }}" class="w-[32px] rounded-full" alt="Foto User">
-                <input type="text" class="ml-1 w-[80%] px-2 bg-[#42394a] rounded-sm p-2 focus:outline-none"
+                <input type="text" id="comment"
+                    class="ml-1 w-[80%] px-2 bg-[#42394a] rounded-sm p-2 focus:outline-none"
                     placeholder="Tambahkan komentar Anda">
                 <i class="fa-light fa-paper-plane-top text-xl hover:opacity-70"></i>
             </div>
@@ -142,15 +200,15 @@
         <h1 class="mt-1 text-center text-[14px]">Komentar</h1>
 
         {{-- Komen orang --}}
-        <div class="mt-1 px-3">
-            <div class="">
+        @foreach ($comments as $comment)
+            <div class="mt-1 px-3">
                 <div class="flex gap-2.5 items-start">
-                    <img src="{{ asset('img/' . $post->user->avatar) }}" class="w-[32px] rounded-full mt-2"
+                    <img src="{{ asset('img/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2"
                         alt="Foto User">
                     <div class="w-full px-1 bg-[#42394a] rounded-md p-2">
                         <div class="py-.5 px-2.5">
                             <div class="flex justify-between items-center relative" x-data="{ showOption: false }">
-                                <h1>Feri Gunawan</h1>
+                                <a href="/profile/{{ $comment->user->id }}">{{ $comment->user->display_name }}</a>
                                 <button @click="showOption=!showOption" class="cursor-pointer"><i
                                         class="fa-light fa-ellipsis text-2xl"></i></button>
 
@@ -161,8 +219,8 @@
                                         class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                                 </div>
                             </div>
-                            <p class="text-sm font-extralight">Pemburu</p>
-                            <p class="font-extralight mt-2 leading-tight">kocak bgt</p>
+                            <p class="text-sm font-extralight">{{ $comment->user->badges->first()->badge_name }}</p>
+                            <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
                             <div class="flex justify-end items-center gap-2 mt-2">
                                 <button class="text-xl cursor-pointer hover:text-red-700">
                                     <i class="fa-light fa-down "></i>
@@ -177,6 +235,46 @@
                     </div>
                 </div>
             </div>
-        </div>
+        @endforeach
     </article>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.location.hash === "#comment") {
+                // Tunggu sedikit supaya scroll bawaan selesai dulu
+                setTimeout(() => {
+                    const el = document.getElementById('comment');
+                    if (el) {
+                        const yOffset = -100; // atur offset di sini (misal: 100px di atas)
+                        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+                        window.scrollTo({
+                            top: y,
+                            behavior: 'smooth'
+                        });
+
+                        el.focus();
+                    }
+                }, 100); // jeda kecil agar scroll default selesai
+            }
+        });
+
+        // Guest Comment
+        const commentButton = document.getElementById('commentButton');
+        commentButton.addEventListener('click', function() {
+            const el = document.getElementById('comment');
+            if (el) {
+                const yOffset = -100; // sesuaikan offset
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({
+                    top: y,
+                    behavior: 'smooth'
+                });
+
+                el.focus();
+            }
+        })
+    </script>
+
+
 </x-layout>
