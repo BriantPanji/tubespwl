@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Post;
+use App\Models\Comment;
 use App\Models\PostAttachment;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user')->with('attachments')->get();
+        $posts = Post::with('user', 'attachments', 'comments')->withCount('votedBy')->get();
         $badges = User::with('badges')->get();
         // dd($posts[0]->attachments[0]->namafile);
 
@@ -56,11 +57,11 @@ class PostController extends Controller
         ]);
 
         $hashtags = collect(explode(',', $request->hashtag))
-            ->map(fn ($tag) => trim(strtolower($tag)))
+            ->map(fn($tag) => trim(strtolower($tag)))
             ->filter()->unique()->values();
 
         $hashtagIds = $hashtags->map(function ($tag) {
-           return Tag::firstOrCreate(['name' => $tag])->id;
+            return Tag::firstOrCreate(['name' => $tag])->id;
         });
 
         $post = Post::create([
@@ -95,9 +96,10 @@ class PostController extends Controller
      */
     public function show($postId)
     {
-        $post = Post::with('user')->findOrFail($postId);
+        $post = Post::with('user')->withCount('votedBy')->findOrFail($postId);
         $badges = User::with('badges');
-        $comments = User::with('comments')->findOrFail($postId);
+        $comments = Comment::with('user')->where('post_id', $postId)->get();
+
 
         return view('post_detail', [
             'post' => $post,
@@ -168,5 +170,18 @@ class PostController extends Controller
         $user->votedPost()->attach($post, ['is_upvoted' => false]);
 
         return response()->json(['message' => 'Post downvoted successfully.']);
+    }
+
+    public function bookmark(Post $post) {
+        $user = auth()->user();
+
+        if ($user->hasBookmarkedPost($post)) {
+            $user->bookmarks()->detach($post->id);
+        } else {
+            $user->bookmarks()->attach($post->id);
+        }
+
+        return response()->json(['message' => 'Success']);
+
     }
 }

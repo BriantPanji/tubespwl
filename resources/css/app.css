@@ -23,6 +23,7 @@
 html {
     font-size: 16px;
     font-family: var(--font-sans);
+    scroll-behavior: smooth;
 }
 
 [x-cloak] {
