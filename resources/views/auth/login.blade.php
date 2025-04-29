@@ -13,10 +13,19 @@
                     <span class="text-sm font-light mb-5">Silahkan login untuk melanjutkan ke <b>SudutLain</b></span>
                     <form method="POST" action="/login" class="min-w-full max-w-full min-h-2 flex flex-col justify-center items-center gap-2.5 *:transition-all">
                         @csrf
-                        <input type="email" name="email" id="email" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 border border-transparent bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" value="{{old('email')}}"  required placeholder="youremail@example.com">
-                        <x-item.form-err name="email" />
+                        @if ($mode == 'email')
+                            <input type="email" name="login" id="login" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 border border-transparent bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" value="{{old('login')}}"  required placeholder="youremail@example.com">
+                        @else
+                            <input type="text" name="login" id="login" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 border border-transparent bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" value="{{old('login')}}"  required placeholder="username">
+                        @endif
+                        <x-item.form-err name="login" />
                         <input type="password" name="password" id="password" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 border border-transparent bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" required placeholder="password">
                         <button type="submit" class="min-w-full max-w-full min-h-3 h-12 px-4 font-normal text-sl-text bg-sl-primary rounded-xl border-2 border-transparent outline-none hover:border-sl-secondary hover:scale-99 cursor-pointer">Lanjutkan</button>
+                        @if ($mode == 'email')
+                            <span class="w-full flex items-end justify-end text-xs m-0 italic text-yellow-700 hover:underline hover:font-semibold"><a href="/login?m=username">Login dengan username</a></span>
+                        @else
+                            <span class="w-full flex items-end justify-end text-xs m-0 italic text-yellow-700 hover:underline hover:font-semibold"><a href="/login?m=email">Login dengan email</a></span>
+                        @endif
                     </form>
                     {{-- <a href="/" class="text-xs min-w-full max-w-full text-right mt-3 mr-2 text-blue-700">
                         Lupa Password?

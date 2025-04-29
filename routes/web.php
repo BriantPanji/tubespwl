@@ -70,6 +70,6 @@ Route::get('/my/post', function () {
 })->middleware('auth')->name('profile.post');
 
 Route::get('/my/votes', function () {
-    $myposts = auth()->user()->posts()->with('user')->get();
+    $myposts = Auth::user()->posts()->with('user')->get();
     return view('dashboard.mypost', compact('myposts'));
 })->middleware('auth')->name('profile.vote');
