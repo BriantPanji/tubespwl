@@ -10,7 +10,8 @@ class SessionController extends Controller
 {
     public function create() {
         if (Auth::check()) return redirect('/');
-        return view('auth.login');
+        $mode = request()->query('m', 'email');
+        return view('auth.login', compact('mode'));
     }
 
     public function store() {
@@ -21,15 +22,23 @@ class SessionController extends Controller
                 'message' => "Tidak dapat login dua kali"
             ], 403);
         }
-
-        $attrs = request()->validate([
-            'email'=>['required', 'email'],
-            'password'=>['required']
+        
+        request()->validate([
+            'login'=>['required', 'string'],
+            'password'=>['required', 'string']
         ]);
 
-        if (!Auth::attempt($attrs)) {
+        $login = request()->input('login');
+        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        $creds = [
+            $field => $login,
+            'password' => request()->input('password')
+        ];
+        
+        if (!Auth::attempt($creds, true)) {
             throw ValidationException::withMessages([
-                'email'=> 'Maaf, email atau password yang anda masukkan salah.'
+                'login'=> 'Maaf, ' . $field . ' atau password yang anda masukkan salah.'
             ]);
         }
 
