@@ -1,6 +1,12 @@
 <x-layout>
     <x-slot:title>Profil Pengguna</x-slot:title>
 
+    @if(session('success'))
+        <script>
+            Swal.fire('', "{{ session('success') }}", 'success');
+        </script>
+    @endif
+
     {{-- PROFIL UTAMA --}}
     <section class="w-full bg-sl-tertiary rounded-md p-6 flex flex-col gap-6">
         {{-- BAGIAN KIRI: FOTO + USERNAME & BIO --}}
@@ -8,7 +14,7 @@
             {{-- FOTO PROFIL --}}
             <div class="w-24 h-24 shrink-0">
                 <img class="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
-                    src="{{ asset('img/veszeta.jpg') }}" alt="Foto Profil">
+                    src="{{ asset('storage/' . $user->avatar) }}" alt="Foto Profil">
             </div>
 
             {{-- USERNAME & BIO --}}
@@ -23,7 +29,7 @@
             </div>
         </div>
 
-        <a href = "/editProfil"
+        <a href="{{ route('profile.edit') }}"
             class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm text-center">
             Edit Profil
         </a>
@@ -69,11 +75,11 @@
         <div class="flex flex-col items-center gap-4">
             {{-- Baris pertama: 2 tombol --}}
             <div class="flex gap-4 w-full justify-center">
-                <a href="/my/post"
+                <a href="{{ route('profile.post') }}"
                     class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm w-48 text-center">
                     Lihat Postinganmu
                 </a>
-                <a href="/my/komentar"
+                <a href="{{ route('profile.comment') }}"
                     class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm w-48 text-center">
                     Lihat Komentarmu
                 </a>
@@ -81,11 +87,11 @@
 
             {{-- Baris kedua: tombol tengah --}}
             <div class="flex gap-4 w-full justify-center">
-                <a href="/my/vote"
+                <a href="{{ route('profile.vote') }}"
                     class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm w-48 text-center">
                     Lihat Votinganmu
                 </a>
-                <a href="/my/bookmarks"
+                <a href="{{ route('profile.bookmark') }}"
                     class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm w-48 text-center">
                     Lihat Bookmarksmu
                 </a>
