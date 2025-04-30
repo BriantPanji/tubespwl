@@ -14,17 +14,19 @@
             {{-- FOTO PROFIL --}}
             <div class="w-24 h-24 shrink-0">
                 <img class="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
-                    src="{{ asset('storage/' . $user->avatar) }}" alt="Foto Profil">
+                    src="{{ asset('storage/avatars/' . $user->avatar) }}" alt="Foto Profil">
             </div>
 
             {{-- USERNAME & BIO --}}
-            <div class="flex flex-col text-left">
+            <div class="flex flex-col text-left min-w-full max-w-full">
                 <h1 class="text-xl font-bold text-sl-text/90">{{ $user->display_name }}</h1>
                 <p class="text-sm leading-tight text-sl-text/90 ">{{ '@' . $user->username }}</p>
-                <div>
-                    <p class="text-sm text-sl-text/70 mt-1">
-                        Isikan Badge gimana Panji🌶️🍜
-                    </p>
+                <div class="!max-w-[80%] w-full  flex items-center customScrollbar h-10 rounded-md mt-2 overflow-x-auto overflow-y-hidden inset-shadow-2xs">
+                    <div class="min-w-full h-full flex items-center gap-1.5 px-1.5 *:whitespace-nowrap">
+                        @foreach ($user->badges()->get() as $badge)
+                            <span class="text-sm cursor-pointer min-w-fit max-h-full bg-sl-quinary px-1.5 py-1 rounded-md flex gap-1 group" style="color:{{ $badge->badge_color }}"><img class="max-h-full w-5" src="{{ asset('img/badge/' . $badge->badge_icon) }}" alt=""> <b class="flex items-center justify-center font-normal group-hover:scale-101">{{ $badge->badge_name }}</b></span>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>

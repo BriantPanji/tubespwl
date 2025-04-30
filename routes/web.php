@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [PostController::class, 'index']);
 Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
 Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
-Route::get('/post/{post}', [PostController::class, 'show']);
+Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');
 Route::post('/post/{post}/upvote', [PostController::class, 'upvote'])->middleware('auth')->name('post.upvote');
 Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middleware('auth')->name('post.downvote');
 Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
+Route::post('/post/{post}', [PostController::class, 'storeComment'])->middleware('auth')->name('post.comment');
+
 
 //TES PROFILE
 Route::get('/profile', function () {
@@ -64,6 +66,8 @@ Route::get('/my/bookmarks', function () {
     $bookmarks = Auth::user()->bookmarks()->with(['user', 'attachments'])->get();
     return view('dashboard.bookmarks', compact('bookmarks'));
 })->middleware('auth')->name('profile.bookmark');
+
+
 
 Route::get('/my/post', function () {
     $myposts = Auth::user()->posts()->with('user')->get();

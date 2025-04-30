@@ -65,7 +65,11 @@ class User extends Authenticatable
     public function bookmarks() {
         return $this->belongsToMany(Post::class, 'bookmarks', 'user_id', 'post_id');
     }
-
+    public function postsBookmarked()
+    {
+        return $this->belongsToMany(Post::class, 'bookmarks');
+    }
+    
     public function hasBookmarkedPost(Post $post)
     {
         return $this->bookmarks()->where('post_id', $post->id)->exists();
