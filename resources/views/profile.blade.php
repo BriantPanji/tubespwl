@@ -36,22 +36,22 @@
     </section>
 
     {{-- RINGKASAN AKTIVITAS --}}
-    <section class="w-full bg-sl-tertiary mt-6 rounded-md p-6">
+    <section class="w-full bg-sl-tertiary rounded-md p-6">
         <h2 class="text-lg font-semibold text-sl-text/90 mb-4">Summary of your activities:</h2>
 
         <div class="flex w-full gap-4">
             {{-- KIRI: POST, COMMENT, BADGE --}}
             <div class="w-3/5 flex flex-col gap-3 text-sl-text/80">
                 <div class="flex items-center gap-2">
-                    <i class="fa-light fa-photo-film-music w-5"></i>
+                    <i class="fa-light fa-rectangle-history"></i>
                     <span>Post: <strong>{{ $postCount }}</strong></span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i class="fa-light fa-comment w-5"></i>
+                    <i class="fa-light fa-comment"></i>
                     <span>Comment: <strong>{{ $commentCount }}</strong></span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i class="fa-light fa-wreath-laurel w-5"></i>
+                    <i class="fa-light fa-shield"></i>
                     <span>Badge: <strong>{{ $badgeCount }}</strong></span>
                 </div>
             </div>
@@ -59,11 +59,11 @@
             {{-- KANAN: VOTE, APA INI --}}
             <div class="w-2/5 flex flex-col gap-3 text-sl-text/80">
                 <div class="flex items-center gap-2">
-                    <i class="fa-light fa-up w-5"></i>
+                    <i class="fa-light fa-up"></i>
                     <span>Vote: <strong>{{ $postVoteCount }}</strong></span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i class="fa-light fa-block-question w-5"></i>
+                    <i class="fa-light fa-bookmark"></i>
                     <span>Bookmark: <strong>{{ $bookmarkCount }}</strong></span>
                 </div>
             </div>
@@ -71,7 +71,7 @@
     </section>
 
     {{-- TOMBOL AKSI --}}
-    <section class="w-full h-full mt-6 rounded-md relative min-h-[200px] pb-16">
+    <section class="w-full bg-sl-tertiary rounded-md p-6">
         <div class="flex flex-col items-center gap-4">
             {{-- Baris pertama: 2 tombol --}}
             <div class="flex gap-4 w-full justify-center">
@@ -100,7 +100,7 @@
     </section>
 
     {{-- Tombol Logout Absolut --}}
-    <div class="relative">
+    <div class="relative mt-9">
         <form action="{{ route('logout') }}" method="POST" class="absolute bottom-0 left-0 right-0 mx-auto w-full">
             @csrf
             <button type="submit"
