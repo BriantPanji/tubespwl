@@ -154,7 +154,7 @@
                         </button>
 
                         <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
-                            {{ $post->voted_by_count }}
+                            {{ $post->upvoted_by_count }}
                         </div>
                     </span>
                     <button @click="toggleDownvote" :class="downvoted ? 'text-red-700 hover:text-red-500' : 'text-sl-text hover:text-red-700'" class="text-2xl cursor-pointer">
@@ -254,7 +254,7 @@
                                         class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                                 </div>
                             </div>
-                            <p class="text-sm font-extralight">{{ $comment->user->badges->first()->badge_name }}</p>
+                            <p class="text-sm font-extralight text-emerald-500">{{ $comment->user->badges->first()->badge_name }}</p>
                             <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
                             <div class="flex justify-between mt-2">
                                 <div class="items-center text-sm opacity-50">

@@ -3,9 +3,9 @@
     <x-item.postbanner></x-item.postbanner>
 
     @foreach ($posts as $post)
-        <article @click="window.location.href = '/post/{{ $post->id }}'"
+        <article 
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
-            <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
+            <section @click="window.location.href = '/post/{{ $post->id }}'" x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2">
                     <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full object-cover"
                             src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
@@ -52,7 +52,7 @@
                 </div>
             </section>
 
-            <section class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
+            <section @click="window.location.href = '/post/{{ $post->id }}'" class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
                 {{-- URL MENUJU DETAIL POST INI --}}
                 <a href="/post/{{ $post->id }}"
                     class="w-full h-full max-w-full max-h-full truncate font-bold text-base md:text-lg hover:underline">
@@ -81,7 +81,7 @@
                     </template>
                 </div>
             </section>
-            <section class="w-full h-auto">
+            <section @click="window.location.href = '/post/{{ $post->id }}'" class="w-full h-auto">
                 <img class="!aspect-video rounded-xl object-cover"
                     src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}">
             </section>

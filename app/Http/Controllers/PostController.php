@@ -115,7 +115,7 @@ class PostController extends Controller
      */
     public function show($postId)
     {
-        $post = Post::with('user')->withCount('votedBy')->findOrFail($postId);
+        $post = Post::with('user')->withCount('upvotedBy')->findOrFail($postId);
         $badges = User::with('badges');
         $comments = Comment::with('user')->where('post_id', $postId)->orderBy('created_at', 'desc')->get();
 
