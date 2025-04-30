@@ -54,7 +54,7 @@ class PostController extends Controller
 
         $request->validate([
             'images' => 'required|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'images.*' => 'image|mimes:jpeg,png,jpg',
         ]);
 
         $hashtags = collect(explode(',', $request->hashtag))

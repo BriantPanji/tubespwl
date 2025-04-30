@@ -6,8 +6,8 @@
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2">
-                    <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full"
-                            src="{{ asset('img/' . $post->user->avatar) }}"></a>
+                    <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full object-cover"
+                            src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
                     {{-- FOTO PROFIL USER --}}
                     <div class="flex flex-col h-full justify-center">
                         <a href="/profile/{{ $post->user_id }}"
