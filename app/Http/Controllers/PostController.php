@@ -17,10 +17,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user', 'attachments', 'comments')->withCount('votedBy')->get();
+        $posts = Post::with('user', 'attachments', 'comments')->withCount('upvotedBy')->get();
         $badges = User::with('badges')->get();
         // dd($posts[0]->attachments[0]->namafile);
 
+        
         return view('home', [
             'posts' => $posts,
             'badges' => $badges,

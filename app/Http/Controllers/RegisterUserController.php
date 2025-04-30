@@ -19,7 +19,7 @@ class RegisterUserController extends Controller
     public function store()
     {
         $attrs = request()->validate([
-            'displayName' => ['required', 'alpha_space'],
+            'display_name' => ['required', 'alpha_space'],
             'username' => ['required', 'unique:users,username', 'alpha_dash'],
             'email' => ['required', 'email'],
             'password' => ['required', Password::min(8)->letters()->numbers(), 'confirmed']

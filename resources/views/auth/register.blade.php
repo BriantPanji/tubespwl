@@ -13,8 +13,8 @@
                     <span class="text-sm font-light mb-5">Lengkapi data Anda untuk mendaftar di <b>SudutLain</b></span>
                     <form method="POST" action="/register" class="min-w-full max-w-full min-h-2 flex flex-col justify-center items-center gap-2.5">
                         @csrf
-                        <input type="text" value="{{ old('displayName') }}" name="displayName" id="displayName" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light border-2 border-transparent outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" required placeholder="nama lengkap">
-                        <x-item.form-err name="displayName" />
+                        <input type="text" value="{{ old('display_name') }}" name="display_name" id="display_name" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light border-2 border-transparent outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" required placeholder="nama lengkap">
+                        <x-item.form-err name="display_name" />
                         <input type="text" value="{{ old('username') }}" name="username" id="username" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light border-2 border-transparent outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" required placeholder="username">
                         <x-item.form-err name="username" />
                         <input type="email" value="{{ old('email') }}" name="email" id="email" class="min-w-full max-w-full min-h-3 h-12 px-4 font-medium text-neutral-900 bg-sl-secondary rounded-xl placeholder:text-neutral-100/60 placeholder:font-light border-2 border-transparent outline-none hover:border-sl-primary hover:scale-101 not-placeholder-shown:scale-101" required placeholder="youremail@example.com">

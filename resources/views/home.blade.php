@@ -37,14 +37,17 @@
                     </div>
                 </div>
                 <div class="max-w-[20%] h-full flex items-center gap-2 text-2xl pr-2">
-                    <button @click="showOption=!showOption" class="w-fit h-fit cursor-pointer"><i
-                            class="fa-light fa-ellipsis"></i></button>
+
+                    <button @click="showOption=!showOption" class="w-fit h-fit cursor-pointer"><i class="fa-light fa-ellipsis"></i></button>
                 </div>
                 <div x-cloak x-show="showOption" @click.outside="showOption = false"
-                    class="absolute top-8 right-0 w-20 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
+                    class="absolute top-8 right-0 min-w-20 max-w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                     {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
-                    <button @click="showOption = false"
-                        class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                    @can('edit-post', $post)
+                        <button @click="window.location.href='/post/{{ $post->id }}/edit'" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
+                        <button @click="" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Hapus Post</button>
+                    @endcan
+                    <button @click="showOption = false" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                 </div>
             </section>
 
@@ -135,6 +138,7 @@
                                 .then(() => {
                                     this.upvoted = !this.upvoted;
                                     if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
+                                    $refs.voteCount.innerText = parseInt($refs.voteCount.innerText) + (this.upvoted ? 1 : -1);
                                 })
                                 .catch(err => console.error(err))
                                 .finally(() => this.loading = false);
@@ -144,8 +148,18 @@
                             this.loading = true;
                             axios.post('/post/{{ $post->id }}/downvote', { _token: '{{ csrf_token() }}' })
                                 .then(() => {
+                                    const wasUpvoted = this.upvoted;
+                                    const wasDownvoted = this.downvoted;
                                     this.downvoted = !this.downvoted;
                                     if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
+                                    let ogCount = {{ $post->upvoted_by_count }};
+                                    let current = parseInt($refs.voteCount.innerText);
+                                    if (wasDownvoted && !wasUpvoted) current += 0;
+                                    else if (wasUpvoted) current -= 1;
+                                    else if (!wasUpvoted && wasDownvoted) current -= 1;
+                                    
+                                    
+                                    $refs.voteCount.innerText = current;
                                 })
                                 .catch(err => console.error(err))
                                 .finally(() => this.loading = false);
@@ -160,8 +174,8 @@
                                 <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
                             </button>
 
-                            <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
-                                {{ $post->voted_by_count }}</div>
+                            <div x-ref="voteCount" class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                                {{ $post->upvoted_by_count }}</div>
                         </span>
 
                         <button @click="toggleDownvote"
