@@ -61,7 +61,7 @@
                 </p>
             </div>
         </section>
-        <section class="swiper mySwiperClass w-full max-w-xl h-fit relative">
+        <section class="swiper mySwiperClass w-full max-w-xl h-fit relative bg-sl-quinary rounded-xl">  
             <div class="swiper-wrapper h-fit flex items-center">
                 <!-- Slides -->
                 @foreach ($post->attachments as $attachment)
