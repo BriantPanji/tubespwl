@@ -63,9 +63,11 @@ Route::get('/my/comments', function () {
 })->middleware('auth')->name('profile.comment');
 
 Route::get('/my/bookmarks', function () {
-    $bookmarks = Auth::user()->bookmarks()->with('post.user')->get();
+    $bookmarks = Auth::user()->postsBookmarked()->with('user')->get();
     return view('dashboard.bookmarks', compact('bookmarks'));
 })->middleware('auth')->name('profile.bookmark');
+
+
 
 Route::get('/my/post', function () {
     $myposts = Auth::user()->posts()->with('user')->get();
