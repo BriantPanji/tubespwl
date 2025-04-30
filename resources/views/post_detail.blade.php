@@ -61,7 +61,7 @@
                 </p>
             </div>
         </section>
-        <div class="swiper mySwiperClass w-full max-w-xl h-fit relative">
+        <section class="swiper mySwiperClass w-full max-w-xl h-fit relative">
             <div class="swiper-wrapper h-fit flex items-center">
                 <!-- Slides -->
                 @foreach ($post->attachments as $attachment)
@@ -79,7 +79,7 @@
             <button
                 class="swiper-button-next !text-white after:content-[''] after:!text-sm text-shadow-lg opacity-80 md:after:!text-xl xl:after:!text-2xl"></button>
 
-        </div>
+        </section>
         <section
             class="w-full min-h-3 h-10 flex items-center bg-[#42394a] mt-1 rounded-md px-3 md:px-5 xl:px-8 2xl:px-10 text-2xl justify-between">
             @guest
@@ -105,7 +105,8 @@
                                 class="fa-light fa-comment "></i></button>
 
                         <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
-                            {{ $post->comments->count() }}</div>
+                            {{ $post->comments->count() }}
+                        </div>
                     </span>
 
                     <button @click="window.location.href = '/login'" class="text-xl cursor-pointer hover:text-cyan-700"><i
@@ -120,46 +121,43 @@
 
                 {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
                 <div x-data="{
-                    upvoted: {{ auth()->user()->hasUpvotedPost($post) ? 'true' : 'false' }},
-                    downvoted: {{ auth()->user()->hasDownvotedPost($post) ? 'true' : 'false' }},
-                    loading: false,
-                    toggleUpvote() {
-                        if (this.loading) return;
-                        this.loading = true;
-                        axios.post('/post/{{ $post->id }}/upvote', { _token: '{{ csrf_token() }}' })
-                            .then(() => {
-                                this.upvoted = !this.upvoted;
-                                if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
-                            })
-                            .catch(err => console.error(err))
-                            .finally(() => this.loading = false);
-                    },
-                    toggleDownvote() {
-                        if (this.loading) return;
-                        this.loading = true;
-                        axios.post('/post/{{ $post->id }}/downvote', { _token: '{{ csrf_token() }}' })
-                            .then(() => {
-                                this.downvoted = !this.downvoted;
-                                if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
-                            })
-                            .catch(err => console.error(err))
-                            .finally(() => this.loading = false);
-                    }
-                }" class="flex w-[35%] md:w-[30%] justify-between">
+                        upvoted: {{ auth()->user()->hasUpvotedPost($post) ? 'true' : 'false' }},
+                        downvoted: {{ auth()->user()->hasDownvotedPost($post) ? 'true' : 'false' }},
+                        loading: false,
+                        toggleUpvote() {
+                            if (this.loading) return;
+                            this.loading = true;
+                            axios.post('/post/{{ $post->id }}/upvote', { _token: '{{ csrf_token() }}' })
+                                .then(() => {
+                                    this.upvoted = !this.upvoted;
+                                    if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
+                                })
+                                .catch(err => console.error(err))
+                                .finally(() => this.loading = false);
+                        },
+                        toggleDownvote() {
+                            if (this.loading) return;
+                            this.loading = true;
+                            axios.post('/post/{{ $post->id }}/downvote', { _token: '{{ csrf_token() }}' })
+                                .then(() => {
+                                    this.downvoted = !this.downvoted;
+                                    if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
+                                })
+                                .catch(err => console.error(err))
+                                .finally(() => this.loading = false);
+                        }
+                    }" class="flex w-[35%] md:w-[30%] justify-between">
                     <span class="h-full flex items-center sm:w-[40%]">
-                        <button @click="toggleUpvote"
-                            :class="upvoted ? 'text-emerald-500 hover:text-emerald-700' :
-                                'text-sl-text hover:text-emerald-500'"
-                            class="text-2xl cursor-pointer">
+                        <button @click="toggleUpvote" :class="upvoted ? 'text-emerald-500 hover:text-emerald-700' :
+                'text-sl-text hover:text-emerald-500'" class="text-2xl cursor-pointer">
                             <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
                         </button>
 
                         <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
-                            {{ $post->voted_by_count }}</div>
+                            {{ $post->voted_by_count }}
+                        </div>
                     </span>
-                    <button @click="toggleDownvote"
-                        :class="downvoted ? 'text-red-700 hover:text-red-500' : 'text-sl-text hover:text-red-700'"
-                        class="text-2xl cursor-pointer">
+                    <button @click="toggleDownvote" :class="downvoted ? 'text-red-700 hover:text-red-500' : 'text-sl-text hover:text-red-700'" class="text-2xl cursor-pointer">
                         <i :class="downvoted ? 'fa-solid' : 'fa-light'" class="fa-light fa-down"></i>
                     </button>
                 </div>
@@ -168,30 +166,40 @@
                         <button id="commentButton" class="text-2xl cursor-pointer hover:text-yellow-500"><i
                                 class="fa-light fa-comment "></i></button>
                         <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
-                            {{ $post->comments->count() }}</div>
+                            {{ $post->comments->count() }}
+                        </div>
                     </span>
 
                     <button x-data="{
-                        bookmarked: {{ auth()->user()->hasBookmarkedPost($post) ? 'true' : 'false' }},
-                        loading: false,
-                        toggleBookmark() {
-                            if (this.loading) return;
-                            this.loading = true;
-                            axios.post('/post/{{ $post->id }}/bookmark', { _token: '{{ csrf_token() }}' })
-                                .then(() => {
-                                    this.bookmarked = !this.bookmarked;
-                                })
-                                .catch(err => console.error(err))
-                                .finally(() => this.loading = false);
-                        },
-                    }" @click="toggleBookmark"
-                        :class="bookmarked ? 'text-cyan-500 hover:text-cyan-700' :
-                            'text-sl-text hover:text-cyan-500'"
-                        class="text-xl cursor-pointer hover:text-cyan-700">
+                            bookmarked: {{ auth()->user()->hasBookmarkedPost($post) ? 'true' : 'false' }},
+                            loading: false,
+                            toggleBookmark() {
+                                if (this.loading) return;
+                                this.loading = true;
+                                axios.post('/post/{{ $post->id }}/bookmark', { _token: '{{ csrf_token() }}' })
+                                    .then(() => {
+                                        this.bookmarked = !this.bookmarked;
+                                    })
+                                    .catch(err => console.error(err))
+                                    .finally(() => this.loading = false);
+                            },
+                        }" @click="toggleBookmark" :class="bookmarked ? 'text-cyan-500 hover:text-cyan-700' :
+                'text-sl-text hover:text-cyan-500'" class="text-xl cursor-pointer hover:text-cyan-700">
                         <i :class="bookmarked ? 'fa-solid' : 'fa-light'" class="fa-bookmark"></i></button>
 
-                    <button class="text-xl cursor-pointer hover:scale-101"><i
-                            class="fa-light fa-share-from-square "></i></button>
+                    <button onclick="copyLink('{{ url('/post/' . $post->id) }}')"
+                        class="text-xl cursor-pointer hover:scale-101">
+                        <i class="fa-light fa-share-from-square "></i>
+                    </button>
+                    <script>
+                    function copyLink(link) {
+                        navigator.clipboard.writeText(link).then(function() {
+                            Swal.fire('', "Link berhasil disalin!", 'success');
+                        }, function(err) {
+                            console.error("Gagal menyalin link: ", err);
+                        });
+                    }
+                </script>
                 </div>
             @endauth
         </section>
@@ -199,20 +207,31 @@
 
     {{-- Komentar-container --}}
 
-    <div class="mt-1 px-2">
-        <div class="">
-            <div class="flex justify-between items-center">
-                <img src="{{ asset('img/' . $post->user->avatar) }}" class="w-[32px] rounded-full" alt="Foto User">
-                <input type="text" id="comment"
-                    class="ml-1 w-[80%] px-2 bg-[#42394a] rounded-sm p-2 focus:outline-none"
-                    placeholder="Tambahkan komentar Anda">
-                <i class="fa-light fa-paper-plane-top text-xl hover:opacity-70"></i>
+    <form action="{{ route('post.comment', $post->id) }}" method="POST">
+        @csrf
+        <div class="mt-1 px-2">
+            <div class="">
+                <div class="flex justify-between items-center">
+                    @auth
+                        <img src="{{ asset('img/' . auth()->user()->avatar) }}" class="w-[32px] rounded-full"
+                            alt="Foto User">
+                    @else
+                        <img src="{{ asset('img/blankprofile.png') }}" class="w-[32px] rounded-full" alt="Foto Default">
+                    @endauth
+                    <input type="text" name="content" id="comment"
+                        class="ml-1 w-[80%] px-2 bg-[#42394a] rounded-sm p-2 focus:outline-none"
+                        placeholder="Tambahkan komentar Anda">
+                    <button type="submit">
+                        <i class="fa-light fa-paper-plane-top text-xl hover:opacity-70"></i>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+
 
     {{-- Komentar --}}
-    <article class="min-w-full max-w-full w-full min-h-16 h-[2000px] bg-sl-tertiary rounded-md flex flex-col gap-y-2">
+    <article class="min-w-full max-w-full w-full min-h-16 pb-5 bg-sl-tertiary rounded-md flex flex-col gap-y-2">
         <h1 class="mt-1 text-center text-[14px]">Komentar</h1>
 
         {{-- Komen orang --}}
@@ -237,15 +256,19 @@
                             </div>
                             <p class="text-sm font-extralight">{{ $comment->user->badges->first()->badge_name }}</p>
                             <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
-                            <div class="flex justify-end items-center gap-2 mt-2">
-                                <button class="text-xl cursor-pointer hover:text-red-700">
-                                    <i class="fa-light fa-down "></i>
-                                </button>
-                                <button class="ml-2 text-xl cursor-pointer hover:text-emerald-500">
-                                    <i class="fa-light fa-up "></i>
-                                </button>
-                                <div class="text-xs">
-                                    1234</div>
+                            <div class="flex justify-between mt-2">
+                                <div class="items-center text-sm opacity-50">
+                                    <small>{{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }}</small></div>
+                                <div class="flex items-center justify-end gap-2">
+                                    <button class="text-xl cursor-pointer hover:text-red-700">
+                                        <i class="fa-light fa-down "></i>
+                                    </button>
+                                    <button class="ml-2 text-xl cursor-pointer hover:text-emerald-500">
+                                        <i class="fa-light fa-up "></i>
+                                    </button>
+                                    <div class="text-xs">
+                                        1234</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -255,7 +278,7 @@
     </article>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             if (window.location.hash === "#comment") {
                 // Tunggu sedikit supaya scroll bawaan selesai dulu
                 setTimeout(() => {
@@ -277,7 +300,7 @@
 
         // Comment Button
         const commentButton = document.getElementById('commentButton');
-        commentButton.addEventListener('click', function() {
+        commentButton.addEventListener('click', function () {
             const el = document.getElementById('comment');
             if (el) {
                 const yOffset = -100; // sesuaikan offset
@@ -291,6 +314,4 @@
             }
         })
     </script>
-
-
 </x-layout>

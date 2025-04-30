@@ -19,7 +19,7 @@ class RegisterUserController extends Controller
     public function store()
     {
         $attrs = request()->validate([
-            'displayName' => ['required', 'alpha_space'],
+            'display_name' => ['required', 'alpha_space'],
             'username' => ['required', 'unique:users,username', 'alpha_dash'],
             'email' => ['required', 'email'],
             'password' => ['required', Password::min(8)->letters()->numbers(), 'confirmed']
@@ -41,7 +41,7 @@ class RegisterUserController extends Controller
 
     // Method untuk update data profile
     public function update(Request $request)
-    {   
+    {
         $user = Auth::user();
 
         // Validasi inputan
@@ -69,7 +69,7 @@ class RegisterUserController extends Controller
 
         // Cek apakah ada avatar yang di-upload
         if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $avatarPath = $request->file('avatar')->store('', 'avatars');
             $user->update([
                 'avatar' => $avatarPath, // Simpan path avatar baru
             ]);

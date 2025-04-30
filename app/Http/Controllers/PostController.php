@@ -17,10 +17,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user', 'attachments', 'comments')->orderBy('created_at','desc')->withCount('votedBy')->get();
+        $posts = Post::with('user', 'attachments', 'comments')->orderBy('created_at','desc')->withCount('upvotedBy')->get();
         $badges = User::with('badges')->get();
         // dd($posts[0]->attachments[0]->namafile);
 
+        
         return view('home', [
             'posts' => $posts,
             'badges' => $badges,
@@ -53,7 +54,7 @@ class PostController extends Controller
 
         $request->validate([
             'images' => 'required|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'images.*' => 'image|mimes:jpeg,png,jpg',
         ]);
 
         $hashtags = collect(explode(',', $request->hashtag))
@@ -91,6 +92,24 @@ class PostController extends Controller
         return redirect('/')->with('success', 'Post created successfully');
     }
 
+    //store comment
+    public function storeComment(Request $request, $postId)
+{
+    $request->validate([
+        'content' => 'required|string|max:2048',
+    ]);
+
+    // Create the comment
+    $comment = new Comment();
+    $comment->post_id = $postId;
+    $comment->user_id = auth()->id();
+    $comment->content = $request->content;
+    $comment->save();
+
+    return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
+}
+
+
     /**
      * Display the specified resource.
      */
@@ -98,7 +117,7 @@ class PostController extends Controller
     {
         $post = Post::with('user')->withCount('votedBy')->findOrFail($postId);
         $badges = User::with('badges');
-        $comments = Comment::with('user')->where('post_id', $postId)->get();
+        $comments = Comment::with('user')->where('post_id', $postId)->orderBy('created_at', 'desc')->get();
 
 
         return view('post_detail', [

@@ -12,6 +12,15 @@
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <script>
+        // Tambahkan custom magic method sebelum Alpine.start
+        document.addEventListener('alpine:init', () => {
+            Alpine.magic('clipboard', () => {
+                return subject => navigator.clipboard.writeText(subject)
+            })
+        })
+    </script>
+
     <title>{{ $title }}</title>
 </head>
 
