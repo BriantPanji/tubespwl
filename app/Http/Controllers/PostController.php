@@ -95,7 +95,7 @@ class PostController extends Controller
     public function storeComment(Request $request, $postId)
 {
     $request->validate([
-        'content' => 'required|string|max:1000',
+        'content' => 'required|string|max:2048',
     ]);
 
     // Create the comment
