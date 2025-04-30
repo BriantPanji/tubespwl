@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
-
+@import 'swiper/css/bundle';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -18,6 +18,10 @@
     --color-sl-quaternary: #5b118f;
     --color-sl-quinary: #42394a;
     --color-sl-text: #fbfbfb;
+    --color-sl-senary: #f1a85f;
+
+    --text-shadow-xl: 0px 0px 50px rgba(0, 0, 0, 0.6);
+    --text-shadow-custom: text-shadow: var(--text-shadow-xl);
 }
 
 html {
@@ -63,4 +67,9 @@ html {
     background-color: var(--color-sl-base);
     border-radius: 0.5rem;
     border: 0.1rem solid var(--color-sl-base);
+  }
+
+
+  .swiper-pagination-bullet-active {
+    background-color: var(--color-sl-senary) !important;
   }

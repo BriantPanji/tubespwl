@@ -1,8 +1,9 @@
 <x-layout>
     <x-slot:title>SudutLain - Beranda</x-slot:title>
+    <x-item.postbanner></x-item.postbanner>
 
     @foreach ($posts as $post)
-        <article
+        <article @click="window.location.href = '/post/{{ $post->id }}'"
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2">
