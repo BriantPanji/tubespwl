@@ -14,13 +14,27 @@ class PostVotesSeeder extends Seeder
      */
     public function run(): void
     {
-        $posts = Post::factory()->count(3)->create();
+        $posts = Post::all();
         $users = User::all();
 
         foreach ($users as $user) {
-            $user->votedPost()->attach($posts->random(2), [
-                'is_upvoted' => rand(0, 1)
-            ]);
+            $votedPostIds = []; // untuk menyimpan post_id yang sudah dipilih
+            $random = rand(3, 10);
+        
+            for ($i = 0; $i < $random; $i++) {
+                $post = $posts->random();
+        
+                // Ulangi sampai dapat post yang belum dipilih user ini
+                while (in_array($post->id, $votedPostIds)) {
+                    $post = $posts->random();
+                }
+        
+                $user->votedPost()->attach($post->id, [
+                    'is_upvoted' => rand(0, 1)
+                ]);
+        
+                $votedPostIds[] = $post->id;
+            }
         }
     }
 }
