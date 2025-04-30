@@ -3,9 +3,10 @@
     <x-item.postbanner></x-item.postbanner>
 
     @foreach ($posts as $post)
-        <article 
+        <article
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
-            <section @click="window.location.href = '/post/{{ $post->id }}'" x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
+            <section @click="window.location.href = '/post/{{ $post->id }}'" x-data="{ showOption: false }"
+                class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2">
                     <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full object-cover"
                             src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
@@ -39,20 +40,25 @@
                 </div>
                 <div class="max-w-[20%] h-full flex items-center gap-2 text-2xl pr-2">
 
-                    <button @click="showOption=!showOption" class="w-fit h-fit cursor-pointer"><i class="fa-light fa-ellipsis"></i></button>
+                    <button @click="showOption=!showOption" class="w-fit h-fit cursor-pointer"><i
+                            class="fa-light fa-ellipsis"></i></button>
                 </div>
                 <div x-cloak x-show="showOption" @click.outside="showOption = false"
                     class="absolute top-8 right-0 min-w-20 max-w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                     {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
                     @can('edit-post', $post)
-                        <button @click="window.location.href='/post/{{ $post->id }}/edit'" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
-                        <button @click="" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Hapus Post</button>
+                        <button @click="window.location.href='/post/{{ $post->id }}/edit'"
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
+                        <button @click=""
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Hapus Post</button>
                     @endcan
-                    <button @click="showOption = false" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                    <button @click="showOption = false"
+                        class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                 </div>
             </section>
 
-            <section @click="window.location.href = '/post/{{ $post->id }}'" class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
+            <section @click="window.location.href = '/post/{{ $post->id }}'"
+                class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
                 {{-- URL MENUJU DETAIL POST INI --}}
                 <a href="/post/{{ $post->id }}"
                     class="w-full h-full max-w-full max-h-full truncate font-bold text-base md:text-lg hover:underline">
@@ -69,8 +75,18 @@
                     <p class="line-clamp-4" x-ref="content">
                         {{-- CONTENT POST --}}
                         {{ $post->content }}
-
                     </p>
+                    <section class="mt-4">
+                        <p class="line-clamp-4" x-ref="location">
+                            {{-- LOCATION POST --}}
+                            {{ $post->location }}
+                        </p>
+                        <a href="{{ $post->gmap_url }}" class="line-clamp-4 text-blue-500 hover:underline"
+                            x-ref="gmap_url">
+                            {{-- GMAP_URL POST --}}
+                            {{ $post->gmap_url }}
+                        </a>
+                    </section>
                     <template x-if="showMore">
                         <div class="absolute mt-10 bottom-0 right-1 md:right-0 w-full text-right cursor-text">
                             <a class="text-blue-500 font-medium hover:underline bg-sl-tertiary"
@@ -158,8 +174,8 @@
                                     if (wasDownvoted && !wasUpvoted) current += 0;
                                     else if (wasUpvoted) current -= 1;
                                     else if (!wasUpvoted && wasDownvoted) current -= 1;
-                                    
-                                    
+                    
+                    
                                     $refs.voteCount.innerText = current;
                                 })
                                 .catch(err => console.error(err))
