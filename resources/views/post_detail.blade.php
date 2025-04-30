@@ -61,9 +61,25 @@
                 </p>
             </div>
         </section>
-        <section class="w-full h-auto">
-            <img class="!aspect-video rounded-xl" src="{{ asset('img/contohgmb.jpg') }}"> {{-- FOTO PERTAMA DARI POST --}}
-        </section>
+        <div class="swiper mySwiperClass w-full max-w-xl h-fit relative">
+            <div class="swiper-wrapper h-fit flex items-center">
+                <!-- Slides -->
+                @foreach ($post->attachments as $attachment)
+                    <div class="swiper-slide h-full">
+                        <img class="w-full h-full rounded-xl"
+                            src="{{ asset('storage/posts/' . $attachment->namafile) }}">
+                    </div>
+                @endforeach
+            </div>
+            <!-- If we need pagination -->
+            <div class="swiper-pagination"></div>
+            {{-- If we need controls --}}
+            <button
+                class="swiper-button-prev !text-white after:content-[''] after:!text-sm text-shadow-lg opacity-80 md:after:!text-xl xl:after:!text-2xl"></button>
+            <button
+                class="swiper-button-next !text-white after:content-[''] after:!text-sm text-shadow-lg opacity-80 md:after:!text-xl xl:after:!text-2xl"></button>
+
+        </div>
         <section
             class="w-full min-h-3 h-10 flex items-center bg-[#42394a] mt-1 rounded-md px-3 md:px-5 xl:px-8 2xl:px-10 text-2xl justify-between">
             @guest
@@ -259,7 +275,7 @@
             }
         });
 
-        // Guest Comment
+        // Comment Button
         const commentButton = document.getElementById('commentButton');
         commentButton.addEventListener('click', function() {
             const el = document.getElementById('comment');

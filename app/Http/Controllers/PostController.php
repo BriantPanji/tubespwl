@@ -17,7 +17,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user', 'attachments', 'comments')->withCount('votedBy')->get();
+        $posts = Post::with('user', 'attachments', 'comments')->orderBy('created_at','desc')->withCount('votedBy')->get();
         $badges = User::with('badges')->get();
         // dd($posts[0]->attachments[0]->namafile);
 
