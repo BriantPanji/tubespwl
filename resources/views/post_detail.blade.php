@@ -75,8 +75,7 @@
                 <!-- Slides -->
                 @foreach ($post->attachments as $attachment)
                     <div class="swiper-slide h-full">
-                        <img class="w-full h-full rounded-xl"
-                            src="{{ asset('storage/posts/' . $attachment->namafile) }}">
+                        <img class="w-full h-full rounded-xl" src="{{ asset('storage/posts/' . $attachment->namafile) }}">
                     </div>
                 @endforeach
             </div>
@@ -127,35 +126,44 @@
             @endguest
 
             @auth
-
-                {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
                 <div x-data="{
-                    upvoted: {{ auth()->user()->hasUpvotedPost($post) ? 'true' : 'false' }},
-                    downvoted: {{ auth()->user()->hasDownvotedPost($post) ? 'true' : 'false' }},
-                    loading: false,
-                    toggleUpvote() {
-                        if (this.loading) return;
-                        this.loading = true;
-                        axios.post('/post/{{ $post->id }}/upvote', { _token: '{{ csrf_token() }}' })
-                            .then(() => {
-                                this.upvoted = !this.upvoted;
-                                if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
-                            })
-                            .catch(err => console.error(err))
-                            .finally(() => this.loading = false);
-                    },
-                    toggleDownvote() {
-                        if (this.loading) return;
-                        this.loading = true;
-                        axios.post('/post/{{ $post->id }}/downvote', { _token: '{{ csrf_token() }}' })
-                            .then(() => {
-                                this.downvoted = !this.downvoted;
-                                if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
-                            })
-                            .catch(err => console.error(err))
-                            .finally(() => this.loading = false);
-                    }
-                }" class="flex w-[35%] md:w-[30%] justify-between">
+                            upvoted: {{ auth()->user()->hasUpvotedPost($post) ? 'true' : 'false' }},
+                            downvoted: {{ auth()->user()->hasDownvotedPost($post) ? 'true' : 'false' }},
+                            loading: false,
+                            toggleUpvote() {
+                                if (this.loading) return;
+                                this.loading = true;
+                                axios.post('/post/{{ $post->id }}/upvote', { _token: '{{ csrf_token() }}' })
+                                    .then(() => {
+                                        this.upvoted = !this.upvoted;
+                                        if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
+                                        $refs.voteCount.innerText = parseInt($refs.voteCount.innerText) + (this.upvoted ? 1 : -1);
+                                    })
+                                    .catch(err => console.error(err))
+                                    .finally(() => this.loading = false);
+                            },
+                            toggleDownvote() {
+                                if (this.loading) return;
+                                this.loading = true;
+                                axios.post('/post/{{ $post->id }}/downvote', { _token: '{{ csrf_token() }}' })
+                                    .then(() => {
+                                        const wasUpvoted = this.upvoted;
+                                        const wasDownvoted = this.downvoted;
+                                        this.downvoted = !this.downvoted;
+                                        if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
+                                        let ogCount = {{ $post->upvoted_by_count }};
+                                        let current = parseInt($refs.voteCount.innerText);
+                                        if (wasDownvoted && !wasUpvoted) current += 0;
+                                        else if (wasUpvoted) current -= 1;
+                                        else if (!wasUpvoted && wasDownvoted) current -= 1;
+
+
+                                        $refs.voteCount.innerText = current;
+                                    })
+                                    .catch(err => console.error(err))
+                                    .finally(() => this.loading = false);
+                            }
+                        }" class="flex w-[35%] md:w-[30%] justify-between">
                     <span class="h-full flex items-center sm:w-[40%]">
                         <button @click="toggleUpvote"
                             :class="upvoted ? 'text-emerald-500 hover:text-emerald-700' :
@@ -164,7 +172,7 @@
                             <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
                         </button>
 
-                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                        <div x-ref="voteCount" class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
                             {{ $post->upvoted_by_count }}
                         </div>
                     </span>
@@ -173,6 +181,7 @@
                         class="text-2xl cursor-pointer">
                         <i :class="downvoted ? 'fa-solid' : 'fa-light'" class="fa-light fa-down"></i>
                     </button>
+
                 </div>
                 <div class="flex w-[53%] justify-between items-center">
                     <span class="h-full flex items-center sm:w-[20%] md:w-[30%]">
