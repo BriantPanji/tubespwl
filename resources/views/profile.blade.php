@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>Profil Pengguna</x-slot:title>
 
-    @if(session('success'))
+    @if (session('success'))
         <script>
             Swal.fire('', "{{ session('success') }}", 'success');
         </script>
@@ -18,13 +18,18 @@
             </div>
 
             {{-- USERNAME & BIO --}}
-            <div class="flex flex-col text-left min-w-full max-w-full">
-                <h1 class="text-xl font-bold text-sl-text/90">{{ $user->display_name }}</h1>
-                <p class="text-sm leading-tight text-sl-text/90 ">{{ '@' . $user->username }}</p>
-                <div class="!max-w-[80%] w-full  flex items-center customScrollbar h-10 rounded-md mt-2 overflow-x-auto overflow-y-hidden inset-shadow-2xs">
+            <div class="flex flex-col text-left max-w-5/8 xl:max-w-14/18"> {{-- ini ganti --}}
+                <h1 class="text-xl font-bold text-sl-text/90 ">{{ $user->display_name }}</h1>
+                <p class="text-sm leading-tight text-sl-text/90">{{ '@' . $user->username }}</p>
+                <div
+                    class="w-full  flex items-center customScrollbar h-10 rounded-md mt-2 overflow-x-auto overflow-y-hidden inset-shadow-2xs rounded-md">
                     <div class="min-w-full h-full flex items-center gap-1.5 px-1.5 *:whitespace-nowrap">
                         @foreach ($user->badges()->get() as $badge)
-                            <span class="text-sm cursor-pointer min-w-fit max-h-full bg-sl-quinary px-1.5 py-1 rounded-md flex gap-1 group" style="color:{{ $badge->badge_color }}"><img class="max-h-full w-5" src="{{ asset('img/badge/' . $badge->badge_icon) }}" alt=""> <b class="flex items-center justify-center font-normal group-hover:scale-101">{{ $badge->badge_name }}</b></span>
+                            <span
+                                class="text-sm cursor-pointer min-w-fit max-h-full bg-sl-quinary px-1.5 py-1 rounded-md flex gap-1 group"
+                                style="color:{{ $badge->badge_color }}"><img class="max-h-full w-5"
+                                    src="{{ asset('img/badge/' . $badge->badge_icon) }}" alt=""> <b
+                                    class="flex items-center justify-center font-normal group-hover:scale-101">{{ $badge->badge_name }}</b></span>
                         @endforeach
                     </div>
                 </div>
@@ -40,10 +45,11 @@
     {{-- RINGKASAN AKTIVITAS --}}
     <section class="w-full bg-sl-tertiary rounded-md p-6">
         <h2 class="text-lg font-semibold text-sl-text/90 mb-4">Summary of your activities:</h2>
-
+        
+        {{-- ANIMASI COUNT --}}
         <div class="flex w-full gap-4">
             {{-- KIRI: POST, COMMENT, BADGE --}}
-            <div class="w-3/5 flex flex-col gap-3 text-sl-text/80">
+            {{-- <div class="w-3/5 flex flex-col gap-3 text-sl-text/80">
                 <div class="flex items-center gap-2">
                     <i class="fa-light fa-rectangle-history"></i>
                     <span>Post: <strong>{{ $postCount }}</strong></span>
@@ -56,7 +62,140 @@
                     <i class="fa-light fa-shield"></i>
                     <span>Badge: <strong>{{ $badgeCount }}</strong></span>
                 </div>
+            </div> --}}
+
+            <div class="w-3/5 flex flex-col gap-3 text-sl-text/80">
+
+                {{-- POST COUNT --}}
+                <div class="w-3/5 flex flex-col gap-3 text-sl-text/80" x-data="{
+                    count: 0,
+                    target: {{ $postCount }},
+                    scrambleDuration: 1250,
+                    finalDuration: 50,
+                    interval: null,
+                    start() {
+                        {{-- Scramble random angka dulu --}}
+                        this.interval = setInterval(() => {
+                            this.count = Math.floor(Math.random() * (this.target + 10));
+                            {{-- acak sampai sedikit di atas target --}}
+                        }, 50);
+                
+                        {{-- // Setelah scrambleDuration, set ke angka asli --}}
+                        setTimeout(() => {
+                            clearInterval(this.interval);
+                            let current = 0;
+                            let step = this.target / (this.finalDuration / 30);
+                            this.interval = setInterval(() => {
+                                current += step;
+                                this.count = Math.floor(current);
+                                if (this.count >= this.target) {
+                                    this.count = this.target;
+                                    clearInterval(this.interval);
+                                }
+                            }, 30);
+                        }, this.scrambleDuration);
+                    }
+                }" x-init="start()">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-light fa-rectangle-history"></i>
+                        <span>
+                            Post:
+                            <strong class="transition-transform duration-300 ease-out"
+                                :class="{ 'scale-105': count < target }" x-text="count">
+                                0
+                            </strong>
+                        </span>
+                    </div>
+                </div>
+
+                {{-- COMMENT COUNT --}}
+                <div class="w-3/5 flex flex-col gap-3 text-sl-text/80" x-data="{
+                    count: 0,
+                    target: {{ $commentCount }},
+                    scrambleDuration: 1250,
+                    finalDuration: 50,
+                    interval: null,
+                    start() {
+                        {{-- Scramble random angka dulu --}}
+                        this.interval = setInterval(() => {
+                            this.count = Math.floor(Math.random() * (this.target + 10));
+                            {{-- acak sampai sedikit di atas target --}}
+                        }, 50);
+                
+                        {{-- // Setelah scrambleDuration, set ke angka asli --}}
+                        setTimeout(() => {
+                            clearInterval(this.interval);
+                            let current = 0;
+                            let step = this.target / (this.finalDuration / 30);
+                            this.interval = setInterval(() => {
+                                current += step;
+                                this.count = Math.floor(current);
+                                if (this.count >= this.target) {
+                                    this.count = this.target;
+                                    clearInterval(this.interval);
+                                }
+                            }, 30);
+                        }, this.scrambleDuration);
+                    }
+                }" x-init="start()">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-light fa-comment"></i>
+                        <span>
+                            Komentar:
+                            <strong class="transition-transform duration-300 ease-out"
+                                :class="{ 'scale-105': count < target }" x-text="count">
+                                0
+                            </strong>
+                        </span>
+                    </div>
+                </div>
+
+                {{-- BADGE COUNT --}}
+                <div class="w-3/5 flex flex-col gap-3 text-sl-text/80" x-data="{
+                    count: 0,
+                    target: {{ $badgeCount }},
+                    scrambleDuration: 1250,
+                    finalDuration: 50,
+                    interval: null,
+                    start() {
+                        {{-- Scramble random angka dulu --}}
+                        this.interval = setInterval(() => {
+                            this.count = Math.floor(Math.random() * (this.target + 10));
+                            {{-- acak sampai sedikit di atas target --}}
+                        }, 50);
+                
+                        {{-- // Setelah scrambleDuration, set ke angka asli --}}
+                        setTimeout(() => {
+                            clearInterval(this.interval);
+                            let current = 0;
+                            let step = this.target / (this.finalDuration / 30);
+                            this.interval = setInterval(() => {
+                                current += step;
+                                this.count = Math.floor(current);
+                                if (this.count >= this.target) {
+                                    this.count = this.target;
+                                    clearInterval(this.interval);
+                                }
+                            }, 30);
+                        }, this.scrambleDuration);
+                    }
+                }" x-init="start()">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-light fa-shield"></i>
+
+                        <span>
+                            Badge:
+                            <strong class="transition-transform duration-300 ease-out"
+                                :class="{ 'scale-105': count < target }" x-text="count">
+                                0
+                            </strong>
+                        </span>
+                    </div>
+                </div>
             </div>
+
+
+
 
             {{-- KANAN: VOTE, APA INI --}}
             <div class="w-2/5 flex flex-col gap-3 text-sl-text/80">
