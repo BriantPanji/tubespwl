@@ -6,7 +6,9 @@
             <div class="container flex justify-start items-center gap-2 px-2 py-1">
                 <div class="container flex justify-start items-center w-4 ">
                     <div data-svg-wrapper data-layer="ic:round-arrow-back" class="IcRoundArr    owBack relative">
-                        <a href="/profile"><i class="fa-light fa-chevron-left xl:text-xl"></a></i>
+                        <button @click="history.back()">
+                            <i class="fa-light fa-chevron-left xl:text-xl"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="container flex justify-center items-center gap-3">
