@@ -252,85 +252,42 @@
         <article class="min-w-full max-w-full w-full min-h-16 pb-5 bg-sl-tertiary rounded-md flex flex-col gap-y-2">
             <h1 class="mt-1 text-center text-[14px]">Komentar</h1>
 
-            {{-- Komen orang --}}
             @foreach ($comments as $comment)
-                <div class="mt-1 px-3">
-                    <div class="flex gap-2.5 items-start">
-                        <img src="{{ asset('img/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2"
-                            alt="Foto User">
-                        <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
-                            <div class="py-.5 px-2.5">
-                                <div class="flex justify-between items-center relative" x-data="{ showOption: false }">
-                                    <a href="/profile/{{ $comment->user->id }}">{{ $comment->user->display_name }}</a>
-                                    <button @click="showOption=!showOption" class="cursor-pointer"><i
-                                            class="fa-light fa-ellipsis text-2xl"></i></button>
+            <div class="mt-1 px-3">
+                <div class="flex gap-2.5 items-start">
+                    <img src="{{ asset('img/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2"
+                        alt="Foto User">
+                    <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
+                        <div class="py-.5 px-2.5">
+                            <div class="flex justify-between items-center relative" x-data="{ showOption: false }">
+                                <a href="/profile/{{ $comment->user->id }}">{{ $comment->user->display_name }}</a>
+                                <button @click="showOption=!showOption" class="cursor-pointer"><i
+                                        class="fa-light fa-ellipsis text-2xl"></i></button>
 
-                                    <div x-cloak x-show="showOption" @click.outside="showOption = false"
-                                        class="absolute top-5 right-0 w-20 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
-                                        {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
-                                        <button @click="showOption = false"
-                                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
-                                    </div>
+                                <div x-cloak x-show="showOption" @click.outside="showOption = false"
+                                    class="absolute top-5 right-0 w-20 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
+                                    {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
+                                    <button @click="showOption = false"
+                                        class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                                 </div>
-                                <p class="text-sm font-extralight text-emerald-500">
-                                    {{ $comment->user->badges->first()->badge_name }}
-                                </p>
-                                <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
-                                <div class="flex justify-between mt-2">
-                                    <div class="items-center text-sm opacity-50">
-                                        <small>{{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }}</small>
+                            </div>
+                            <p class="text-sm font-extralight text-emerald-500">
+                                {{ $comment->user->badges->first()->badge_name }}</p>
+                            <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
+                            <div class="flex justify-between mt-2">
+                                <div class="items-center text-sm opacity-50">
+                                    <small>{{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }}</small>
+                                </div>
+                                <div class="flex items-center justify-end gap-2">
+                                    <button class="text-xl cursor-pointer hover:text-red-700">
+                                        <i class="fa-light fa-down "></i>
+                                    </button>
+                                    <button class="ml-2 text-xl cursor-pointer hover:text-emerald-500">
+                                        <i class="fa-light fa-up "></i>
+                                    </button>
+                                    <div class="text-xs">
+                                        1234</div>
                                     </div>
-                                
-                                    @auth
-                                        <div x-data="{
-                                            upvoted: {{ auth()->user()->hasUpvotedComment($comment) ? 'true' : 'false' }},
-                                            downvoted: {{ auth()->user()->hasDownvotedComment($comment) ? 'true' : 'false' }},
-                                            loading: false,
-                                            toggleUpvote() {
-                                                if (this.loading) return;
-                                                this.loading = true;
-                                                axios.post('/comment/{{ $comment->id }}/upvote', { _token: '{{ csrf_token() }}' })
-                                                    .then(() => {
-                                                        this.upvoted = !this.upvoted;
-                                                        if (this.upvoted) this.downvoted = false;
-                                                        $refs.voteCount.innerText = parseInt($refs.voteCount.innerText) + (this.upvoted ? 1 : -1);
-                                                    })
-                                                    .catch(err => console.error(err))
-                                                    .finally(() => this.loading = false);
-                                            },
-                                            toggleDownvote() {
-                                                if (this.loading) return;
-                                                this.loading = true;
-                                                axios.post('/comment/{{ $comment->id }}/downvote', { _token: '{{ csrf_token() }}' })
-                                                    .then(() => {
-                                                        const wasUpvoted = this.upvoted;
-                                                        const wasDownvoted = this.downvoted;
-                                                        this.downvoted = !this.downvoted;
-                                                        if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
-                                                        let ogCount = {{ $comment->upvoted_by_count }};
-                                                        let current = parseInt($refs.voteCount.innerText);
-                                                        if (wasDownvoted && !wasUpvoted) current += 0;
-                                                        else if (wasUpvoted) current -= 1;
-                                                        else if (!wasUpvoted && wasDownvoted) current -= 1;
-                                        
-                                        
-                                                        $refs.voteCount.innerText = current;
-                                                    })
-                                                    .catch(err => console.error(err))
-                                                    .finally(() => this.loading = false);
-                                            }
-                                        }">
-                                            <button @click="toggleUpvote" class="text-xl hover:text-emerald-500">
-                                                <i class="fa-light fa-up"></i>
-                                            </button>
-                                            <button @click="toggleDownvote" class="text-xl hover:text-red-700">
-                                                <i class="fa-light fa-down"></i>
-                                            </button>
-                                            <div x-ref="voteCount" class="text-xs">
-                                                {{ $comment->upvotedBy()->count() }}
-                                            </div>
-                                        </div>
-                                    @endauth
                                 </div>
                             </div>
                         </div>
