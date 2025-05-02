@@ -69,7 +69,7 @@
                     <div class="container inline-flex justify-start items-center gap-2" onclick="window.open('{{ $post->gmap_url }}', '_blank')">
                         <input type="text" id="gmap-url" value="{{ $post->gmap_url }}"
                             class="bg-white/10 rounded-md min-w-[80%] w-fit max-w-full focus:ring-blue-500 outline-none focus:border-blue-500 block px-2 py-1 line-clamp-4 text-blue-500 hover:underline" readonly>
-                        <button onclick="window.open('{{ $post->gmap_url }}', '_blank')" class="rounded-md py-1 px-2 bg-sl-senary rounded-md border border-sl-senary hover:scale-90 focus:ring-1 focus:outline-none focus:ring-blue-300 ">
+                        <button onclick="window.open('{{ $post->gmap_url }}', '_blank')" class="py-1 px-2 bg-sl-senary rounded-md border border-sl-senary hover:scale-90 focus:ring-1 focus:outline-none focus:ring-blue-300 ">
                             {{-- ICON GMAP --}}
                             <i class="fa-light fa-location-dot text-sm"></i>
                         </button>
