@@ -57,9 +57,8 @@ Route::get('/tes', function () {
 });
 
 Route::get('/my/comments', function () {
-    // $comments = User::with('comments')->get();
-    $posts = Auth::user()->comments()->with('post.user')->get()->pluck('post');
-    return view('dashboard.comment', compact('posts'));
+    $comments = Auth::user()->comments()->with('post')->latest()->get();
+    return view('dashboard.comment', compact('comments'));
 })->middleware('auth')->name('profile.comment');
 
 Route::get('/my/bookmarks', function () {
