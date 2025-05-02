@@ -76,17 +76,6 @@
                         {{-- CONTENT POST --}}
                         {{ $post->content }}
                     </p>
-                    <section class="mt-4">
-                        <p class="line-clamp-4" x-ref="location">
-                            {{-- LOCATION POST --}}
-                            {{ $post->location }}
-                        </p>
-                        <a href="{{ $post->gmap_url }}" class="line-clamp-4 text-blue-500 hover:underline"
-                            x-ref="gmap_url">
-                            {{-- GMAP_URL POST --}}
-                            {{ $post->gmap_url }}
-                        </a>
-                    </section>
                     <template x-if="showMore">
                         <div class="absolute mt-10 bottom-0 right-1 md:right-0 w-full text-right cursor-text">
                             <a class="text-blue-500 font-medium hover:underline bg-sl-tertiary"

@@ -58,16 +58,24 @@
                     {{-- CONTENT POST --}}
                     {{ $post->content }}
                 </p>
-                <section class="mt-4">
-                    <p class="line-clamp-4">
-                        {{-- LOCATION POST --}}
-                        {{ $post->location }}
-                    </p>
-                    <a href="{{ $post->gmap_url }}" target="_blank" class="line-clamp-4 text-blue-500 hover:underline">
-                        {{-- GMAP_URL POST --}}
-                        {{ $post->gmap_url }}
-                    </a>
+
+                {{-- Place Name & URL Gmaaps --}}
+                <section class="py-2 min-w-fit">
+
+                    <div class="container inline-flex justify-start items-center gap-2 text-shadow-lg my-2 font-semibold">
+                        <input type="text" id="place_name" value="{{ $post->location }}" class="bg-white/10 rounded-md min-w-[80%] w-fit max-w-full focus:ring-blue-500 outline-none focus:border-blue-500 block px-2 py-1 line-clamp-4" readonly>
+                    </div>
+                    
+                    <div class="container inline-flex justify-start items-center gap-2" onclick="window.open('{{ $post->gmap_url }}', '_blank')">
+                        <input type="text" id="gmap-url" value="{{ $post->gmap_url }}"
+                            class="bg-white/10 rounded-md min-w-[80%] w-fit max-w-full focus:ring-blue-500 outline-none focus:border-blue-500 block px-2 py-1 line-clamp-4 text-blue-500 hover:underline" readonly>
+                        <button onclick="window.open('{{ $post->gmap_url }}', '_blank')" class="rounded-md py-1 px-2 bg-sl-senary rounded-md border border-sl-senary hover:scale-90 focus:ring-1 focus:outline-none focus:ring-blue-300 ">
+                            {{-- ICON GMAP --}}
+                            <i class="fa-light fa-location-dot text-sm"></i>
+                        </button>
+                    </div>
                 </section>
+
             </div>
         </section>
         <section class="swiper mySwiperClass w-full max-w-xl h-fit relative bg-sl-quinary rounded-xl">  
