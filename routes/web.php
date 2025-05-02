@@ -17,6 +17,11 @@ Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middl
 Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
 Route::post('/post/{post}', [PostController::class, 'storeComment'])->middleware('auth')->name('post.comment');
 
+// Search
+Route::get('/search', [PostController::class, 'search']);
+Route::post('/search/delete-history', [PostController::class, 'delete_history']);
+Route::post('/search/delete-all-history', [PostController::class, 'delete_all_history']);
+
 
 //TES PROFILE
 Route::get('/profile', function () {

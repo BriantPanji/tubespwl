@@ -21,8 +21,7 @@
             <div class="flex flex-col text-left max-w-5/8 xl:max-w-14/18"> {{-- ini ganti --}}
                 <h1 class="text-xl font-bold text-sl-text/90 ">{{ $user->display_name }}</h1>
                 <p class="text-sm leading-tight text-sl-text/90">{{ '@' . $user->username }}</p>
-                <div
-                    class="w-full  flex items-center customScrollbar h-10 rounded-md mt-2 overflow-x-auto overflow-y-hidden inset-shadow-2xs">
+                <div class="w-full  flex items-center customScrollbar h-10 rounded-md mt-2 overflow-x-auto overflow-y-hidden inset-shadow-2xs">
                     <div class="min-w-full h-full flex items-center gap-1.5 px-1.5 *:whitespace-nowrap">
                         @foreach ($user->badges()->get() as $badge)
                             <span

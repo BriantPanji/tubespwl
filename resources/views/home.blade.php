@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>SudutLain - Beranda</x-slot:title>
     <x-item.postbanner></x-item.postbanner>
-
+    
     @foreach ($posts as $post)
         <article
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">

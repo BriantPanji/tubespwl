@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Post;
 use App\Models\Comment;
+use App\Models\Post;
 use App\Models\PostAttachment;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -17,15 +18,74 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user', 'attachments', 'comments')->orderBy('created_at','desc')->withCount('upvotedBy')->get();
+        $posts = Post::with('user', 'attachments', 'comments')->orderBy('created_at', 'desc')->withCount('upvotedBy')->get();
         $badges = User::with('badges')->get();
         // dd($posts[0]->attachments[0]->namafile);
 
-        
+
         return view('home', [
             'posts' => $posts,
             'badges' => $badges,
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->search;
+        $search = trim(strip_tags($search));
+
+        // History
+        if ($search) {
+            $history = session()->get('search_history', []);
+
+            // Masukkan ke awal array
+            array_unshift($history, $search);
+
+            // Hilangkan duplikat
+            $history = array_unique($history);
+
+            // Batasi jumlah history, misal 10 terakhir
+            $history = array_slice($history, 0, 10);
+
+            // Simpan kembali ke session
+            session(['search_history' => $history]);
+        }
+
+        // $posts = DB::table('posts')->with('user', 'attachments', 'comments')->where('content', 'like', "%" . $search . "%")->get();
+        $posts = Post::with('user', 'attachments', 'comments', 'tag')->where(function ($query) use ($search) {
+            $query->where('title', 'like', "%{$search}%")
+                ->orWhere('content', 'like', "%{$search}%")
+                ->orWhere('location', 'like', "%{$search}%")
+                ->orWhere('gmap_url', 'like', "%{$search}%")
+                ->orWhere('place_name', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($query) use ($search) {
+                    $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
+                })
+                ->orWhereHas('tag', function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                });
+        })->withCount('upvotedBy')->get();
+
+        return view('home', [
+            'posts' => $posts,
+        ]);
+    }
+
+    public function delete_history(Request $request)
+    {
+        $keyword = $request->search;
+
+        $history = session('search_history', []);
+        $filtered = array_filter($history, fn($item) => $item !== $keyword);
+        session(['search_history' => array_values($filtered)]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function delete_all_history()
+    {
+        session()->forget('search_history');
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -94,20 +154,20 @@ class PostController extends Controller
 
     //store comment
     public function storeComment(Request $request, $postId)
-{
-    $request->validate([
-        'content' => 'required|string|max:2048',
-    ]);
+    {
+        $request->validate([
+            'content' => 'required|string|max:2048',
+        ]);
 
-    // Create the comment
-    $comment = new Comment();
-    $comment->post_id = $postId;
-    $comment->user_id = auth()->id();
-    $comment->content = $request->content;
-    $comment->save();
+        // Create the comment
+        $comment = new Comment();
+        $comment->post_id = $postId;
+        $comment->user_id = auth()->id();
+        $comment->content = $request->content;
+        $comment->save();
 
-    return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
-}
+        return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
+    }
 
 
     /**
@@ -191,7 +251,8 @@ class PostController extends Controller
         return response()->json(['message' => 'Post downvoted successfully.']);
     }
 
-    public function bookmark(Post $post) {
+    public function bookmark(Post $post)
+    {
         $user = auth()->user();
 
         if ($user->hasBookmarkedPost($post)) {
@@ -201,6 +262,5 @@ class PostController extends Controller
         }
 
         return response()->json(['message' => 'Success']);
-
     }
 }
