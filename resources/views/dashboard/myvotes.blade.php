@@ -1,5 +1,5 @@
 <x-layout>
-    <x-slot:title>Bookmarks</x-slot:title>
+    <x-slot:title>Votes</x-slot:title>
 
     <div class="container bg-sl-tertiary rounded-md max-w-full h-auto">
         <!-- Header -->
@@ -8,13 +8,13 @@
                 <div class="container flex justify-start items-center w-4">
                     <div class="IcRoundArrowBack relative">
                         <button @click="history.back()">
-                            <i class="fa-light fa-chevron-left xl:text-xl"></i>
+                            <i class="fa-light fa-chevron-left xl:text-xl hover:text-yellow-500"></i>
                         </button>
                     </div>
                 </div>
                 <div class="container flex justify-center items-center gap-2">
                     <i class="fa-light fa-bookmark xl:text-xl hover:text-yellow-500"></i>
-                    <h1 class="text-white text-sm font-medium leading-tight xl:text-base">Tersimpan</h1>
+                    <h1 class="text-white text-sm font-medium leading-tight xl:text-base">Vote</h1>
                 </div>
                 <div class="container flex justify-start items-center w-4"></div>
             </div>
@@ -25,12 +25,12 @@
         <!-- Info -->
         <div class="container inline-flex flex-col justify-start items-center gap-4 py-4">
             <h1 class="text-center text-white text-xs font-light leading-5 px-2 xl:text-base"><i>
-                Postingan yang disimpan bersifat rahasia dan hanya tersedia untuk Anda.</i>
+                Postingan yang diberi vote bersifat rahasia dan hanya tersedia untuk Anda.</i>
             </h1>
 
             <!-- Post Images -->
             <div class="container inline-flex justify-center items-center gap-1 flex-wrap content-start">
-                @forelse($bookmarks as $post)
+                @forelse($myvotes as $post)
                 {{-- @dd($post->attachments->first()->namafile) --}}
             
 
@@ -42,7 +42,7 @@
 
                 @empty
                     <p class="text-white text-xs font-light italic px-2 xl:text-base">
-                        Belum ada postingan disimpan.
+                        Belum ada postingan yang diberi vote.
                     </p>
                 @endforelse
             </div>

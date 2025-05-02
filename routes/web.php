@@ -62,9 +62,8 @@ Route::get('/tes', function () {
 });
 
 Route::get('/my/comments', function () {
-    // $comments = User::with('comments')->get();
-    $posts = Auth::user()->comments()->with('post.user')->get()->pluck('post');
-    return view('dashboard.comment', compact('posts'));
+    $comments = Auth::user()->comments()->with('post')->latest()->get();
+    return view('dashboard.comment', compact('comments'));
 })->middleware('auth')->name('profile.comment');
 
 Route::get('/my/bookmarks', function () {
@@ -76,11 +75,10 @@ Route::get('/my/bookmarks', function () {
 
 Route::get('/my/post', function () {
     $myposts = Auth::user()->posts()->with('user')->get();
-
     return view('dashboard.mypost', compact('myposts'));
 })->middleware('auth')->name('profile.post');
 
 Route::get('/my/votes', function () {
-    $myposts = Auth::user()->posts()->with('user')->get();
-    return view('dashboard.mypost', compact('myposts'));
+    $myvotes = Auth::user()->votedPost()->with('user')->get();
+    return view('dashboard.myvotes', compact('myvotes'));
 })->middleware('auth')->name('profile.vote');

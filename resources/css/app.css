@@ -73,3 +73,8 @@ html {
   .swiper-pagination-bullet-active {
     background-color: var(--color-sl-senary) !important;
   }
+
+  .ring-custom-highlight {
+    box-shadow: 0 0 0 2px rgba(192, 150, 246, 0.7);
+    border-radius: 0.375rem; /* sama seperti rounded-md */
+}
