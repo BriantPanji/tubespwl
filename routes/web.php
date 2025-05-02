@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
@@ -43,6 +44,21 @@ Route::get('/profile', function () {
         'bookmarkCount' => $bookmarkCount,
     ]);
 })->middleware('auth')->name('profile');
+
+//Profile lain
+// Route::get('/profile/{id}', [RegisterUserController::class, 'showOther'])->name('profile.other');
+Route::get('/profile/{id}', function($id) {
+    $user = User::findOrFail($id);
+
+    $myposts = Post::where('user_id', $id)->with('attachments')->get();
+    $postCount = $user->posts()->count();
+    $commentCount = $user->comments()->count();
+    $badgeCount = $user->badges()->count();
+    $postVoteCount = $user->votedPost()->count();
+    $bookmarkCount = $user->bookmarks()->count();
+
+    return view('profile.other', compact('user', 'myposts', 'postCount', 'commentCount', 'badgeCount', 'postVoteCount', 'bookmarkCount'));
+})->name('profile.other');
 
 // Route untuk tampilkan form edit profile
 Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');

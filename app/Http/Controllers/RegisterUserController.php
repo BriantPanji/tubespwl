@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,4 +79,22 @@ class RegisterUserController extends Controller
         // Setelah berhasil, redirect ke halaman edit profile dengan pesan sukses
         return redirect()->route('profile')->with('success', 'Profil berhasil diperbarui !');
     }
+
+    public function showOther($id)
+    {
+        $user = User::findOrFail($id); // atau pakai `where('id', $id)->firstOrFail()`
+        
+        // Hitung data aktivitas pengguna
+        $myposts = Post::where('user_id', $id)->with('attachments')->get();
+        $postCount = $user->posts()->count();
+        $commentCount = $user->comments()->count();
+        $badgeCount = $user->badges()->count();
+        $postVoteCount = $user->votedPost()->count(); // Pastikan relasi ini ada
+        $bookmarkCount = $user->bookmarks()->count();  // Pastikan relasi ini juga ada
+
+        return view('profile.other', compact(
+            'user', 'myposts', 'postCount', 'commentCount', 'badgeCount', 'postVoteCount', 'bookmarkCount'
+        ));
+    }
+
 }
