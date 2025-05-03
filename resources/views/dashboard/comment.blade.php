@@ -1,7 +1,31 @@
 <x-layout>
     <x-slot:title>SudutLain - Komentarku</x-slot:title>
 
-    <h1 class="text-xl font-bold mb-4 text-sl-text">Komentar Saya</h1>
+    <!-- <div class="border flex items-center gap-2">
+        <div data-svg-wrapper data-layer="ic:round-arrow-back">
+            <button @click="history.back()" class="p-2 flex items-center">
+                <i class="fa-light fa-chevron-left xl:text-xl"></i>
+            </button>
+        </div>
+        <h1 class="text-xl font-bold text-sl-text">
+            Komentar Saya
+        </h1>
+    </div> -->
+
+    <div class="container rounded-md bg-sl-tertiary flex justify-between items-center px-2 py-2">
+        <div class="flex items-center w-4">
+            <button @click="history.back()" class="px-2">
+                <i class="fa-light fa-chevron-left xl:text-xl"></i>
+            </button>
+        </div>
+        <div class="flex justify-center items-center gap-3">
+            <div class="flex items-center">
+                <i class="fa-light fa-comment xl:text-xl"></i>
+            </div>
+            <h1 class="text-white text-sm font-medium leading-tight xl:text-base">Komentar Saya</h1>
+        </div>
+        <div class="w-10"></div>
+    </div>
 
     @forelse ($comments as $comment)
         <article class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">

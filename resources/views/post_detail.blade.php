@@ -279,8 +279,9 @@
                                         class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                                 </div>
                             </div>
-                            <p class="text-sm font-extralight text-emerald-500">
-                                {{ $comment->user->badges->first()->badge_name }}</p>
+                            <p class="text-sm font-extralight {{ $comment->user->badges->first() ? 'text-emerald-500' : 'text-gray-400' }}">
+                            {{ optional($comment->user->badges->first())->badge_name ?? ' ' }}
+                            </p>
                             <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
                             <div class="flex justify-between mt-2">
                                 <div class="items-center text-sm opacity-50">
