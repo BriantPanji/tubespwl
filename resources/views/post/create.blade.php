@@ -31,6 +31,17 @@
                     autocomplete="off">{{ old('content') }}</textarea>
                 <x-item.err-form name="content"/>
             </div>
+
+            <div
+                class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
+                <label for="place_name" class="px-1 font-semibold">Nama Tempat:</label>
+                <input type="text" name="place_name" id="place_name"
+                       value="{{ old('place_name') }}"
+                       class="group-hover:scale-101 not-placeholder-shown:scale-101 w-full h-10 rounded-md px-2 bg-sl-tertiary focus:outline-none focus:border-sl-secondary/60 not-placeholder-shown:border-sl-primary/70"
+                       placeholder="Ayam Penyet Mas Panji" required autocomplete="off">
+                <x-item.err-form name="place_name"/>
+            </div>
+            
             <div
                 class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
                 <label for="location" class="px-1 font-semibold">Lokasi:</label>
@@ -49,15 +60,7 @@
                        placeholder="https://maps.app.goo.gl/a4vv1n6h8e87g4uq" required autocomplete="off">
                 <x-item.err-form name="gmap_url"/>
             </div>
-            <div
-                class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
-                <label for="place_name" class="px-1 font-semibold">Nama Tempat:</label>
-                <input type="text" name="place_name" id="place_name"
-                       value="{{ old('place_name') }}"
-                       class="group-hover:scale-101 not-placeholder-shown:scale-101 w-full h-10 rounded-md px-2 bg-sl-tertiary focus:outline-none focus:border-sl-secondary/60 not-placeholder-shown:border-sl-primary/70"
-                       placeholder="Ayam Penyet Mas Panji" required autocomplete="off">
-                <x-item.err-form name="place_name"/>
-            </div>
+            
 
             <div
                 class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
@@ -123,7 +126,7 @@
             <div class="w-full h-auto px-2 pt-1 pb-2 flex justify-center items-center">
                 <button type="submit"
                         class="w-full border-2 border-sl-primary bg-sl-primary font-semibold cursor-pointer rounded-md py-2 hover:bg-sl-primary/50 hover:font-bold hover:scale-102 focus:scale-98">
-                    Ajukan Post
+                    Posting
                 </button>
             </div>
         </form>

@@ -190,26 +190,70 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+        if(auth()->id()!== $post->user_id)
+        {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('post.edit', compact('post'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update database postingan
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        if(auth()->id()!== $post->user_id)
+        {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:128',
+            'content' => 'required|string|max:5120',
+            'location' => 'required|string|max:512',
+            'gmap_url' => 'required|string|max:512',
+            'place_name' => 'required|string|max:512',
+            'hashtag' => 'required|hashtag',
+        ]);
+
+        $validator->validate();
+        $hashtags = collect(explode(',', $request->hashtag))
+            ->map(fn($tag) => trim(strtolower($tag)))
+            ->filter()->unique()->values();
+        $hashtagIds = $hashtags->map(function ($tag) {
+            return Tag::firstOrCreate(['name' => $tag])->id;
+        });
+
+        $post->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'location' => $request->location,
+            'gmap_url' => $request->gmap_url,
+            'place_name' => $request->place_name,
+        ]);
+        $post->tag()->sync($hashtagIds);
+
+        return redirect('/')->with('success', 'Postingan berhasil diperbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
-        //
+        if (auth()->id() !== $post->user_id)
+        {
+        abort(403, 'Unauthorized action.');
+        }
+
+        $post->delete();
+
+        return redirect('/')->with('success', 'Post deleted successfully');
     }
+
 
     public function upvote(Request $request, Post $post)
     {

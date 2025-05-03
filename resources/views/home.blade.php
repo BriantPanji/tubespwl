@@ -5,7 +5,7 @@
     @foreach ($posts as $post)
         <article
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
-            <section @click="window.location.href = '/post/{{ $post->id }}'" x-data="{ showOption: false }"
+            <section x-data="{ showOption: false }"
                 class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2">
                     <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full object-cover"
@@ -47,17 +47,45 @@
                     class="absolute top-8 right-0 min-w-20 max-w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                     {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
                     @can('edit-post', $post)
+                    @if(auth()->user()->id == $post->user_id) {{-- CEK POSTINGAN APAKAH PUNYA PENGGUNA --}}
                         <button @click="window.location.href='/post/{{ $post->id }}/edit'"
                             class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
-                        <button @click=""
-                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Hapus Post</button>
+                        <button
+                            @click.prevent="
+                                Swal.fire({
+                                    title: 'Yakin ingin menghapus?',
+                                    text: 'Postingan ini akan dihapus permanen!',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#e3342f',
+                                    cancelButtonColor: '#6c757d',
+                                    confirmButtonText: 'Ya, hapus!',
+                                    cancelButtonText: 'Batal'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        document.getElementById('delete-post-form-{{ $post->id }}').submit()
+                                    }
+                                })
+                            "
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600">
+                            Hapus Post
+                        </button>
+                        @endif
+                        
+                            <form id="delete-post-form-{{ $post->id }}"
+                                action="{{ route('post.delete', $post) }}"
+                                method="POST"
+                                class="hidden">
+                              @csrf
+                              @method('DELETE')
+                          </form>
                     @endcan
                     <button @click="showOption = false"
                         class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                 </div>
             </section>
 
-            <section @click="window.location.href = '/post/{{ $post->id }}'"
+            <section @click="window.location.href = '/post/{{ $post->id }}'" 
                 class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
                 {{-- URL MENUJU DETAIL POST INI --}}
                 <a href="/post/{{ $post->id }}"
