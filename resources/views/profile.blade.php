@@ -54,7 +54,7 @@
 
         {{-- ANIMASI COUNT --}}
         
-        <div class="container max-w-full inline-flex justify-center items-center gap-5 flex-wrap content-center xl:gap-x-20 xl:gap-y-8">
+        <div class="container max-w-full inline-flex justify-center items-center gap-5 flex-wrap content-center xl:gap-x-10 xl:gap-y-8">
 
                 {{-- POST COUNT --}}
                 <div class="inline-flex flex-col justify-start items-center gap-1" x-data="{
@@ -87,15 +87,15 @@
                     }
                     }" x-init="start()">
                     <div class="inline-flex justify-center items-center bg-white/8 rounded-full size-16 mb-2">
-                    <i class="fa-light fa-rectangle-history text-sl-senary text-3xl"></i>
+                    <i class="fa-duotone fa-rectangle-history text-sl-senary text-3xl"></i>
                     </div>
                     <div class="flex items-center gap-x-2">
                         <span>
-                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl"
+                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl xl:text-2xl"
                             :class="{ 'scale-105': count < target }" x-text="count"> {{-- DISINI ATUR STYLENYAA --}}
                             0
                         </div>
-                        <h2 class="">Post</h2>
+                        <h2 class="text-sm">Post</h2>
                         </span>
                     </div>
                 </div>
@@ -131,15 +131,15 @@
                     }
                     }" x-init="start()">
                     <div class="inline-flex justify-center items-center bg-white/8 rounded-full size-16 mb-2">
-                        <i class="fa-light fa-comment text-sl-senary text-3xl"></i>
+                        <i class="fa-duotone fa-solid fa-comments text-sl-senary text-3xl"></i>
                     </div>
                     <div class="flex items-center gap-x-2">
                         <span>
-                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl"
+                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl xl:text-2xl"
                             :class="{ 'scale-105': count < target }" x-text="count"> {{-- DISINI ATUR STYLENYAA --}}
                             0
                         </div>
-                        <h2 class="">Komentar</h2>
+                        <h2 class="text-sm">Komentar</h2>
                         </span>
                     </div>
                 </div>
@@ -175,15 +175,15 @@
                     }
                     }" x-init="start()">
                     <div class="inline-flex justify-center items-center bg-white/8 rounded-full size-16 mb-2">
-                    <i class="fa-light fa-shield text-sl-senary text-3xl"></i>
+                    <i class="fa-duotone fa-shield-halved text-sl-senary text-3xl"></i>
                     </div>
                     <div class="flex items-center gap-x-2">
                         <span>
-                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl"
+                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl xl:text-2xl"
                             :class="{ 'scale-105': count < target }" x-text="count"> {{-- DISINI ATUR STYLENYAA --}}
                             0
                         </div>
-                        <h2 class="">Badge</h2>
+                        <h2 class="text-sm">Badge</h2>
                         </span>
                     </div>
                 </div>
@@ -219,15 +219,15 @@
                     }
                     }" x-init="start()">
                     <div class="inline-flex justify-center items-center bg-white/8 rounded-full size-16 mb-2">
-                    <i class="fa-light fa-up text-sl-senary text-3xl"></i>
+                    <i class="fa-duotone fa-up text-sl-senary text-3xl"></i>
                     </div>
                     <div class="flex items-center gap-x-2">
                         <span>
-                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl"
+                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl xl:text-2xl"
                             :class="{ 'scale-105': count < target }" x-text="count"> {{-- DISINI ATUR STYLENYAA --}}
                             0
                         </div>
-                        <h2 class="">Vote</h2>
+                        <h2 class="text-sm">Vote</h2>
                         </span>
                     </div>
                 </div>
@@ -263,15 +263,15 @@
                     }
                     }" x-init="start()">
                     <div class="inline-flex justify-center items-center bg-white/8 rounded-full size-16 mb-2">
-                    <i class="fa-light fa-bookmark text-sl-senary text-2xl"></i>
+                    <i class="fa-duotone fa-bookmark text-sl-senary text-2xl"></i>
                     </div>
                     <div class="flex items-center gap-x-2">
                         <span>
-                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl"
+                            <div class="transition-transform duration-300 ease-out max-w-full font-bold align-items-center justify-center flex text-3xl xl:text-2xl"
                             :class="{ 'scale-105': count < target }" x-text="count"> {{-- DISINI ATUR STYLENYAA --}}
                             0
                         </div>
-                        <h2 class="">Tersimpan</h2>
+                        <h2 class="text-sm">Tersimpan</h2>
                         </span>
                     </div>
                 </div>  

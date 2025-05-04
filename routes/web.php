@@ -18,6 +18,11 @@ Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middl
 Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
 Route::post('/post/{post}', [PostController::class, 'storeComment'])->middleware('auth')->name('post.comment');
 
+// Edit & Hapus postingan
+Route::get('/post/{post}/edit', [PostController::class, 'edit'])->middleware('auth')->name('post.edit');
+Route::put('/post/{post}', [PostController::class, 'update'])->middleware('auth')->name('post.update');
+Route::delete('/post/{post}', [PostController::class, 'destroy'])->middleware('auth')->name('post.delete');
+
 // Search
 Route::get('/search', [PostController::class, 'search']);
 Route::post('/search/delete-history', [PostController::class, 'delete_history']);
