@@ -25,20 +25,22 @@
         <!-- Info -->
         <div class="container inline-flex flex-col justify-start items-center gap-4 py-4">
             <h1 class="text-center text-white text-xs font-light leading-5 px-2 xl:text-base"><i>
-                Postingan yang disimpan bersifat rahasia dan hanya tersedia untuk Anda.</i>
+                    Postingan yang disimpan bersifat rahasia dan hanya tersedia untuk Anda.</i>
             </h1>
 
             <!-- Post Images -->
             <div class="container inline-flex justify-center items-center gap-1 flex-wrap content-start">
                 @forelse($bookmarks as $post)
-                {{-- @dd($post->attachments->first()->namafile) --}}
-            
+                    {{-- @dd($post->attachments->first()->namafile) --}}
 
-                <a href="/post/{{ $post->id }}">
-                    <img class="size-27 rounded-md xl:size-40 object-cover hover:size-29 xl:hover:size-42 duration-300"
-                         src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}"
-                         alt="Bookmark Image" />
-                </a>
+
+                    <a href="/post/{{ $post->id }}">
+                        <div class="overflow-hidden">
+                            <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-125 overflow-hidden duration-300"
+                                src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}"
+                                alt="Bookmark Image" />
+                        </div>
+                    </a>
 
                 @empty
                     <p class="text-white text-xs font-light italic px-2 xl:text-base">

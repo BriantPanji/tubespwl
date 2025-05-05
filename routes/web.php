@@ -1,21 +1,31 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\SessionController;
 use App\Http\Controllers\RegisterUserController;
+use App\Http\Controllers\SessionController;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
-//Beranda
+
+// Post
 Route::get('/', [PostController::class, 'index']);
 Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
 Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');
+Route::post('/post/{post}', [PostController::class, 'storeComment'])->middleware('auth')->name('post.comment');
+
+// Upvote/Downvote Post
 Route::post('/post/{post}/upvote', [PostController::class, 'upvote'])->middleware('auth')->name('post.upvote');
 Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middleware('auth')->name('post.downvote');
+
+// Bookmark
 Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
-Route::post('/post/{post}', [PostController::class, 'storeComment'])->middleware('auth')->name('post.comment');
+
+// Comment
+Route::post('/comment/{comment}/upvote', [CommentController::class, 'upvote'])->middleware('auth')->name('comment.upvote');
+Route::post('/comment/{comment}/downvote', [CommentController::class, 'downvote'])->middleware('auth')->name('comment.downvote');
 
 // Search
 Route::get('/search', [PostController::class, 'search']);
@@ -54,6 +64,8 @@ Route::post('/login', [SessionController::class, 'store']);
 Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisterUserController::class, 'store']);
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth')->name('logout');
+Route::get('/forget-password', [SessionController::class, 'forget_password_view']);
+Route::post('/forget-password', [SessionController::class, 'forget_password']);
 
 // Post
 

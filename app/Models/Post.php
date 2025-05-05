@@ -14,36 +14,45 @@ class Post extends Model
     public $incrementing = false;  // Karena bukan auto-increment
     protected $guarded = [];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function comments() {
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
     }
 
-    public function votedBy() {
+    public function votedBy()
+    {
         return $this->belongsToMany(User::class, 'post_votes', 'post_id', 'user_id');
     }
-    public function upvotedBy() {
+    public function upvotedBy()
+    {
         return $this->belongsToMany(User::class, 'post_votes', 'post_id', 'user_id')->where('is_upvoted', 1);
     }
-    public function downvotedBy() {
+    public function downvotedBy()
+    {
         return $this->belongsToMany(User::class, 'post_votes', 'post_id', 'user_id')->where('is_upvoted', -1);
     }
 
-    public function attachments() {
+    public function attachments()
+    {
         return $this->hasMany(PostAttachment::class, 'post_id');
     }
 
-    public function tag() {
+    public function tag()
+    {
         return $this->belongsToMany(Tag::class, 'tag_pivots', 'post_id', 'hashtag_id');
     }
 
-    public function reports() {
+    public function reports()
+    {
         return $this->belongsToMany(User::class, 'post_reports', 'post_id', 'user_id');
     }
-    public function bookmarkedBy() {
+    public function bookmarkedBy()
+    {
         return $this->belongsToMany(User::class, 'bookmarks', 'post_id', 'user_id');
     }
 }
