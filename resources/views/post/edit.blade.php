@@ -56,7 +56,7 @@
 
             <div class="flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
                 <label for="hashtag" class="px-1 font-semibold">Tagar</label>
-                <input type="text" name="hashtag" id="hashtag" value="{{ old('hashtag', $post->hashtag) }}"
+                <input type="text" name="hashtag" id="hashtag" value="{{ old('hashtag', $post->tag()->pluck('name')->implode(', ')) }}"
                     class="w-full h-10 rounded-md px-2 bg-sl-tertiary focus:outline-none focus:border-sl-secondary/60"
                     placeholder="makanan, ayampenyet, geprek, sambalijo" required autocomplete="off">
                 <x-item.err-form name="hashtag" />

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('edit-post', function (?User $user, Post $post) {
             return $user && ($user->is_admin || $post->user->is($user));
+        });
+
+        Gate::define('edit-comment', function (?User $user, Comment $comment) {
+            return $user && ($user->is_admin || $comment->user->is($user));
         });
 
         Validator::extend('alpha_space', function ($attribute, $value) {

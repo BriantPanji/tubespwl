@@ -8,7 +8,9 @@ use App\Models\PostAttachment;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -126,7 +128,7 @@ class PostController extends Controller
         });
 
         $post = Post::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'title' => $request->title,
             'content' => $request->content,
             'location' => $request->location,
@@ -152,22 +154,7 @@ class PostController extends Controller
         return redirect('/')->with('success', 'Post created successfully');
     }
 
-    //store comment
-    public function storeComment(Request $request, $postId)
-    {
-        $request->validate([
-            'content' => 'required|string|max:2048',
-        ]);
-
-        // Create the comment
-        $comment = new Comment();
-        $comment->post_id = $postId;
-        $comment->user_id = auth()->id();
-        $comment->content = $request->content;
-        $comment->save();
-
-        return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
-    }
+    
 
 
     /**
@@ -177,7 +164,7 @@ class PostController extends Controller
     {
         $post = Post::with('user')->withCount('upvotedBy')->findOrFail($postId);
         $badges = User::with('badges');
-        $comments = Comment::with('user')->withCount('votes')->where('post_id', $postId)->orderBy('votes_count', 'desc')->get();
+        $comments = Comment::with('user')->withCount('upvotedBy')->where('post_id', $postId)->orderBy('upvoted_by_count', 'desc')->get();
 
 
         return view('post_detail', [
@@ -192,10 +179,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        if(auth()->id()!== $post->user_id)
-        {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('edit-post', $post);
 
         return view('post.edit', compact('post'));
     }
@@ -205,10 +189,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        if(auth()->id()!== $post->user_id)
-        {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('edit-post', $post);
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:128',
@@ -244,11 +225,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        if (auth()->id() !== $post->user_id)
-        {
-        abort(403, 'Unauthorized action.');
-        }
-
+        Gate::authorize('edit-post', $post);
         $post->delete();
 
         return redirect('/')->with('success', 'Post deleted successfully');
@@ -257,7 +234,7 @@ class PostController extends Controller
 
     public function upvote(Request $request, Post $post)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->hasDownvotedPost($post)) {
             $user->votedPost()->detach($post);
@@ -277,7 +254,7 @@ class PostController extends Controller
 
     public function downvote(Request $request, Post $post)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->hasUpvotedPost($post)) {
             $user->votedPost()->detach($post);
@@ -297,7 +274,7 @@ class PostController extends Controller
 
     public function bookmark(Post $post)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->hasBookmarkedPost($post)) {
             $user->bookmarks()->detach($post->id);
@@ -307,4 +284,21 @@ class PostController extends Controller
 
         return response()->json(['message' => 'Success']);
     }
+
+    public function report(Request $request, Post $post) {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+
+        if (Auth::user()->hasReportedPost($post)) {
+            return response()->json(['message' => 'You have already reported this post.'], 403);
+        }
+
+        Auth::user()->reportedPosts()->attach($post->id, [
+            'content' => $request->reason,
+        ]);
+    
+        return response()->json(['message' => 'Post reported successfully.']);
+    }
+
 }

@@ -27,5 +27,12 @@ class Comment extends Model
         return $this->belongsToMany(User::class, 'comment_reports', 'comment_id', 'user_id');
     }
 
+    public function upvotedBy() {
+        return $this->belongsToMany(User::class, 'comment_votes', 'comment_id', 'user_id')->where('is_upvoted', true);
+    }
+    public function downvotedBy() {
+        return $this->belongsToMany(User::class, 'comment_votes', 'comment_id', 'user_id')->where('is_upvoted', false);
+    }
+
 
 }

@@ -4,12 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
+
+    //store comment
+    public function store(Request $request, $postId)
+    {
+        $request->validate([
+            'content' => 'required|string|max:2048',
+        ]);
+
+        // Create the comment
+        $comment = new Comment();
+        $comment->post_id = $postId;
+        $comment->user_id = Auth::id();
+        $comment->content = $request->content;
+        $comment->save();
+
+        return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
+    }
+
     public function upvote(Request $request, Comment $comment)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->hasDownvotedComment($comment)) {
             $user->votedComments()->detach($comment);
@@ -29,7 +49,7 @@ class CommentController extends Controller
 
     public function downvote(Request $request, Comment $comment)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->hasUpvotedComment($comment)) {
             $user->votedComments()->detach($comment);
@@ -45,5 +65,30 @@ class CommentController extends Controller
         $user->votedComments()->attach($comment, ['is_upvoted' => false]);
 
         return response()->json(['message' => 'Post downvoted successfully.']);
+    }
+
+    public function report(Request $request, Comment $comment)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+        
+        if (Auth::user()->hasReportedComment($comment)) {
+            return response()->json(['message' => 'You have already reported this comment.'], 403);
+        }
+        Auth::user()->reportedComments()->attach($comment->id, [
+            'content' => $request->reason,
+        ]);
+
+
+        return response()->json(['message' => 'Comment reported successfully.']);
+    }
+    public function destroy(Request $request, Comment $comment)
+    {
+        Gate::authorize('edit-comment', $comment);
+
+        $comment->delete();
+
+        return response()->json(['message' => 'Comment deleted successfully.']);
     }
 }

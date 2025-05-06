@@ -3,18 +3,20 @@
     <x-item.postbanner></x-item.postbanner>
     @if ($posts->isEmpty())
         <h1 class="text-center mt-4">Hasil pencarian tidak ditemukan</h1>
-    @else
+    @else 
         @foreach ($posts as $post)
-            <article
+            <article 
+                x-data
+                x-ref="post_{{ $post->id }}"
                 class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
-                <section @click="window.location.href = '/post/{{ $post->id }}'" x-data="{ showOption: false }"
+                <section x-data="{ showOption: false }"
                     class="w-full min-h-12 flex items-center justify-between relative">
-                    <div class="max-w-[75%] h-full flex items-center gap-2">
+                    <div @click="window.location.href = '/post/{{ $post->id }}'" class="max-w-[75%] h-full flex items-center gap-2">
                         <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full object-cover"
                                 src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
                         {{-- FOTO PROFIL USER --}}
                         <div class="flex flex-col h-full justify-center">
-                            <a href="/profile/{{ $post->user_id }}"
+                            <a href="/profile/{{ $post->user->username }}"
                                 class="text-sm lg:text-base font-semibold text-sl-text/90">
                                 @php
                                     $display_name = $post->user->first();
@@ -23,7 +25,7 @@
                                 @if ($display_name)
                                     <span>{{ $post->user->display_name }}</span>
                                 @else
-                                    <span>{{ $post->user->usename }}</span>
+                                    <span>{{ $post->user->username }}</span>
                                 @endif
 
                             </a>
@@ -49,41 +51,82 @@
                         class="absolute top-8 right-0 min-w-20 max-w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                         {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
                         @can('edit-post', $post)
-                        <button @click="window.location.href='/post/{{ $post->id }}/edit'"
-                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit
-                                Post</button>
-                            <button
-                            @click.prevent="
-                                Swal.fire({
-                                    title: 'Yakin ingin menghapus?',
-                                    text: 'Postingan ini akan dihapus permanen!',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#e3342f',
-                                    cancelButtonColor: '#6c757d',
-                                    confirmButtonText: 'Ya, hapus!',
-                                    cancelButtonText: 'Batal'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        document.getElementById('delete-post-form-{{ $post->id }}').submit()
-                                    }
-                                })
-                            "
-                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600">
-                            Hapus
-                                Post
+                        <button @click="window.location.href='/post/{{ $post->id }}/edit'" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
+                        <button @click="
+                            Swal.fire({
+                                title: 'Hapus Postingan',
+                                text: 'Apakah anda yakin ingin menghapus postingan ini?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Hapus',
+                                cancelButtonText: 'Batal',
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    axios.post('/post/{{ $post->id }}', {
+                                        _method: 'DELETE',
+                                        data: {
+                                            _token: '{{ csrf_token() }}'
+                                        }
+                                    })
+                                    .then(() => {
+                                        Swal.fire('Berhasil!', 'Postingan berhasil dihapus!', 'success')
+                                        $refs.post_{{ $post->id }}.remove();
+                                    })
+                                    .catch((error) => {
+                                        console.error(error);
+                                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus postingan.', 'error')
+                                    });
+                                }
+                            }) "
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600 font-bold">
+                            Hapus Post
                         </button>
-                        
-                            <form id="delete-post-form-{{ $post->id }}"
-                                action="{{ route('post.delete', $post) }}"
-                                method="POST"
-                                class="hidden">
-                              @csrf
-                              @method('DELETE')
-                          </form>
                     @endcan
-                        <button @click="showOption = false"
+                    @auth
+                        <button
+                        @click="
+                            Swal.fire({
+                                title: 'Laporkan Postingan',
+                                text: 'Berikan alasan anda!',
+                                icon: 'warning',    
+                                input: 'text',
+                                inputPlaceholder: 'Alasan anda',
+                                showCancelButton: true,
+                                confirmButtonText: 'Laporkan',
+                                cancelButtonText: 'Batal',
+                                allowOutsideClick: false,
+                                preConfirm: (input) => {
+                                    if (!input) {
+                                        Swal.showValidationMessage('Alasan tidak boleh kosong!')
+                                    }
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    const reason = result.value;
+                                    axios.post('/post/{{ $post->id }}/report', {
+                                        reason: reason,
+                                        _token: '{{ csrf_token() }}'
+                                    })
+                                    .then(() => {
+                                        Swal.fire('Berhasil!', 'Postingan berhasil dilaporkan!', 'success')
+                                    })
+                                    .catch((error) => {
+                                        if (error.response.status === 403 && error.response.data.message.startsWith('You have already reported')) {
+                                            Swal.fire('Gagal!', 'Anda Sudah melaporkan Postingan ini', 'error')
+                                        } else {
+                                            console.error(error);
+                                            Swal.fire('Gagal!', 'Terjadi kesalahan saat melaporkan postingan.', 'error')
+                                        }
+                                    });
+                                }
+                            })"
+                        class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                    @endauth
+                    @guest
+                        <button @click="window.location.href = '/login'"
                             class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                    @endguest
                     </div>
                 </section>
 
@@ -133,7 +176,9 @@
                                     class="text-2xl cursor-pointer hover:text-emerald-500"><i
                                         class="fa-light fa-up "></i></button>
 
-                                <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block"></div>
+                                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                                            {{ $post->upvoted_by_count }}
+                                        </div>
                             </span>
 
                             <button @click="window.location.href = '/login'"

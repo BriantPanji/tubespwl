@@ -15,11 +15,13 @@ Route::get('/', [PostController::class, 'index']);
 Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
 Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');
-Route::post('/post/{post}', [PostController::class, 'storeComment'])->middleware('auth')->name('post.comment');
+Route::patch('/comment/{post}', [CommentController::class, 'store'])->middleware('auth')->name('post.comment');
 
 // Upvote/Downvote Post
 Route::post('/post/{post}/upvote', [PostController::class, 'upvote'])->middleware('auth')->name('post.upvote');
 Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middleware('auth')->name('post.downvote');
+
+Route::post('/post/{post}/report', [PostController::class, 'report'])->middleware('auth')->name('post.report');
 
 // Bookmark
 Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
@@ -27,6 +29,9 @@ Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middl
 // Comment
 Route::post('/comment/{comment}/upvote', [CommentController::class, 'upvote'])->middleware('auth')->name('comment.upvote');
 Route::post('/comment/{comment}/downvote', [CommentController::class, 'downvote'])->middleware('auth')->name('comment.downvote');
+
+Route::post('/comment/{comment}/report', [CommentController::class, 'report'])->middleware('auth')->name('comment.report');
+Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth')->name('comment.delete');
 
 // Edit & Hapus postingan
 Route::get('/post/{post}/edit', [PostController::class, 'edit'])->middleware('auth')->name('post.edit');
@@ -60,12 +65,16 @@ Route::get('/profile', function () {
     ]);
 })->middleware('auth')->name('profile');
 
+
+// Route untuk tampilkan form edit profile
+Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
+Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');
+
 //Profile lain
 // Route::get('/profile/{id}', [RegisterUserController::class, 'showOther'])->name('profile.other');
-Route::get('/profile/{id}', function($id) {
-    $user = User::findOrFail($id);
+Route::get('/profile/{user:username}', function(User $user) {
 
-    $myposts = Post::where('user_id', $id)->with('attachments')->get();
+    $myposts = Post::where('user_id', $user->id)->with('attachments')->get();
     $postCount = $user->posts()->count();
     $commentCount = $user->comments()->count();
     $badgeCount = $user->badges()->count();
@@ -74,10 +83,6 @@ Route::get('/profile/{id}', function($id) {
 
     return view('profile.other', compact('user', 'myposts', 'postCount', 'commentCount', 'badgeCount', 'postVoteCount', 'bookmarkCount'));
 })->name('profile.other');
-
-// Route untuk tampilkan form edit profile
-Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
-Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');
 
 
 Route::get('/login', [SessionController::class, 'create'])->name('login');
