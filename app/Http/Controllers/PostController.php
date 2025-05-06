@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\PostAttachment;
 use App\Models\Tag;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -306,5 +307,27 @@ class PostController extends Controller
         }
 
         return response()->json(['message' => 'Success']);
+    }
+
+    public function report(Request $request, Post $post)
+    {   
+        dd('here'); // Pastikan controller ini dipanggil
+
+        return response()->json(['message' => 'This is a test.'], 200); // Response sederhana
+        // dd($post); // Pastikan ini muncul
+        // $user = Auth::user();
+
+        // // Cek jika user sudah melaporkan post ini
+        // if ($user->reportedPosts()->where('post_id', $post->id)->exists()) {
+        //     return response()->json(['message' => 'Anda sudah melaporkan postingan ini'], 400);
+        // }
+
+        // // Logika untuk mencatat laporan
+        // $post->reports()->attach($user->id, [
+        //     'reason' => $request->input('reason', 'No reason provided')
+        // ]);
+        // dd($post->reports()->get()); // Cek apa yang ada di reports setelah attach
+        // // Response berupa JSON
+        // return response()->json(['message' => 'Laporan berhasil dikirim.'], 200);
     }
 }

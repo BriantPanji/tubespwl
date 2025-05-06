@@ -41,8 +41,9 @@ class Post extends Model
     }
 
     public function reports() {
-        return $this->belongsToMany(User::class, 'post_reports', 'post_id', 'user_id');
+        return $this->belongsToMany(User::class, 'post_reports', 'post_id', 'user_id')->withPivot('reason')->withTimestamps();
     }
+
     public function bookmarkedBy() {
         return $this->belongsToMany(User::class, 'bookmarks', 'post_id', 'user_id');
     }

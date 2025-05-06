@@ -56,7 +56,7 @@ class User extends Authenticatable
     }
 
     public function reportedPosts() {
-        return $this->belongsToMany(Post::class, 'post_reports', 'user_id', 'post_id');
+        return $this->belongsToMany(Post::class, 'post_reports', 'user_id', 'post_id')->withPivot('reason')->withTimestamps();
     }
     public function reportedComments() {
         return $this->belongsToMany(Comment::class, 'comment_reports', 'user_id', 'comment_id');

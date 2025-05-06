@@ -23,6 +23,9 @@ Route::get('/post/{post}/edit', [PostController::class, 'edit'])->middleware('au
 Route::put('/post/{post}', [PostController::class, 'update'])->middleware('auth')->name('post.update');
 Route::delete('/post/{post}', [PostController::class, 'destroy'])->middleware('auth')->name('post.delete');
 
+//Laporkan Post
+Route::post('/report/{post}', [PostController::class, 'report'])->middleware('auth')->name('post.report');
+
 // Search
 Route::get('/search', [PostController::class, 'search']);
 Route::post('/search/delete-history', [PostController::class, 'delete_history']);

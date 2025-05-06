@@ -2,6 +2,20 @@
     <x-slot:title>SudutLain - Beranda</x-slot:title>
     <x-item.postbanner></x-item.postbanner>
     
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            })
+        });
+    </script>
+    @endif
+
     @foreach ($posts as $post)
         <article
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
@@ -80,11 +94,46 @@
                               @method('DELETE')
                           </form>
                     @endcan
-                    <button @click="showOption = false"
-                        class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                    <!-- yang ini versi swal -->
+                    <div x-data="{ loading: false }">
+                    <button @click="
+                        Swal.fire({
+                        title: 'Laporkan Postingan',
+                        input: 'text',
+                        inputLabel: 'Tulis alasan laporan',
+                        inputPlaceholder: 'Misalnya: konten tidak pantas',
+                        showCancelButton: true,
+                        confirmButtonText: 'Kirim',
+                        cancelButtonText: 'Batal',
+                        showLoaderOnConfirm: true,
+                        preConfirm: (reason) => {
+                            if (!reason) {
+                            Swal.showValidationMessage('Alasan tidak boleh kosong');
+                            return false;
+                            }
+
+                            loading = true;
+                            return axios.post('/report/{{ $post->id }}', { reason })
+                            .then(response => {
+                                return response.data;
+                            })
+                            .catch(error => {
+                                Swal.showValidationMessage('Gagal mengirim laporan');
+                            })
+                            .finally(() => loading = false);
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire('Terkirim!', 'Laporan Anda telah dikirim.', 'success');
+                        }
+                        });
+                    " :disabled="loading" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">
+                        Laporkan
+                    </button>
+                    </div>
                 </div>
             </section>
-
             <section @click="window.location.href = '/post/{{ $post->id }}'" 
                 class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
                 {{-- URL MENUJU DETAIL POST INI --}}
