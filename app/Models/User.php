@@ -58,8 +58,16 @@ class User extends Authenticatable
     public function reportedPosts() {
         return $this->belongsToMany(Post::class, 'post_reports', 'user_id', 'post_id');
     }
+    public function hasReportedPost(Post $post) {
+        return $this->reportedPosts()->where('post_id', $post->id)->exists();
+    }
+
+
     public function reportedComments() {
         return $this->belongsToMany(Comment::class, 'comment_reports', 'user_id', 'comment_id');
+    }
+    public function hasReportedComment(Comment $comment) {
+        return $this->reportedComments()->where('comment_id', $comment->id)->exists();
     }
 
     public function bookmarks() {

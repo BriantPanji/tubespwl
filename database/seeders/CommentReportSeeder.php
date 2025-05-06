@@ -18,7 +18,9 @@ class CommentReportSeeder extends Seeder
         $users = User::all();
 
         foreach ($users as $user) {
-            $user->reportedComments()->attach($comments->random(2));
+            $user->reportedComments()->attach($comments->random(2), [
+                'content' => fake()->sentence(),
+            ]);
         }
     }
 }

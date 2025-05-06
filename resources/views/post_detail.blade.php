@@ -7,11 +7,11 @@
             class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2">
-                    <a href="/profile/{{ $post->user_id }}"><img class="w-9 h-9 rounded-full"
+                    <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
                             src="{{ asset('img/' . $post->user->avatar) }}"></a>
                     {{-- FOTO PROFIL USER --}}
                     <div class="flex flex-col h-full justify-center">
-                        <a href="/profile/{{ $post->user_id }}"
+                        <a href="/profile/{{ $post->user->username }}"
                             class="text-sm lg:text-base font-semibold text-sl-text/90">
                             @php
                                 $display_name = $post->user->first();
@@ -45,41 +45,84 @@
                     class="absolute top-8 right-0 min-w-20 max-w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                     {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
                     @can('edit-post', $post)
-                    @if(auth()->user()->id == $post->user_id) {{-- CEK POSTINGAN APAKAH PUNYA PENGGUNA --}}
-                        <button @click="window.location.href='/post/{{ $post->id }}/edit'"
-                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
-                        <button
-                            @click.prevent="
-                                Swal.fire({
-                                    title: 'Yakin ingin menghapus?',
-                                    text: 'Postingan ini akan dihapus permanen!',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#e3342f',
-                                    cancelButtonColor: '#6c757d',
-                                    confirmButtonText: 'Ya, hapus!',
-                                    cancelButtonText: 'Batal'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        document.getElementById('delete-post-form-{{ $post->id }}').submit()
-                                    }
-                                })
-                            "
-                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600">
+                        <button @click="window.location.href='/post/{{ $post->id }}/edit'" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
+                        <button @click="
+                            Swal.fire({
+                                title: 'Hapus Postingan',
+                                text: 'Apakah anda yakin ingin menghapus postingan ini?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Hapus',
+                                cancelButtonText: 'Batal',
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    axios.post('/post/{{ $post->id }}', {
+                                        _method: 'DELETE',
+                                        data: {
+                                            _token: '{{ csrf_token() }}'
+                                        }
+                                    })
+                                    .then(() => {
+                                        Swal.fire('Berhasil!', 'Postingan berhasil dihapus!', 'success')
+                                        .then(() => {
+                                            window.location.href = '/';
+                                        });
+                                    })
+                                    .catch((error) => {
+                                        console.error(error);
+                                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus postingan.', 'error')
+                                    });
+                                }
+                            }) "
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600 font-bold">
                             Hapus Post
                         </button>
-                        @endif
-                        
-                            <form id="delete-post-form-{{ $post->id }}"
-                                action="{{ route('post.delete', $post) }}"
-                                method="POST"
-                                class="hidden">
-                              @csrf
-                              @method('DELETE')
-                          </form>
                     @endcan
-                    <button @click="showOption = false"
+                    @auth
+                        <button
+                        @click="
+                            Swal.fire({
+                                title: 'Laporkan Postingan',
+                                text: 'Berikan alasan anda!',
+                                icon: 'warning',    
+                                input: 'text',
+                                inputPlaceholder: 'Alasan anda',
+                                showCancelButton: true,
+                                confirmButtonText: 'Laporkan',
+                                cancelButtonText: 'Batal',
+                                allowOutsideClick: false,
+                                preConfirm: (input) => {
+                                    if (!input) {
+                                        Swal.showValidationMessage('Alasan tidak boleh kosong!')
+                                    }
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    const reason = result.value;
+                                    axios.post('/post/{{ $post->id }}/report', {
+                                        reason: reason,
+                                        _token: '{{ csrf_token() }}'
+                                    })
+                                    .then(() => {
+                                        Swal.fire('Berhasil!', 'Postingan berhasil dilaporkan!', 'success')
+                                    })
+                                    .catch((error) => {
+                                        if (error.response.status === 403 && error.response.data.message.startsWith('You have already reported')) {
+                                            Swal.fire('Gagal!', 'Anda Sudah melaporkan Postingan ini', 'error')
+                                        } else {
+                                            console.error(error);
+                                            Swal.fire('Gagal!', 'Terjadi kesalahan saat melaporkan postingan.', 'error')
+                                        }
+                                    });
+                                }
+                            })"
                         class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                    @endauth
+                    @guest
+                        <button @click="window.location.href = '/login'"
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                    @endguest
                 </div>
             </section>
 
@@ -144,14 +187,16 @@
                 @guest
 
                     {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
-                    <div class="flex w-[35%] md:w-[30%] justify-between">
+                    <div  class="flex w-[35%] md:w-[30%] justify-between">
                         <span class="h-full flex items-center sm:w-[40%]">
 
                             <button @click="window.location.href = '/login'"
                                 class="text-2xl cursor-pointer hover:text-emerald-500"><i
                                     class="fa-light fa-up "></i></button>
 
-                            <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block"></div>
+                                    <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                                        {{ $post->upvoted_by_count }}
+                                    </div>
                         </span>
 
                         <button @click="window.location.href = '/login'"
@@ -285,6 +330,7 @@
 
         <form action="{{ route('post.comment', $post->id) }}" method="POST">
             @csrf
+            @method('PATCH')
             <div class="mt-1 px-2">
                 <div class="">
                     <div class="flex justify-between items-center">
@@ -299,7 +345,7 @@
                             class="ml-1 w-[80%] px-2 bg-[#42394a] rounded-sm p-2 focus:outline-none"
                             placeholder="Tambahkan komentar Anda">
                         <button type="submit">
-                            <i class="fa-light fa-paper-plane-top text-xl hover:opacity-70"></i>
+                            <i class="fa-light fa-paper-plane-top text-xl hover:opacity-70 cursor-pointer"></i>
                         </button>
                     </div>
                 </div>
@@ -308,27 +354,102 @@
 
 
         {{-- Komentar --}}
-        <article class="min-w-full max-w-full w-full min-h-16 pb-5 bg-sl-tertiary rounded-md flex flex-col gap-y-2">
+        <article x-data class="min-w-full max-w-full w-full min-h-16 pb-5 bg-sl-tertiary rounded-md flex flex-col gap-y-2">
             <h1 class="mt-1 text-center text-[14px]">Komentar</h1>
 
             @foreach ($comments as $comment)
-                <div class="mt-1 px-3">
+                <div x-ref="comment_{{ $comment->id }}" class="mt-1 px-3">
                     <div class="flex gap-2.5 items-start">
-                        <img src="{{ asset('img/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2"
+                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ asset('img/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
                             alt="Foto User">
                         <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
                             <div class="py-.5 px-2.5">
                                 <div class="flex justify-between items-center relative" x-data="{ showOption: false }">
                                     <a
-                                        href="/profile/{{ $comment->user->id }}">{{ $comment->user->display_name }}</a>
+                                        href="/profile/{{ $comment->user->username }}">{{ $comment->user->display_name }}</a>
                                     <button @click="showOption=!showOption" class="cursor-pointer"><i
                                             class="fa-light fa-ellipsis text-2xl"></i></button>
 
                                     <div x-cloak x-show="showOption" @click.outside="showOption = false"
-                                        class="absolute top-5 right-0 w-20 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
+                                        class="absolute top-5 right-0 w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                                         {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
-                                        <button @click="showOption = false"
+                                        @can('edit-comment', $comment)
+                                            <button @click="
+                                                Swal.fire({
+                                                    title: 'Hapus Komentar',
+                                                    text: 'Apakah anda yakin ingin menghapus komentar ini?',
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonText: 'Hapus',
+                                                    cancelButtonText: 'Batal',
+                                                    allowOutsideClick: false
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        axios.post('/comment/{{ $comment->id }}', {
+                                                            _method: 'DELETE',
+                                                            data: {
+                                                                _token: '{{ csrf_token() }}'
+                                                            }
+                                                        })
+                                                        .then(() => {
+                                                            Swal.fire('Berhasil!', 'Komentar berhasil dihapus!', 'success')
+                                                            $refs['comment_{{ $comment->id }}'].remove();
+                                                        })
+                                                        .catch((error) => {
+                                                            console.error(error);
+                                                            Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus komentar.', 'error')
+                                                        });
+                                                    }
+                                                }) "
+                                                class="w-max h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600 font-bold">
+                                                Hapus Komen
+                                            </button>
+                                        @endcan
+                                        @auth
+                                            <button
+                                            @click="
+                                                Swal.fire({
+                                                    title: 'Laporkan Komentar',
+                                                    text: 'Berikan alasan anda!',
+                                                    icon: 'warning',    
+                                                    input: 'text',
+                                                    inputPlaceholder: 'Alasan anda',
+                                                    showCancelButton: true,
+                                                    confirmButtonText: 'Laporkan',
+                                                    cancelButtonText: 'Batal',
+                                                    allowOutsideClick: false,
+                                                    preConfirm: (input) => {
+                                                        if (!input) {
+                                                            Swal.showValidationMessage('Alasan tidak boleh kosong!')
+                                                        }
+                                                    }
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        const reason = result.value;
+                                                        axios.post('/comment/{{ $comment->id }}/report', {
+                                                            reason: reason,
+                                                            _token: '{{ csrf_token() }}'
+                                                        })
+                                                        .then(() => {
+                                                            Swal.fire('Berhasil!', 'Komentar berhasil dilaporkan!', 'success')
+                                                        })
+                                                        .catch((error) => {
+                                                            if (error.response.status === 403 && error.response.data.message.startsWith('You have already reported')) {
+                                                                Swal.fire('Gagal!', 'Anda Sudah melaporkan Komentar ini', 'error')
+                                                            } else {
+                                                                console.error(error);
+                                                                Swal.fire('Gagal!', 'Terjadi kesalahan saat melaporkan komentar.', 'error')
+                                                            }
+                                                        });
+                                                    }
+                                                })"
                                             class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                                        @endauth
+                                        @guest
+                                            <button @click="window.location.href = '/login'"
+                                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                                        @endguest
+
                                     </div>
                                 </div>
                                 <p class="text-sm font-extralight {{ $comment->user->badges->first() ? 'text-emerald-500' : 'text-gray-400' }}">
@@ -340,61 +461,79 @@
                                         <small>{{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }}</small>
                                     </div>
 
-                                    {{-- VOte komeen --}}
-                                    <div x-data="{
-                                        upvoted: {{ auth()->user()->hasUpvotedComment($comment) ? 'true' : 'false' }},
-                                        downvoted: {{ auth()->user()->hasDownvotedComment($comment) ? 'true' : 'false' }},
-                                        loading: false,
-                                        toggleUpvote() {
-                                            if (this.loading) return;
-                                            this.loading = true;
-                                            axios.post('/comment/{{ $comment->id }}/upvote', { _token: '{{ csrf_token() }}' })
-                                                .then(() => {
-                                                    this.upvoted = !this.upvoted;
-                                                    if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
-                                                    $refs.voteCount.innerText = parseInt($refs.voteCount.innerText) + (this.upvoted ? 1 : -1);
-                                                })
-                                                .catch(err => console.error(err))
-                                                .finally(() => this.loading = false);
-                                        },
-                                        toggleDownvote() {
-                                            if (this.loading) return;
-                                            this.loading = true;
-                                            axios.post('/comment/{{ $comment->id }}/downvote', { _token: '{{ csrf_token() }}' })
-                                                .then(() => {
-                                                    const wasUpvoted = this.upvoted;
-                                                    const wasDownvoted = this.downvoted;
-                                                    this.downvoted = !this.downvoted;
-                                                    if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
-                                                    let ogCount = {{ $post->upvoted_by_count }};
-                                                    let current = parseInt($refs.voteCount.innerText);
-                                                    if (wasDownvoted && !wasUpvoted) current += 0;
-                                                    else if (wasUpvoted) current -= 1;
-                                                    else if (!wasUpvoted && wasDownvoted) current -= 1;
-                                    
-                                    
-                                                    $refs.voteCount.innerText = current;
-                                                })
-                                                .catch(err => console.error(err))
-                                                .finally(() => this.loading = false);
-                                        }
-                                    }" class="flex items-center justify-end gap-2">
-                                        <button @click="toggleDownvote"
-                                            :class="downvoted ? 'text-red-700 hover:text-red-500' :
-                                                'text-sl-text hover:text-red-700'"
-                                            class="text-2xl cursor-pointer">
-                                            <i :class="downvoted ? 'fa-solid' : 'fa-light'"
-                                                class="fa-light fa-down"></i>
-                                        </button>
-                                        <button @click="toggleUpvote"
-                                            :class="upvoted ? 'text-emerald-500 hover:text-emerald-700' :
-                                                'text-sl-text hover:text-emerald-500'"
-                                            class="text-2xl cursor-pointer">
-                                            <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
-                                        </button>
+                                    @auth
+                                        {{-- VOte komeen --}}
+                                        <div x-data="{
+                                            upvoted: {{ auth()->user()->hasUpvotedComment($comment) ? 'true' : 'false' }},
+                                            downvoted: {{ auth()->user()->hasDownvotedComment($comment) ? 'true' : 'false' }},
+                                            loading: false,
+                                            toggleUpvote() {
+                                                if (this.loading) return;
+                                                this.loading = true;
+                                                axios.post('/comment/{{ $comment->id }}/upvote', { _token: '{{ csrf_token() }}' })
+                                                    .then(() => {
+                                                        this.upvoted = !this.upvoted;
+                                                        if (this.upvoted) this.downvoted = false; // Upvote aktif, downvote harus nonaktif
+                                                        $refs.voteCount.innerText = parseInt($refs.voteCount.innerText) + (this.upvoted ? 1 : -1);
+                                                    })
+                                                    .catch(err => console.error(err))
+                                                    .finally(() => this.loading = false);
+                                            },
+                                            toggleDownvote() {
+                                                if (this.loading) return;
+                                                this.loading = true;
+                                                axios.post('/comment/{{ $comment->id }}/downvote', { _token: '{{ csrf_token() }}' })
+                                                    .then(() => {
+                                                        const wasUpvoted = this.upvoted;
+                                                        const wasDownvoted = this.downvoted;
+                                                        this.downvoted = !this.downvoted;
+                                                        if (this.downvoted) this.upvoted = false; // Downvote aktif, upvote harus nonaktif
+                                                        let ogCount = {{ $post->upvoted_by_count }};
+                                                        let current = parseInt($refs.voteCount.innerText);
+                                                        if (wasDownvoted && !wasUpvoted) current += 0;
+                                                        else if (wasUpvoted) current -= 1;
+                                                        else if (!wasUpvoted && wasDownvoted) current -= 1;
+                                        
+                                        
+                                                        $refs.voteCount.innerText = current;
+                                                    })
+                                                    .catch(err => console.error(err))
+                                                    .finally(() => this.loading = false);
+                                            }
+                                        }" class="flex items-center justify-end gap-2">
+                                            <button @click="toggleDownvote"
+                                                :class="downvoted ? 'text-red-700 hover:text-red-500' :
+                                                    'text-sl-text hover:text-red-700'"
+                                                class="text-2xl cursor-pointer">
+                                                <i :class="downvoted ? 'fa-solid' : 'fa-light'"
+                                                    class="fa-light fa-down"></i>
+                                            </button>
+                                            <button @click="toggleUpvote"
+                                                :class="upvoted ? 'text-emerald-500 hover:text-emerald-700' :
+                                                    'text-sl-text hover:text-emerald-500'"
+                                                class="text-2xl cursor-pointer">
+                                                <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
+                                            </button>
 
-                                        <div x-ref="voteCount" class="text-xs"> {{ $comment->votes_count }}</div>
-                                    </div>
+                                            <div x-ref="voteCount" class="text-xs"> {{ $comment->upvoted_by_count }}</div>
+                                        </div>
+                                        @endauth
+                                        @guest
+                                        <div class="flex items-center justify-end gap-2">
+
+                                            <button @click="window.location.href = '/login'"
+                                            class="text-2xl cursor-pointer text-sl-text hover:text-red-700">
+                                            <i class="fa-light fa-down"></i>
+                                            </button>
+                                            
+                                            <button @click="window.location.href = '/login'"
+                                            class="text-2xl cursor-pointer text-sl-text hover:text-emerald-500">
+                                            <i class="fa-light fa-up"></i>
+                                            </button>
+
+                                            <div x-ref="voteCount" class="text-xs"> {{ $comment->upvoted_by_count }}</div>
+                                        </div>
+                                    @endguest
                                 </div>
                             </div>
                         </div>
