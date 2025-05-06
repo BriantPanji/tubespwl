@@ -18,7 +18,9 @@ class PostReportSeeder extends Seeder
         $users = User::all();
 
         foreach ($users as $user) {
-            $user->reportedPosts()->attach($posts->random(2));
+            $user->reportedPosts()->attach($posts->random(2), [
+                'content' => fake()->sentence()
+            ]);
         }
     }
 }
