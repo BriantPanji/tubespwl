@@ -16,13 +16,11 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // if (!auth()->check() || !auth()->user()->is_admin) {
-        //     abort(403, 'Unauthorized action, Admin Only.');
-        // }
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            abort(403, 'Unauthorized action, Admin Only.');
+        if (auth()->check() && auth()->user()->is_admin) {
+            return $next($request); // lanjut ke route
         }
 
-        return $next($request);
+        // jika bukan admin, bisa redirect atau abort
+        abort(403, 'Akses ditolak. Hanya admin yang boleh masuk.');
     }
 }

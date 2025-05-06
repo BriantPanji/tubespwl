@@ -78,3 +78,12 @@ html {
     box-shadow: 0 0 0 2px rgba(192, 150, 246, 0.7);
     border-radius: 0.375rem; /* sama seperti rounded-md */
 }
+
+.card-glow {
+    border: 1px solid var(--color-sl-quinary);
+    box-shadow: 0 0 10px rgba(192, 150, 246, 0.15);
+    transition: box-shadow 0.3s ease;
+}
+.card-glow:hover {
+    box-shadow: 0 0 20px rgba(192, 150, 246, 0.35);
+}

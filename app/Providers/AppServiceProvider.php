@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\IsAdmin;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::aliasMiddleware('isAdmin', IsAdmin::class);
 
         Gate::define('admin', function (?User $user) {
             return $user && $user->is_admin;
