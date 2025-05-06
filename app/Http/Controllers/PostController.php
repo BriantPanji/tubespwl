@@ -20,9 +20,22 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user', 'attachments', 'comments')->orderBy('created_at', 'desc')->withCount('upvotedBy')->get();
+        $posts = Post::with('user', 'attachments', 'comments')
+        ->orderBy('created_at', 'desc')
+        ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+        ->get()
+        ->map(function ($post) {
+            $score = ($post->upvoted_by_count * 3) +
+                        ($post->downvoted_by_count * 1) -
+                        ($post->comments_count * 2) +
+                        ($post->bookmarks_count * 2);
+
+            $post->weighted_score = $score + rand(0, 10);
+
+            return $post;
+        })
+        ->sortByDesc('weighted_score');
         $badges = User::with('badges')->get();
-        // dd($posts[0]->attachments[0]->namafile);
 
 
         return view('home', [
