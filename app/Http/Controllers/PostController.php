@@ -177,7 +177,7 @@ class PostController extends Controller
     {
         $post = Post::with('user')->withCount('upvotedBy')->findOrFail($postId);
         $badges = User::with('badges');
-        $comments = Comment::with('user')->where('post_id', $postId)->orderBy('created_at', 'desc')->get();
+        $comments = Comment::with('user')->withCount('votes')->where('post_id', $postId)->orderBy('votes_count', 'desc')->get();
 
 
         return view('post_detail', [
