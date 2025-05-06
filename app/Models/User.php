@@ -56,7 +56,7 @@ class User extends Authenticatable
     }
 
     public function reportedPosts() {
-        return $this->belongsToMany(Post::class, 'post_reports', 'user_id', 'post_id');
+        return $this->belongsToMany(Post::class, 'post_reports', 'user_id', 'post_id')->withPivot('content');
     }
     public function hasReportedPost(Post $post) {
         return $this->reportedPosts()->where('post_id', $post->id)->exists();

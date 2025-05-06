@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Models\Post;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
@@ -9,6 +10,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+//Admin Dashboard
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.reports');
+});
 
 // Post
 Route::get('/', [PostController::class, 'index']);
