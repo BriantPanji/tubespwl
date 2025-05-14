@@ -60,28 +60,20 @@ class SessionController extends Controller
     public function forget_password(Request $request)
     {
         // @dd($request->query('m'));
-        $login = $request->query('m');
         $request->validate([
-            $login => ['required'],
+            'email' => ['required'],
             'password' => ['required', 'min:8', 'confirmed', 'regex:/^[a-zA-Z0-9]+$/'],
         ], [
-            $login . '.required' => ucfirst($login) . ' tidak boleh kosong',
+            'email' . '.required' => 'Email tidak boleh kosong',
             'password.required' => 'Password tidak boleh kosong',
             'password.min' => 'Password minimal harus 8 karakter',
             'password.confirmed' => 'Konfirmasi password tidak cocok',
             'password.regex' => 'Password hanya boleh mengandung huruf dan angka (tanpa simbol)',
         ]);
 
-        if ($login == 'email') {
-            $user = User::where('email', $request->email)->first();
-            if (!$user) {
-                return back()->withErrors(['email' => 'Email tidak terdaftar']);
-            }
-        } else {
-            $user = User::where('username', $request->username)->first();
-            if (!$user) {
-                return back()->withErrors(['username' => 'Username tidak terdaftar']);
-            }
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email tidak terdaftar']);
         }
 
         $user->password = Hash::make($request->password);

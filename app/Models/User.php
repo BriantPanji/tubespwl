@@ -3,11 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -36,48 +37,58 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function posts() {
+    public function posts()
+    {
         return $this->hasMany(Post::class);
     }
 
-    public function votedPost() {
+    public function votedPost()
+    {
         return $this->belongsToMany(Post::class, 'post_votes', 'user_id', 'post_id');
     }
 
-    public function comments() {
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
     }
-    public function votedComments() {
+    public function votedComments()
+    {
         return $this->belongsToMany(Comment::class, 'comment_votes', 'user_id', 'comment_id');
     }
 
-    public function badges() {
+    public function badges()
+    {
         return $this->belongsToMany(Badge::class, 'badge_pivots', 'user_id', 'badge_id');
     }
 
-    public function reportedPosts() {
+    public function reportedPosts()
+    {
         return $this->belongsToMany(Post::class, 'post_reports', 'user_id', 'post_id')->withPivot('content');
     }
-    public function hasReportedPost(Post $post) {
+    public function hasReportedPost(Post $post)
+    {
         return $this->reportedPosts()->where('post_id', $post->id)->exists();
     }
 
 
-    public function reportedComments() {
+    public function reportedComments()
+    {
         return $this->belongsToMany(Comment::class, 'comment_reports', 'user_id', 'comment_id');
     }
-    public function hasReportedComment(Comment $comment) {
+    public function hasReportedComment(Comment $comment)
+    {
         return $this->reportedComments()->where('comment_id', $comment->id)->exists();
     }
 
-    public function bookmarks() {
+    public function bookmarks()
+    {
         return $this->belongsToMany(Post::class, 'bookmarks', 'user_id', 'post_id');
     }
     public function postsBookmarked()
     {
         return $this->belongsToMany(Post::class, 'bookmarks');
     }
-    
+
     public function hasBookmarkedPost(Post $post)
     {
         return $this->bookmarks()->where('post_id', $post->id)->exists();
@@ -97,7 +108,8 @@ class User extends Authenticatable
         return $this->votedPost()->where('post_id', $post->id)->where('is_upvoted', false)->exists();
     }
 
-    public function hasVotedComment(Comment $comment) {
+    public function hasVotedComment(Comment $comment)
+    {
         return $this->votedComments()->where('comment_id', $comment->id)->exists();
     }
     public function hasUpvotedComment(Comment $comment)
