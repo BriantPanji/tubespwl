@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout> 
     <x-slot:title>SudutLain - Beranda</x-slot:title>
     <x-item.postbanner></x-item.postbanner>
     @if ($posts->isEmpty())

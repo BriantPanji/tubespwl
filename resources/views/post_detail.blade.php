@@ -272,7 +272,7 @@
                             <div x-ref="voteCount" class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
                                 {{ $post->upvoted_by_count }}
                             </div>
-                        </span>
+                         </span>
                         <button @click="toggleDownvote"
                             :class="downvoted ? 'text-red-700 hover:text-red-500' : 'text-sl-text hover:text-red-700'"
                             class="text-2xl cursor-pointer">

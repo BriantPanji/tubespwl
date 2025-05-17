@@ -7,7 +7,7 @@
         </script>
     @endif
 
-    {{-- PROFIL UTAMA --}}
+    {{-- PROFIL UTAMA --}} 
     <section class="w-full bg-sl-tertiary rounded-md p-6 flex flex-col gap-6">
         {{-- BAGIAN KIRI: FOTO + USERNAME & BIO --}}
         <div class="flex items-center gap-4">
