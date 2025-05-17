@@ -12,7 +12,11 @@ use Illuminate\Support\Facades\Route;
 
 //Admin Dashboard
 Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.reports');
+    Route::get('/admin', [AdminController::class, 'showPost'])->name('admin.post');
+});
+
+Route::middleware(['auth','is_admin'])->group( function(){
+    Route::get('/admin/{tes}', [AdminController::class, 'showCom'])->name('admin.comment');
 });
 
 // Post

@@ -24,7 +24,7 @@ class Comment extends Model
     }
 
     public function reports() {
-        return $this->belongsToMany(User::class, 'comment_reports', 'comment_id', 'user_id');
+        return $this->belongsToMany(User::class, 'comment_reports', 'comment_id', 'user_id')->withPivot('content');
     }
 
     public function upvotedBy() {
