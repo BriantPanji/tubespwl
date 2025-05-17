@@ -37,7 +37,7 @@ class PostController extends Controller
         ->sortByDesc('weighted_score');
         $badges = User::with('badges')->get();
 
-
+        
         return view('home', [
             'posts' => $posts,
             'badges' => $badges,
@@ -140,6 +140,7 @@ class PostController extends Controller
             return Tag::firstOrCreate(['name' => $tag])->id;
         });
 
+
         $post = Post::create([
             'user_id' => Auth::id(),
             'title' => $request->title,
@@ -152,7 +153,7 @@ class PostController extends Controller
         $post->tag()->sync($hashtagIds);
 
 
-        foreach ($request->file('images', [])  as $file) {
+        foreach ($request->file('images', []) as $file) {
             if ($file) {
                 $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
                 $file->storeAs('', $fileName, 'posts');
@@ -164,10 +165,79 @@ class PostController extends Controller
             }
         }
 
+        $user = Auth::user();
+        $postCount = $user->posts()->count();
+
+        //Badge untuk jumlah postingan
+        if ($postCount >= 50 && !$user->badges->contains(12)) {
+            $user->badges()->attach(12);
+        } elseif ($postCount >= 25 && !$user->badges->contains(11)) {
+            $user->badges()->attach(11);
+        } elseif ($postCount >= 10 && !$user->badges->contains(10)) {
+            $user->badges()->attach(10);
+        } elseif ($postCount == 1 && !$user->badges->contains(1)) {
+            // == 1 karena post barusan baru saja dibuat
+            $user->badges()->attach(1);
+        }
+
+        // Badge untuk jumlah foto
+        $photoCount = PostAttachment::whereIn('post_id', $user->posts->pluck('id'))->count();
+        if ($photoCount >= 50 && !$user->badges->contains(18)) {
+            $user->badges()->attach(18);
+        } elseif ($photoCount >= 25 && !$user->badges->contains(17)) {
+            $user->badges()->attach(17);
+        } elseif ($photoCount >= 10 && !$user->badges->contains(16)) {
+            $user->badges()->attach(16);
+        }
+
+
         return redirect('/')->with('success', 'Post created successfully');
     }
 
-    
+    //store comment
+    // public function storeComment(Request $request, $postId)
+    // {
+    //     $request->validate([
+    //         'content' => 'required|string|max:2048',
+    //     ]);
+
+    //     // Create the comment
+    //     $comment = new Comment();
+    //     $comment->post_id = $postId;
+    //     $comment->user_id = auth()->id();
+    //     $comment->content = $request->content;
+    //     $comment->save();
+
+    //     // badge untuk jumlah komentar 
+    //     $user = auth()->user();
+    //     $commentCount = $user->comments()->count();
+
+    //     if ($commentCount >= 50 && !$user->badges->contains(15)) {
+    //         $user->badges()->attach(15);
+    //     } elseif ($commentCount >= 25 && !$user->badges->contains(14)) {
+    //         $user->badges()->attach(14);
+    //     } elseif ($commentCount >= 10 && !$user->badges->contains(13)) {
+    //         $user->badges()->attach(13);
+    //     }
+
+    //     $user = auth()->user();
+
+    //     // Badge untuk jumlah komentar panjang
+    //     $longCommentsCount = Comment::where('user_id', $user->id)
+    //         ->whereRaw('LENGTH(content) >= 500')
+    //         ->count();
+
+    //     // badge berdasarkan jumlah komentar panjang
+    //     if ($longCommentsCount >= 20 && !$user->badges->contains(24)) {
+    //         $user->badges()->attach(24);
+    //     } elseif ($longCommentsCount >= 10 && !$user->badges->contains(23)) {
+    //         $user->badges()->attach(23);
+    //     } elseif ($longCommentsCount >= 5 && !$user->badges->contains(22)) {
+    //         $user->badges()->attach(22);
+    //     }
+
+    //     return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
+    // }
 
 
     /**
@@ -261,6 +331,18 @@ class PostController extends Controller
         }
 
         $user->votedPost()->attach($post, ['is_upvoted' => true]);
+
+        // Badge untuk jumlah votingan
+        $totalVotes = $user->votedPost()->count();
+
+        if ($totalVotes >= 100 && !$user->badges->contains(21)) {
+            $user->badges()->attach(21);
+        } elseif ($totalVotes >= 50 && !$user->badges->contains(20)) {
+            $user->badges()->attach(20);
+        } elseif ($totalVotes >= 20 && !$user->badges->contains(19)) {
+            $user->badges()->attach(19);
+        }
+
 
         return response()->json(['message' => 'Post upvoted successfully.']);
     }
