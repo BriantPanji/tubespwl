@@ -9,13 +9,17 @@ use App\Http\Controllers\SessionController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+
+
 
 //Admin Dashboard
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'showPost'])->name('admin.post');
 });
 
-Route::middleware(['auth','is_admin'])->group( function(){
+Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/{tes}', [AdminController::class, 'showCom'])->name('admin.comment');
 });
 
@@ -81,7 +85,7 @@ Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('
 
 //Profile lain
 // Route::get('/profile/{id}', [RegisterUserController::class, 'showOther'])->name('profile.other');
-Route::get('/profile/{user:username}', function(User $user) {
+Route::get('/profile/{user:username}', function (User $user) {
 
     $myposts = Post::where('user_id', $user->id)->with('attachments')->get();
     $postCount = $user->posts()->count();
@@ -95,14 +99,37 @@ Route::get('/profile/{user:username}', function(User $user) {
 
 
 Route::get('/login', [SessionController::class, 'create'])->name('login');
-Route::post('/login', [SessionController::class, 'store']);
+Route::post('/login', [SessionController::class, 'store'])->middleware('guest');
 Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisterUserController::class, 'store']);
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::get('/forget-password', [SessionController::class, 'forget_password_view']);
 Route::post('/forget-password', [SessionController::class, 'forget_password']);
 
-// Post
+
+// Menampilkan pesan "verifikasi email Anda"
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->name('verification.notice');
+
+// Verifikasi link (dari email)
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill(); // Verifikasi email user
+    return redirect('/'); // Atau dashboard
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+
+// Kirim ulang email verifikasi
+Route::post('/email/verification-notification', function (Request $request) {
+    if (!Auth::check()) {
+        return redirect('/login')->withErrors(['login' => 'Anda harus login untuk mengirim ulang verifikasi.']);
+    }
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Link verifikasi baru telah dikirim!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+
 
 Route::get('/tes', function () {
     return view('welcome');

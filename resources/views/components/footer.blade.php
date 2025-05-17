@@ -6,10 +6,10 @@
     <section class="max-w-full min-h-2 w-full sm:max-w-[65%] text-sl-text/70 flex flex-wrap mt-2 capitalize justify-start gap-24 items-center">
         <div class="flex flex-col text-xs font-semibold ">
             <span class="text-sm font-bold">Team</span>
-            <a class="font-light text-[.7rem] hover:underline cursor-pointer" target="_blank" href="//instagram.com/panjidepari">Panji Depari</a>
+            <a class="font-light text-[.7rem] hover:underline cursor-pointer" target="_blank" href="//instagram.com/panjidepari">Panji Briant Depari</a>
             <a class="font-light text-[.7rem] hover:underline cursor-pointer" target="_blank" href="//instagram.com/feri.gnwn_">Feri Gunawan</a>
             <a class="font-light text-[.7rem] hover:underline cursor-pointer" target="_blank" href="//instagram.com/suttkah">Sutanto</a>
-            <a class="font-light text-[.7rem] hover:underline cursor-pointer" target="_blank" href="//instagram.com/delricoo_">Delrico</a>
+            <a class="font-light text-[.7rem] hover:underline cursor-pointer" target="_blank" href="//instagram.com/delricoo_">Delrico Lie</a>
             <a class="font-light text-[.7rem] hover:underline cursor-pointer" target="_blank" href="//instagram.com/_andreaslim_">Andreas Lim</a>
         </div>
         <div class="flex flex-col text-xs font-semibold ">

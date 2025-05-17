@@ -46,6 +46,16 @@ class SessionController extends Controller
             ]);
         }
 
+        $user = Auth::user();
+        Auth::login($user);
+
+        if (!$user->hasVerifiedEmail()) {
+
+            return redirect()->route('verification.notice')->withErrors([
+                'email' => 'Email Anda belum diverifikasi. Silakan cek email Anda.',
+            ]);
+        }
+
         request()->session()->regenerate();
 
         return redirect('/');
