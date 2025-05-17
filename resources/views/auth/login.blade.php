@@ -32,17 +32,14 @@
                         <button type="submit"
                             class="min-w-full max-w-full min-h-3 h-12 px-4 font-normal text-sl-text bg-sl-primary rounded-xl border-2 border-transparent outline-none hover:border-sl-secondary hover:scale-99 cursor-pointer">Lanjutkan</button>
                         <div class="flex justify-between w-[100%]">
+                            <a class="text-xs text-left w-[100%] text-blue-600 hover:underline"
+                                href="/forget-password">Lupa
+                                Password?</a>
                             @if ($mode == 'email')
-                                <a class="text-xs text-left w-[100%] text-blue-600 hover:underline"
-                                    href="/forget-password?m=email">Lupa
-                                    Password?</a>
                                 <span
                                     class="w-full flex items-end justify-end text-xs m-0 italic text-yellow-700 hover:underline hover:font-semibold"><a
                                         href="/login?m=username">Login dengan username</a></span>
                             @else
-                                <a class="text-xs text-left w-[100%] text-blue-600 hover:underline"
-                                    href="/forget-password?m=username">Lupa
-                                    Password?</a>
                                 <span
                                     class="w-full flex items-end justify-end text-xs m-0 italic text-yellow-700 hover:underline hover:font-semibold"><a
                                         href="/login?m=email">Login dengan email</a></span>

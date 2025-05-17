@@ -37,23 +37,13 @@
                 @csrf
 
                 <!-- Email -->
-                @if ($mode == 'email')
-                    <div class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
-                        <label for="email" class="px-1 font-semibold">Email</label>
-                        <input type="email" name="email" id="email"
-                            class="group-hover:scale-101 not-placeholder-shown:scale-101 w-full h-10 rounded-md px-2 bg-sl-tertiary focus:outline-none focus:border-sl-secondary/60 not-placeholder-shown:border-sl-primary/70"
-                            placeholder="Masukkan email">
-                        <x-item.err-form name="email" />
-                    </div>
-                @else
-                    <div class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
-                        <label for="username" class="px-1 font-semibold">Username</label>
-                        <input type="text" name="username" id="username"
-                            class="group-hover:scale-101 not-placeholder-shown:scale-101 w-full h-10 rounded-md px-2 bg-sl-tertiary focus:outline-none focus:border-sl-secondary/60 not-placeholder-shown:border-sl-primary/70"
-                            placeholder="Masukkan username">
-                        <x-item.err-form name="username" />
-                    </div>
-                @endif
+                <div class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
+                    <label for="email" class="px-1 font-semibold">Email</label>
+                    <input type="email" name="email" id="email"
+                        class="group-hover:scale-101 not-placeholder-shown:scale-101 w-full h-10 rounded-md px-2 bg-sl-tertiary focus:outline-none focus:border-sl-secondary/60 not-placeholder-shown:border-sl-primary/70"
+                        placeholder="Masukkan email">
+                    <x-item.err-form name="email" />
+                </div>
                 <!-- Password -->
                 <div class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
                     <label for="password" class="px-1 font-semibold">Password Baru</label>
