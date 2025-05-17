@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterUserController extends Controller
 {
@@ -28,9 +29,14 @@ class RegisterUserController extends Controller
 
         $user = User::create($attrs);
 
-        Auth::login($user, true);
+        Auth::login($user);
 
-        return redirect('/');
+        // Kirim email verifikasi
+        event(new Registered($user));
+
+        // Jangan login dulu, arahkan ke halaman verifikasi
+        return redirect()->route('verification.notice')
+            ->with('success', 'Registrasi berhasil! Silakan cek email Anda untuk verifikasi.');
     }
 
     // Method untuk tampilkan form edit profile
@@ -83,7 +89,7 @@ class RegisterUserController extends Controller
     public function showOther($id)
     {
         $user = User::findOrFail($id); // atau pakai `where('id', $id)->firstOrFail()`
-        
+
         // Hitung data aktivitas pengguna
         $myposts = Post::where('user_id', $id)->with('attachments')->get();
         $postCount = $user->posts()->count();
@@ -93,8 +99,13 @@ class RegisterUserController extends Controller
         $bookmarkCount = $user->bookmarks()->count();  // Pastikan relasi ini juga ada
 
         return view('profile.other', compact(
-            'user', 'myposts', 'postCount', 'commentCount', 'badgeCount', 'postVoteCount', 'bookmarkCount'
+            'user',
+            'myposts',
+            'postCount',
+            'commentCount',
+            'badgeCount',
+            'postVoteCount',
+            'bookmarkCount'
         ));
     }
-
 }

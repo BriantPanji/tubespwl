@@ -2,6 +2,17 @@
     <x-slot:title>
         Masuk ke SudutLain
     </x-slot:title>
+
+        @if (session('success'))
+        <script>
+            Swal.fire({
+                title: "Berhasil",
+                text: "{{ session()->get('success') }}",
+                icon: "success"
+            });
+        </script>
+    @endif
+
     <main class="bg-sl-base min-w-full max-w-full min-h-screen h-screen text-sl-text">
         <section class="bg-sl-base min-w-full max-w-full min-h-screen flex flex-col justify-center py-10 px-7 xs:px-20 sm:px-32 md:px-48 lg:px-72 xl:px-92 2xl:px-124">
             <div class=" min-w-full max-w-full min-h-[30vh] max-h-[30vh] text-center flex items-center justify-center font-extrabold tracking-wider text-2xl">
