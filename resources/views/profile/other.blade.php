@@ -35,12 +35,14 @@
             </div>
         </div>
 
-        @if (auth()->user()->username == $user->username)
-            <a href="{{ route('profile.edit') }}"
-            class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm text-center">
-            Edit Profil
-            </a>
-        @endif
+        @auth
+            @if (auth()->user()->username == $user->username)
+                <a href="{{ route('profile.edit') }}"
+                class="bg-white/10 hover:bg-white/20 text-sm text-sl-text/90 px-4 py-2 rounded-md shadow-sm text-center">
+                Edit Profil
+                </a>
+            @endif
+        @endauth
     </section>
 
 
