@@ -28,7 +28,7 @@ Route::middleware('email_verified')->group(function () {
     Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
     Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
     Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');
-    Route::patch('/comment/{post}', [CommentController::class, 'store'])->middleware('auth')->name('post.comment');
+    Route::post('/comment/{post}', [CommentController::class, 'store'])->middleware('auth')->name('post.comment');
 
     // Upvote/Downvote Post
     Route::post('/post/{post}/upvote', [PostController::class, 'upvote'])->middleware('auth')->name('post.upvote');

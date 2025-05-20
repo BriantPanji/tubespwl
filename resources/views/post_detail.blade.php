@@ -350,7 +350,6 @@
 
         <form action="{{ route('post.comment', $post->id) }}" method="POST">
             @csrf
-            @method('PATCH')
             <div class="mt-1 px-2">
                 <div class="">
                     <div class="flex justify-between items-center">
@@ -377,7 +376,7 @@
         <article x-data class="min-w-full max-w-full w-full min-h-16 pb-5 bg-sl-tertiary rounded-md flex flex-col gap-y-2">
             <h1 class="mt-1 text-center text-[14px]">Komentar</h1>
 
-            @foreach ($comments as $comment)
+            @forelse ($comments as $comment)
                 <div x-ref="comment_{{ $comment->id }}" class="mt-1 px-3">
                     <div class="flex gap-2.5 items-start">
                         <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ asset('img/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
@@ -559,7 +558,11 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+                @empty
+                    <p class="flex justify-center opacity-50 text-white text-xs font-light italic px-2 xl:text-base">
+                        Belum ada Komentar diposting.
+                    </p>
+            @endforelse
         </article>
 
         <script>
