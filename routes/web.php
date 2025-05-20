@@ -129,3 +129,8 @@ Route::middleware('email_verified')->group(function () {
 
 
 require __DIR__.'/auth.php';
+
+//penjelasan badges
+Route::get('/badges',
+ [\App\Http\Controllers\BadgeController::class,
+  'index'])->name('badges.index');

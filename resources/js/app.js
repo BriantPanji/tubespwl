@@ -5,7 +5,6 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         new Swiper('.mySwiperClass', {
