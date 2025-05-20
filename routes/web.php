@@ -12,117 +12,120 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
+Route::middleware('email_verified')->group(function () {
+
+    //Admin Dashboard
+    Route::middleware(['auth', 'is_admin'])->group(function () {
+        Route::get('/admin', [AdminController::class, 'showPost'])->name('admin.post');
+    });
+
+    Route::middleware(['auth', 'is_admin'])->group(function () {
+        Route::get('/admin/{tes}', [AdminController::class, 'showCom'])->name('admin.comment');
+    });
+
+    // Post
+    Route::get('/', [PostController::class, 'index']);
+    Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
+    Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
+    Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');
+    Route::post('/comment/{post}', [CommentController::class, 'store'])->middleware('auth')->name('post.comment');
+
+    // Upvote/Downvote Post
+    Route::post('/post/{post}/upvote', [PostController::class, 'upvote'])->middleware('auth')->name('post.upvote');
+    Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middleware('auth')->name('post.downvote');
+
+    Route::post('/post/{post}/report', [PostController::class, 'report'])->middleware('auth')->name('post.report');
+
+    // Bookmark
+    Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
+
+    // Comment
+    Route::post('/comment/{comment}/upvote', [CommentController::class, 'upvote'])->middleware('auth')->name('comment.upvote');
+    Route::post('/comment/{comment}/downvote', [CommentController::class, 'downvote'])->middleware('auth')->name('comment.downvote');
+
+    Route::post('/comment/{comment}/report', [CommentController::class, 'report'])->middleware('auth')->name('comment.report');
+    Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth')->name('comment.delete');
+
+    // Edit & Hapus postingan
+    Route::get('/post/{post}/edit', [PostController::class, 'edit'])->middleware('auth')->name('post.edit');
+    Route::put('/post/{post}', [PostController::class, 'update'])->middleware('auth')->name('post.update');
+    Route::delete('/post/{post}', [PostController::class, 'destroy'])->middleware('auth')->name('post.delete');
+
+    // Search
+    Route::get('/search', [PostController::class, 'search']);
+    Route::post('/search/delete-history', [PostController::class, 'delete_history']);
+    Route::post('/search/delete-all-history', [PostController::class, 'delete_all_history']);
+
+    Route::get('/tagar/{tag}', [PostController::class, 'showTag'])->name('tag.show');
 
 
-//Admin Dashboard
-Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'showPost'])->name('admin.post');
+    //TES PROFILE
+    Route::get('/profile', function () {
+        $user = Auth::user();
+
+        // Hitung jumlah postingan, komentar,badge, bookmark dan postvotes
+        $postCount = $user->posts()->count();
+        $commentCount = $user->comments()->count();
+        $badgeCount = $user->badges()->count();
+        $postVoteCount = $user->votedPost()->count();
+        $bookmarkCount = $user->bookmarks()->count();
+
+        return view('profile', [
+            'user' => $user,
+            'postCount' => $postCount,
+            'commentCount' => $commentCount,
+            'badgeCount' => $badgeCount,
+            'postVoteCount' => $postVoteCount,
+            'bookmarkCount' => $bookmarkCount,
+        ]);
+    })->middleware('auth')->name('profile');
+
+
+    // Route untuk tampilkan form edit profile
+    Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
+    Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');
+
+    //Profile lain
+    // Route::get('/profile/{id}', [RegisterUserController::class, 'showOther'])->name('profile.other');
+    Route::get('/profile/{user:username}', function (User $user) {
+
+        $myposts = Post::where('user_id', $user->id)->with('attachments')->get();
+        $postCount = $user->posts()->count();
+        $commentCount = $user->comments()->count();
+        $badgeCount = $user->badges()->count();
+        $postVoteCount = $user->votedPost()->count();
+        $bookmarkCount = $user->bookmarks()->count();
+
+        return view('profile.other', compact('user', 'myposts', 'postCount', 'commentCount', 'badgeCount', 'postVoteCount', 'bookmarkCount'));
+    })->name('profile.other');
+
+
+    Route::get('/tes', function () {
+        return view('welcome');
+    });
+
+    Route::get('/my/comments', function () {
+        $comments = Auth::user()->comments()->with('post')->latest()->get();
+        return view('dashboard.comment', compact('comments'));
+    })->middleware('auth')->name('profile.comment');
+
+    Route::get('/my/bookmarks', function () {
+        $bookmarks = Auth::user()->bookmarks()->with(['user', 'attachments'])->get();
+        return view('dashboard.bookmarks', compact('bookmarks'));
+    })->middleware('auth')->name('profile.bookmark');
+
+
+
+    Route::get('/my/post', function () {
+        $myposts = Auth::user()->posts()->with('user')->get();
+        return view('dashboard.mypost', compact('myposts'));
+    })->middleware('auth')->name('profile.post');
+
+    Route::get('/my/votes', function () {
+        $myvotes = Auth::user()->votedPost()->with('user')->get();
+        return view('dashboard.myvotes', compact('myvotes'));
+    })->middleware('auth')->name('profile.vote');
 });
-
-Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/admin/{tes}', [AdminController::class, 'showCom'])->name('admin.comment');
-});
-
-// Post
-Route::get('/', [PostController::class, 'index']);
-Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
-Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
-Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');
-Route::post('/comment/{post}', [CommentController::class, 'store'])->middleware('auth')->name('post.comment');
-
-// Upvote/Downvote Post
-Route::post('/post/{post}/upvote', [PostController::class, 'upvote'])->middleware('auth')->name('post.upvote');
-Route::post('/post/{post}/downvote', [PostController::class, 'downvote'])->middleware('auth')->name('post.downvote');
-
-Route::post('/post/{post}/report', [PostController::class, 'report'])->middleware('auth')->name('post.report');
-
-// Bookmark
-Route::post('/post/{post}/bookmark', [PostController::class, 'bookmark'])->middleware('auth');
-
-// Comment
-Route::post('/comment/{comment}/upvote', [CommentController::class, 'upvote'])->middleware('auth')->name('comment.upvote');
-Route::post('/comment/{comment}/downvote', [CommentController::class, 'downvote'])->middleware('auth')->name('comment.downvote');
-
-Route::post('/comment/{comment}/report', [CommentController::class, 'report'])->middleware('auth')->name('comment.report');
-Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->middleware('auth')->name('comment.delete');
-
-// Edit & Hapus postingan
-Route::get('/post/{post}/edit', [PostController::class, 'edit'])->middleware('auth')->name('post.edit');
-Route::put('/post/{post}', [PostController::class, 'update'])->middleware('auth')->name('post.update');
-Route::delete('/post/{post}', [PostController::class, 'destroy'])->middleware('auth')->name('post.delete');
-
-// Search
-Route::get('/search', [PostController::class, 'search']);
-Route::post('/search/delete-history', [PostController::class, 'delete_history']);
-Route::post('/search/delete-all-history', [PostController::class, 'delete_all_history']);
-
-
-//TES PROFILE
-Route::get('/profile', function () {
-    $user = Auth::user();
-
-    // Hitung jumlah postingan, komentar,badge, bookmark dan postvotes
-    $postCount = $user->posts()->count();
-    $commentCount = $user->comments()->count();
-    $badgeCount = $user->badges()->count();
-    $postVoteCount = $user->votedPost()->count();
-    $bookmarkCount = $user->bookmarks()->count();
-
-    return view('profile', [
-        'user' => $user,
-        'postCount' => $postCount,
-        'commentCount' => $commentCount,
-        'badgeCount' => $badgeCount,
-        'postVoteCount' => $postVoteCount,
-        'bookmarkCount' => $bookmarkCount,
-    ]);
-})->middleware('auth')->name('profile');
-
-
-// Route untuk tampilkan form edit profile
-Route::get('/profile/edit', [RegisterUserController::class, 'edit'])->name('profile.edit')->middleware('auth');
-Route::patch('/profile/edit', [RegisterUserController::class, 'update'])->name('profile.update')->middleware('auth');
-
-//Profile lain
-// Route::get('/profile/{id}', [RegisterUserController::class, 'showOther'])->name('profile.other');
-Route::get('/profile/{user:username}', function (User $user) {
-
-    $myposts = Post::where('user_id', $user->id)->with('attachments')->get();
-    $postCount = $user->posts()->count();
-    $commentCount = $user->comments()->count();
-    $badgeCount = $user->badges()->count();
-    $postVoteCount = $user->votedPost()->count();
-    $bookmarkCount = $user->bookmarks()->count();
-
-    return view('profile.other', compact('user', 'myposts', 'postCount', 'commentCount', 'badgeCount', 'postVoteCount', 'bookmarkCount'));
-})->name('profile.other');
-
-
-Route::get('/tes', function () {
-    return view('welcome');
-});
-
-Route::get('/my/comments', function () {
-    $comments = Auth::user()->comments()->with('post')->latest()->get();
-    return view('dashboard.comment', compact('comments'));
-})->middleware('auth')->name('profile.comment');
-
-Route::get('/my/bookmarks', function () {
-    $bookmarks = Auth::user()->bookmarks()->with(['user', 'attachments'])->get();
-    return view('dashboard.bookmarks', compact('bookmarks'));
-})->middleware('auth')->name('profile.bookmark');
-
-
-
-Route::get('/my/post', function () {
-    $myposts = Auth::user()->posts()->with('user')->get();
-    return view('dashboard.mypost', compact('myposts'));
-})->middleware('auth')->name('profile.post');
-
-Route::get('/my/votes', function () {
-    $myvotes = Auth::user()->votedPost()->with('user')->get();
-    return view('dashboard.myvotes', compact('myvotes'));
-})->middleware('auth')->name('profile.vote');
 
 
 require __DIR__.'/auth.php';

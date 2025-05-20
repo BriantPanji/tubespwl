@@ -261,7 +261,7 @@ class PostController extends Controller
     {
         $user = Auth::user();
 
-        $post = Post::with('user')->withCount('upvotedBy')->findOrFail($postId);
+        $post = Post::with(['user', 'tag'])->withCount('upvotedBy')->findOrFail($postId);
         $badges = User::with('badges')->get();
         $comments = Comment::with('user')->withCount('upvotedBy')->where('post_id', $postId)->get();
 
@@ -425,6 +425,32 @@ class PostController extends Controller
         ]);
 
         return response()->json(['message' => 'Post reported successfully.']);
+    }
+
+    public function showTag($tag)
+    {
+        $posts = Post::with('user', 'attachments', 'comments')
+            ->whereHas('tag', function ($query) use ($tag) {
+                $query->where('name', $tag);
+            })
+            ->orderBy('created_at', 'desc')
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->get()
+            ->map(function ($post) {
+                $score = ($post->upvoted_by_count * 3) +
+                            ($post->downvoted_by_count * 1) -
+                            ($post->comments_count * 2) +
+                            ($post->bookmarks_count * 2);
+
+                $post->weighted_score = $score + rand(0, 10);
+
+                return $post;
+            })
+            ->sortByDesc('weighted_score');
+
+        return view('home', [
+            'posts' => $posts,
+        ]);
     }
 
 }
