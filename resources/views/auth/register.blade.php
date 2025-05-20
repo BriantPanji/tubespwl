@@ -13,11 +13,18 @@
         </script>
     @endif
 
-    <main class="bg-sl-base min-w-full max-w-full min-h-screen h-screen text-sl-text">
-        <section class="bg-sl-base min-w-full max-w-full min-h-screen flex flex-col justify-center py-10 px-7 xs:px-20 sm:px-32 md:px-48 lg:px-72 xl:px-92 2xl:px-124">
-            <div class=" min-w-full max-w-full min-h-[30vh] max-h-[30vh] text-center flex items-center justify-center font-extrabold tracking-wider text-2xl">
+    <main class=" min-w-full max-w-full min-h-screen h-screen text-sl-text">
+        <section
+            class="min-w-full max-w-full min-h-screen flex flex-col justify-center py-8 px-4 xs:px-20 sm:px-32 md:px-48 lg:px-72 xl:px-92 2xl:px-124 ">
+            <img src="{{ asset('img/backgroundLogin.png') }}" alt="SudutLain"
+                class="size-[121%] absolute top-0 left-0 object-cover -z-99999 2xl:size-[100%]">
+
+            <div class=" max-w-full msax-h-full px-8  py-8 bg-sl-tertiary rounded-xl inline-flex flex-col justify-start items-start gap-2.5 shadow-lg">
+                <div
+                class=" min-w-full max-w-full min-h-[15vh] max-h-[15vh] text-center flex items-center justify-center font-extrabold tracking-wider text-2xl ">
                 <a href="/"><img src="{{ asset('img/logo/sudutlain_wm.png') }}" alt="SudutLain"></a>
             </div>
+
             <div class="min-w-full max-w-full min-h-fit flex flex-col justify-center items-center">
                 <fieldset class="min-w-full max-w-full flex flex-col justify-center items-center text-center">
                     <legend class="float-left font-semibold">Buat akun</legend>
@@ -38,11 +45,12 @@
                     </form>
                 </fieldset>
             </div>
-            <div class="min-w-full max-w-full min-h-[40vh] max-h-[40vh] flex flex-col">
+
+            <div class="in-w-full max-w-full min-h-fit max-h-[40vh] flex flex-col">
                 <div class="relative min-w-full max-w-full min-h-1 h-16 flex items-center justify-center text-sl-text/50">
                     <hr class="border-[1.5px] border-sl-text/50 min-w-full">
                     <div class="min-w-full max-w-full min-h-1 flex items-center justify-center bg-transparent absolute">
-                        <span class="bg-sl-base px-2 text-center">atau</span>
+                        <span class="bg-sl-tertiary px-2 text-center">atau</span>
                     </div>
                 </div>
                 <div class="min-w-full max-w-full min-h-2 text-center flex flex-col items-center text-sl-text/60 gap-5">
@@ -55,6 +63,7 @@
                     </div>
                 </div>
             </div>
+
         </section>
     </main>
 </x-authlayout>
