@@ -56,6 +56,8 @@ Route::get('/search', [PostController::class, 'search']);
 Route::post('/search/delete-history', [PostController::class, 'delete_history']);
 Route::post('/search/delete-all-history', [PostController::class, 'delete_all_history']);
 
+Route::get('/tagar/{tag}', [PostController::class, 'showTag'])->name('tag.show');
+
 
 //TES PROFILE
 Route::get('/profile', function () {

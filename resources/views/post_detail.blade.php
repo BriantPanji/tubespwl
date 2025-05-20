@@ -136,14 +136,26 @@
                     <p class="line-clamp-4">
                         {{-- CONTENT POST --}}
                         {{ $post->content }}
+                        {{-- @foreach ($post->tag as $tag)
+                            <a href="/tagar/{{ $tag->name }}" class="text-blue-500 italic">#{{ $tag->name }}</a>
+                        @endforeach --}}
                     </p>
+                    <section class="w-full h-7 mt-1 flex gap-1">
+                            @if ($post->tag)
+                                @foreach ($post->tag as $tag)
+                                    <a href="/tagar/{{ $tag->name }}"
+                                        class="text-blue-600 font-normal tracking-wide text-xs md:text-sm italic rounded-md hover:text-blue-500 hover:underline">
+                                        #{{ $tag->name }}
+                                    </a>
+                                @endforeach
+                            @endif
+                    </section>
 
                     {{-- Place Name & URL Gmaaps --}}
-                    <section class="py-2 min-w-fit">
-
+                    <section class="py-2 min-w-fit max-w-fit space-y-1.5">
                         <div
-                            class="container inline-flex justify-start items-center gap-2 text-shadow-lg my-2 font-semibold">
-                            <input type="text" id="place_name" value="{{ $post->location }}"
+                            class="container inline-flex justify-start items-center gap-2 text-shadow-lg font-semibold ">
+                            <input type="text" id="place_name" value="{{ $post->place_name }}"
                                 class="bg-white/10 rounded-md min-w-[80%] w-fit max-w-full focus:ring-blue-500 outline-none focus:border-blue-500 block px-2 py-1 line-clamp-4"
                                 readonly>
                         </div>
@@ -151,14 +163,22 @@
                         <div class="container inline-flex justify-start items-center gap-2"
                             onclick="window.open('{{ $post->gmap_url }}', '_blank')">
                             <input type="text" id="gmap-url" value="{{ $post->gmap_url }}"
-                                class="bg-white/10 rounded-md min-w-[80%] w-fit max-w-full focus:ring-blue-500 outline-none focus:border-blue-500 block px-2 py-1 line-clamp-4 text-blue-500 hover:underline"
+                                class="bg-white/10 rounded-md min-w-[80%] cursor-pointer w-fit max-w-full focus:ring-blue-500 outline-none focus:border-blue-500 block px-2 py-1 line-clamp-4 text-blue-500 hover:underline"
                                 readonly>
                             <button onclick="window.open('{{ $post->gmap_url }}', '_blank')"
-                                class="py-1 px-2 bg-sl-senary rounded-md border border-sl-senary hover:scale-90 focus:ring-1 focus:outline-none focus:ring-blue-300 ">
+                                class="py-1 px-2 bg-sl-senary rounded-md cursor-pointer border border-sl-senary hover:scale-90 focus:ring-1 focus:outline-none focus:ring-blue-300 ">
                                 {{-- ICON GMAP --}}
                                 <i class="fa-light fa-location-dot text-sm"></i>
                             </button>
                         </div>
+                        <div
+                            class="container inline-flex justify-start items-center gap-2 text-shadow-lg font-semibold">
+                            <input type="text" id="place_name" value="{{ $post->location }}"
+                                class="bg-white/10 rounded-md min-w-[80%] w-fit max-w-full focus:ring-blue-500 outline-none focus:border-blue-500 block px-2 py-1 line-clamp-4"
+                                readonly>
+                        </div>
+
+                        
                     </section>
 
                 </div>

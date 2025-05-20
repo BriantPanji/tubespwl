@@ -20,12 +20,26 @@ class RegisterUserController extends Controller
 
     public function store()
     {
+        $valMess = [
+            'display_name.required' => 'Nama tampilan tidak boleh kosong',
+            'display_name.alpha_space' => 'Nama tampilan hanya boleh mengandung huruf dan spasi',
+            'username.required' => 'Username tidak boleh kosong',
+            'username.unique' => 'Username sudah terdaftar',
+            'username.alpha_dash' => 'Username hanya boleh mengandung huruf, angka, garis bawah, dan tanda hubung',
+            'email.required' => 'Email tidak boleh kosong',
+            'email.email' => 'Format email tidak valid',
+            'email.unique' => 'Email sudah terdaftar',
+            'password.required' => 'Password tidak boleh kosong',
+            'password.min' => 'Password minimal 8 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak cocok'
+        ];
+
         $attrs = request()->validate([
             'display_name' => ['required', 'alpha_space'],
             'username' => ['required', 'unique:users,username', 'alpha_dash'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', Password::min(8)->letters()->numbers(), 'confirmed']
-        ]);
+        ], $valMess);
 
         $user = User::create($attrs);
 
