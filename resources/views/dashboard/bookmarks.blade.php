@@ -36,7 +36,7 @@
 
                     <a href="/post/{{ $post->id }}">
                         <div class="overflow-hidden">
-                            <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-125 overflow-hidden duration-300"
+                            <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-[1.1] overflow-hidden duration-300"
                                 src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}"
                                 alt="Bookmark Image" />
                         </div>

@@ -3,15 +3,13 @@
     <x-item.postbanner></x-item.postbanner>
     @if ($posts->isEmpty())
         <h1 class="text-center mt-4">Hasil pencarian tidak ditemukan</h1>
-    @else 
+    @else
         @foreach ($posts as $post)
-            <article 
-                x-data
-                x-ref="post_{{ $post->id }}"
-                class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
-                <section x-data="{ showOption: false }"
-                    class="w-full min-h-12 flex items-center justify-between relative">
-                    <div @click="window.location.href = '/post/{{ $post->id }}'" class="max-w-[75%] h-full flex items-center gap-2">
+            <article x-data x-ref="post_{{ $post->id }}"
+                class="min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2 ">
+                <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
+                    <div @click="window.location.href = '/post/{{ $post->id }}'"
+                        class="max-w-[75%] h-full flex items-center gap-2">
                         <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full object-cover"
                                 src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
                         {{-- FOTO PROFIL USER --}}
@@ -51,8 +49,11 @@
                         class="absolute top-8 right-0 min-w-20 max-w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                         {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
                         @can('edit-post', $post)
-                        <button @click="window.location.href='/post/{{ $post->id }}/edit'" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
-                        <button @click="
+                            <button @click="window.location.href='/post/{{ $post->id }}/edit'"
+                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit
+                                Post</button>
+                            <button
+                                @click="
                             Swal.fire({
                                 title: 'Hapus Postingan',
                                 text: 'Apakah anda yakin ingin menghapus postingan ini?',
@@ -79,17 +80,17 @@
                                     });
                                 }
                             }) "
-                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600 font-bold">
-                            Hapus Post
-                        </button>
-                    @endcan
-                    @auth
-                        <button
-                        @click="
+                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-red-600 font-bold">
+                                Hapus Post
+                            </button>
+                        @endcan
+                        @auth
+                            <button
+                                @click="
                             Swal.fire({
                                 title: 'Laporkan Postingan',
                                 text: 'Berikan alasan anda!',
-                                icon: 'warning',    
+                                icon: 'warning',
                                 input: 'text',
                                 inputPlaceholder: 'Alasan anda',
                                 showCancelButton: true,
@@ -121,16 +122,16 @@
                                     });
                                 }
                             })"
-                        class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
-                    @endauth
-                    @guest
-                        <button @click="window.location.href = '/login'"
-                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
-                    @endguest
+                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                        @endauth
+                        @guest
+                            <button @click="window.location.href = '/login'"
+                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                        @endguest
                     </div>
                 </section>
 
-                <section @click="window.location.href = '/post/{{ $post->id }}'" 
+                <section @click="window.location.href = '/post/{{ $post->id }}'"
                     class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
                     {{-- URL MENUJU DETAIL POST INI --}}
                     <a href="/post/{{ $post->id }}"
@@ -160,7 +161,7 @@
                     </div>
                 </section>
                 <section @click="window.location.href = '/post/{{ $post->id }}'" class="w-full h-auto">
-                    <img class="!aspect-video rounded-xl object-cover"
+                    <img class="!aspect-video rounded-xl object-cover w-full"
                         src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}">
                 </section>
                 <section
@@ -176,9 +177,9 @@
                                     class="text-2xl cursor-pointer hover:text-emerald-500"><i
                                         class="fa-light fa-up "></i></button>
 
-                                        <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
-                                            {{ $post->upvoted_by_count }}
-                                        </div>
+                                <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                                    {{ $post->upvoted_by_count }}
+                                </div>
                             </span>
 
                             <button @click="window.location.href = '/login'"
@@ -239,8 +240,8 @@
                                         if (wasDownvoted && !wasUpvoted) current += 0;
                                         else if (wasUpvoted) current -= 1;
                                         else if (!wasUpvoted && wasDownvoted) current -= 1;
-                        
-                        
+
+
                                         $refs.voteCount.innerText = current;
                                     })
                                     .catch(err => console.error(err))
@@ -262,7 +263,8 @@
                             </span>
 
                             <button @click="toggleDownvote"
-                                :class="downvoted ? 'text-red-700 hover:text-red-500' : 'text-sl-text hover:text-red-700'"
+                                :class="downvoted ? 'text-red-700 hover:text-red-500' :
+                                    'text-sl-text hover:text-red-700'"
                                 class="text-2xl cursor-pointer">
                                 <i :class="downvoted ? 'fa-solid' : 'fa-light'" class="fa-light fa-down"></i>
                             </button>
