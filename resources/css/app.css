@@ -19,7 +19,7 @@
     --color-sl-quinary: #42394a;
     --color-sl-text: #fbfbfb;
     --color-sl-senary: #f1a85f;
-
+    --color-sl-septenary: #170a21;
     --text-shadow-xl: 0px 0px 50px rgba(0, 0, 0, 0.6);
     --text-shadow-custom: text-shadow: var(--text-shadow-xl);
 }
@@ -86,4 +86,31 @@ html {
 }
 .card-glow:hover {
     box-shadow: 0 0 20px rgba(192, 150, 246, 0.35);
+}
+
+.theme-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sl-primary) var(--color-sl-tertiary);
+}
+
+.theme-scrollbar::-webkit-scrollbar {
+  width: 0.6rem;
+  background: var(--color-sl-tertiary);
+  border-radius: 0.5rem;
+}
+
+.theme-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--color-sl-primary), var(--color-sl-secondary));
+  border-radius: 0.5rem;
+  border: 2px solid var(--color-sl-tertiary);
+  box-shadow: 0 2px 8px rgba(91, 24, 143, 0.15);
+}
+
+.theme-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--color-sl-secondary), var(--color-sl-primary));
+}
+
+.theme-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-sl-tertiary);
+  border-radius: 0.5rem;
 }

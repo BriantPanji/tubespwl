@@ -102,6 +102,9 @@ window.addEventListener('scroll', () => {
                 @endif
             </div>
         @endauth
+            @can('admin')
+                <a href="/admin" class="cursor-pointer flex items-center justify-center w-fit text-2xl"><i class="fa-light fa-gear "></i></a>
+            @endcan
     </section>
 
 </header>

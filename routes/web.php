@@ -17,7 +17,7 @@ Route::middleware('email_verified')->group(function () {
 
     //Admin Dashboard
     Route::middleware(['auth', 'is_admin'])->group(function () {
-        Route::get('/admin', [AdminController::class, 'showPost'])->name('admin.post');
+        Route::get('/admin', [AdminController::class, 'index'])->name('admin.post');
     });
 
     Route::middleware(['auth', 'is_admin'])->group(function () {
@@ -133,3 +133,8 @@ Route::get('/notification', [NotificationController::class, 'index']);
 
 
 require __DIR__.'/auth.php';
+
+//penjelasan badges
+Route::get('/badges',
+ [\App\Http\Controllers\BadgeController::class,
+  'index'])->name('badges.index');
