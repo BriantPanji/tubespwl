@@ -181,7 +181,7 @@
                 </div>
             </section> --}}
 
-            <section class="flex w-full max-w-full min-w-full items-center justify-center gap-2 md:gap-5 bg-sl-quinary/30 p-2 md:px-5 rounded-lg">
+            <section class="flex w-full max-w-full min-w-full items-start justify-center gap-2 md:gap-5 bg-sl-quinary/30 p-2 md:px-5 rounded-lg">
                 <div class="w-full min-h-20 mt-1">
                     <h1 class="ml-1 mb-1 font-semibold text-xl flex items-center justify-center w-fit whitespace-pre"><i class="fa-light fa-rectangle-history text-lg"></i> Reported Post:</h1>
                     <div class="overflow-x-auto bg-sl-quinary rounded-md border border-sl-text/25 max-h-50 no-scrollbar">
@@ -260,11 +260,11 @@
                             </thead>
 
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-sl-septenary/40">
-                                @forelse ($reportedComments as $post)
+                                @forelse ($reportedComments as $comment)
                                     <tr class="*:text-gray-900 *:first:font-normal text-sm dark:*:text-white">
-                                        <td class="px-3 py-2 whitespace-nowrap max- truncate"><a href="/post/{{ $post->post_id }}#comment-{{ $post->id }}">{{ $post->id }}</a></td>
-                                        <td class="px-3 py-2 whitespace-nowrap"><a href="/profile/{{ $post->user->username }}">{{ $post->user->username }}</a></td>
-                                        {{-- <td class="px-3 py-2 whitespace-nowrap">{{ $post->email }}</td> --}}
+                                        <td class="px-3 py-2 whitespace-nowrap max- truncate"><a href="/post/{{ $comment->post_id }}#comment-{{ $comment->id }}">{{ $comment->id }}</a></td>
+                                        <td class="px-3 py-2 whitespace-nowrap"><a href="/profile/{{ $comment->user->username }}">{{ $comment->user->username }}</a></td>
+                                        {{-- <td class="px-3 py-2 whitespace-nowrap">{{ $comment->email }}</td> --}}
                                         <td class="px-3 py-2 whitespace-nowrap flex items-center justify-center">
                                             <button 
                                                 @click="
@@ -278,8 +278,8 @@
                                                     allowOutsideClick: false
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
-                                                        axios.post('/comment/{{ $post->id }}', {
-                                                            _method: 'DELETE',
+                                                        axios.post('/comment/{{ $comment->id }}', {
+                                                            _method: 'DELETE', 
                                                             data: {
                                                                 _token: '{{ csrf_token() }}'
                                                             }
