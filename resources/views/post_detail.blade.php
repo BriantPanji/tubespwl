@@ -8,7 +8,7 @@
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2">
                     <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
-                            src="{{ asset('img/' . $post->user->avatar) }}"></a>
+                            src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
                     {{-- FOTO PROFIL USER --}}
                     <div class="flex flex-col h-full justify-center">
                         <a href="/profile/{{ $post->user->username }}"
@@ -85,7 +85,7 @@
                             Swal.fire({
                                 title: 'Laporkan Postingan',
                                 text: 'Berikan alasan anda!',
-                                icon: 'warning',    
+                                icon: 'warning',
                                 input: 'text',
                                 inputPlaceholder: 'Alasan anda',
                                 showCancelButton: true,
@@ -253,8 +253,8 @@
                                     if (wasDownvoted && !wasUpvoted) current += 0;
                                     else if (wasUpvoted) current -= 1;
                                     else if (!wasUpvoted && wasDownvoted) current -= 1;
-                    
-                    
+
+
                                     $refs.voteCount.innerText = current;
                                 })
                                 .catch(err => console.error(err))
@@ -335,7 +335,7 @@
                 <div class="">
                     <div class="flex justify-between items-center">
                         @auth
-                            <img src="{{ asset('img/' . auth()->user()->avatar) }}" class="w-[32px] rounded-full"
+                            <img src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}" class="w-[32px] rounded-full"
                                 alt="Foto User">
                         @else
                             <img src="{{ asset('img/blankprofile.png') }}" class="w-[32px] rounded-full"
@@ -360,7 +360,7 @@
             @foreach ($comments as $comment)
                 <div x-ref="comment_{{ $comment->id }}" class="mt-1 px-3">
                     <div class="flex gap-2.5 items-start">
-                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ asset('img/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
+                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ asset('storage/avatars/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
                             alt="Foto User">
                         <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
                             <div class="py-.5 px-2.5">
@@ -411,7 +411,7 @@
                                                 Swal.fire({
                                                     title: 'Laporkan Komentar',
                                                     text: 'Berikan alasan anda!',
-                                                    icon: 'warning',    
+                                                    icon: 'warning',
                                                     input: 'text',
                                                     inputPlaceholder: 'Alasan anda',
                                                     showCancelButton: true,
@@ -493,8 +493,8 @@
                                                         if (wasDownvoted && !wasUpvoted) current += 0;
                                                         else if (wasUpvoted) current -= 1;
                                                         else if (!wasUpvoted && wasDownvoted) current -= 1;
-                                        
-                                        
+
+
                                                         $refs.voteCount.innerText = current;
                                                     })
                                                     .catch(err => console.error(err))
@@ -525,7 +525,7 @@
                                             class="text-2xl cursor-pointer text-sl-text hover:text-red-700">
                                             <i class="fa-light fa-down"></i>
                                             </button>
-                                            
+
                                             <button @click="window.location.href = '/login'"
                                             class="text-2xl cursor-pointer text-sl-text hover:text-emerald-500">
                                             <i class="fa-light fa-up"></i>

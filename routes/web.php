@@ -1,16 +1,17 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Models\Post;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\RegisterUserController;
-use App\Http\Controllers\SessionController;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RegisterUserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 
 
 
@@ -22,6 +23,9 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/{tes}', [AdminController::class, 'showCom'])->name('admin.comment');
 });
+
+// Notifikasi
+Route::get('/notification', [NotificationController::class, 'index']);
 
 // Post
 Route::get('/', [PostController::class, 'index']);
@@ -125,4 +129,4 @@ Route::get('/my/votes', function () {
 })->middleware('auth')->name('profile.vote');
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

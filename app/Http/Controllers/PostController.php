@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
-use App\Models\Post;
-use App\Models\PostAttachment;
 use App\Models\Tag;
+use App\Models\Post;
 use App\Models\User;
+use App\Models\Comment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\PostAttachment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Notifications\VoteNotification;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -21,23 +22,23 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::with('user', 'attachments', 'comments')
-        ->orderBy('created_at', 'desc')
-        ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-        ->get()
-        ->map(function ($post) {
-            $score = ($post->upvoted_by_count * 3) +
-                        ($post->downvoted_by_count * 1) -
-                        ($post->comments_count * 2) +
-                        ($post->bookmarks_count * 2);
+            ->orderBy('created_at', 'desc')
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->get()
+            ->map(function ($post) {
+                $score = ($post->upvoted_by_count * 3) +
+                    ($post->downvoted_by_count * 1) -
+                    ($post->comments_count * 2) +
+                    ($post->bookmarks_count * 2);
 
-            $post->weighted_score = $score + rand(0, 10);
+                $post->weighted_score = $score + rand(0, 10);
 
-            return $post;
-        })
-        ->sortByDesc('weighted_score');
+                return $post;
+            })
+            ->sortByDesc('weighted_score');
         $badges = User::with('badges')->get();
 
-        
+
         return view('home', [
             'posts' => $posts,
             'badges' => $badges,
@@ -208,7 +209,7 @@ class PostController extends Controller
     //     $comment->content = $request->content;
     //     $comment->save();
 
-    //     // badge untuk jumlah komentar 
+    //     // badge untuk jumlah komentar
     //     $user = auth()->user();
     //     $commentCount = $user->comments()->count();
 
@@ -332,6 +333,10 @@ class PostController extends Controller
 
         $user->votedPost()->attach($post, ['is_upvoted' => true]);
 
+        if ($user->id !== $post->user_id) {
+            $post->user->notify(new VoteNotification($user, $post));
+        }
+
         // Badge untuk jumlah votingan
         $totalVotes = $user->votedPost()->count();
 
@@ -342,7 +347,6 @@ class PostController extends Controller
         } elseif ($totalVotes >= 20 && !$user->badges->contains(19)) {
             $user->badges()->attach(19);
         }
-
 
         return response()->json(['message' => 'Post upvoted successfully.']);
     }
@@ -380,7 +384,8 @@ class PostController extends Controller
         return response()->json(['message' => 'Success']);
     }
 
-    public function report(Request $request, Post $post) {
+    public function report(Request $request, Post $post)
+    {
         $request->validate([
             'reason' => 'required|string|max:255',
         ]);
@@ -392,8 +397,7 @@ class PostController extends Controller
         Auth::user()->reportedPosts()->attach($post->id, [
             'content' => $request->reason,
         ]);
-    
+
         return response()->json(['message' => 'Post reported successfully.']);
     }
-
 }
