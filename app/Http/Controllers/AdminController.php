@@ -4,10 +4,55 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    public function index()
+    {
+        $userCount = User::count();
+        $postCount = Post::count();
+        $commentCount = Comment::count();
+        $reportedPostsCount = Post::whereHas('reports')->count(); 
+        $reportedCommentsCount = Comment::whereHas('reports')->count();
+        $votedPostsCount = Post::whereHas('votedBy')->count(); 
+        $votedCommentsCount = Comment::whereHas('votes')->count();
+        $tagsCount = Post::with('tag')->get()->pluck('tag')->flatten()->unique('id')->count(); 
+
+        $admins = User::where('is_admin', true)->get();
+
+        $reportedPosts = Post::withCount('reports')
+            ->whereHas('reports')
+            ->with('user')
+            ->withCount('reports')
+            ->orderByDesc('reports_count')
+            ->take(3)
+            ->get();
+
+        $reportedComments = Comment::withCount('reports')
+            ->whereHas('reports')
+            ->with(['user', 'post'])
+            ->withCount('reports')
+            ->orderByDesc('reports_count')
+            ->take(3)
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'userCount',
+            'postCount', 
+            'commentCount', 
+            'reportedPostsCount', 
+            'reportedCommentsCount',
+            'votedPostsCount', 
+            'votedCommentsCount', 
+            'tagsCount', 
+            'admins',
+            'reportedPosts',
+            'reportedComments'
+        ));
+    }
+
     public function showPost()
     {
         $reportedPosts = Post::whereHas('reports') // Hanya ambil postingan yang punya laporan

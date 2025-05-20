@@ -70,6 +70,7 @@
 
         {{-- BAGIAN KANAN HEADER: LOGO SEARCH DAN ADD POST --}}
         <section class="flex items-center justify-end gap-8 text-2xl !max-w-[25%] w-[25%] sm:!max-w-[60%] sm:w-auto sm:justify-between transition-all relative">
+            
             <button @click="open=!open" type="button" class="cursor-pointer flex items-center justify-center w-fit sm:hidden"><i class="fa-light fa-magnifying-glass"></i></button>
             <form @click="open = !open; $nextTick(() => $refs.searchbar.focus())" method="GET" class="w-full hidden sm:flex items-center gap-5 px-4 py-2 rounded-md">
                 <input x-model="inputValue" :class="scrolled ? 'backdrop-blur-xs bg-sl-tertiary/70' : 'backdrop-blur-none bg-sl-tertiary'" class=" w-full h-10 px-4 text-lg rounded-xl border-transparent outline-none font-light" type="search" name="search" id="search" placeholder="Cari..." required autocomplete="off">
@@ -79,6 +80,9 @@
             @if(!(Request::is('post/add')))
                 <a href="{{ route('post.create') }}" class="cursor-pointer flex items-center justify-center w-fit"><i class="fa-light fa-square-plus"></i></a>
             @endif
+            @can('admin')
+                <a href="/admin" class="cursor-pointer flex items-center justify-center w-fit text-2xl"><i class="fa-light fa-gear "></i></a>
+            @endcan
         </section>
 
 </header>
