@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\CustomVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -118,6 +119,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasDownvotedComment(Comment $comment)
     {
         return $this->votedComments()->where('comment_id', $comment->id)->where('is_upvoted', false)->exists();
+    }
+
+    public function sendEmailVerificationNotification(){
+        $this->notify(new CustomVerifyEmail);
     }
 
     /**
