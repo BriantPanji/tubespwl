@@ -6,6 +6,8 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Notifications\CommentNotification;
+use App\Notifications\VoteCommentNotification;
 
 class CommentController extends Controller
 {
@@ -24,6 +26,10 @@ class CommentController extends Controller
         $comment->content = $request->content;
         $comment->save();
 
+        if ($comment->user->id !== $comment->post->user_id) {
+            $comment->post->user->notify(new CommentNotification($comment->user, $comment));
+        }
+
         return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
     }
 
@@ -40,6 +46,10 @@ class CommentController extends Controller
         if ($user->hasUpvotedComment($comment)) {
             $user->votedComments()->detach($comment);
             return response()->json(['message' => 'Upvote removed successfully.']);
+        }
+
+        if ($user->id !== $comment->user_id) {
+            $comment->user->notify(new VoteCommentNotification($user, $comment));
         }
 
         $user->votedComments()->attach($comment, ['is_upvoted' => true]);
@@ -72,7 +82,7 @@ class CommentController extends Controller
         $request->validate([
             'reason' => 'required|string|max:255',
         ]);
-        
+
         if (Auth::user()->hasReportedComment($comment)) {
             return response()->json(['message' => 'You have already reported this comment.'], 403);
         }

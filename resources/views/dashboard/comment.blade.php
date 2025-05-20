@@ -32,7 +32,7 @@
             <section @click="window.location.href = '/post/{{ $comment->post->id }}#comment-{{ $comment->id }}'"
                 class="cursor-pointer">
                 <div class="flex items-center gap-2">
-                    <a href="/profile/{{ $comment->user_id }}">
+                    <a href="/profile">
                         <img class="w-9 h-9 rounded-full object-cover"
                             src="{{ asset('storage/avatars/' . $comment->user->avatar) }}" alt="Avatar">
                     </a>
