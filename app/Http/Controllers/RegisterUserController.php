@@ -22,7 +22,7 @@ class RegisterUserController extends Controller
     {
         $attrs = request()->validate([
             'display_name' => ['required', 'alpha_space'],
-            'username' => ['required', 'unique:users,username', 'alpha_dash'],
+            'username' => ['required', 'unique:users,username', 'regex:/^[a-zA-Z0-9._-]+$/', 'min:3', 'max:20'],
             'email' => ['required', 'email'],
             'password' => ['required', Password::min(8)->letters()->numbers(), 'confirmed']
         ]);
@@ -54,7 +54,7 @@ class RegisterUserController extends Controller
         // Validasi inputan
         $validated = $request->validate([
             'display_name' => ['required', 'alpha_space'],
-            'username' => ['required', 'unique:users,username,' . $user->id, 'alpha_dash'],
+            'username' => ['required', 'unique:users,username,' . $user->id, 'regex:/^[a-zA-Z0-9._-]+$/'],
             'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // avatar tidak wajib
         ]);
