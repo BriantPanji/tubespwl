@@ -25,9 +25,11 @@
             <div class="container inline-flex justify-center items-center gap-1 flex-wrap content-start">
                 @forelse($myposts as $post)
                     <a href="/post/{{ $post->id }}">
-                        <img class="size-27 rounded-md xl:size-40 object-cover hover:size-29 xl:hover:size-42 duration-300"
+                        <div class="overflow-hidden">
+                            <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-[1.1] overflow-hidden duration-300"
                             src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}"
                             alt="Bookmark Image" />
+                        </div>
                     </a>
 
                 @empty
