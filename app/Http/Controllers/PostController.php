@@ -20,26 +20,40 @@ class PostController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+
         $posts = Post::with('user', 'attachments', 'comments')
-        ->orderBy('created_at', 'desc')
-        ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-        ->get()
-        ->map(function ($post) {
-            $score = ($post->upvoted_by_count * 3) +
-                        ($post->downvoted_by_count * 1) -
-                        ($post->comments_count * 2) +
-                        ($post->bookmarks_count * 2);
+            ->orderBy('created_at', 'desc')
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->get()
+            ->map(function ($post) {
+                $score = ($post->upvoted_by_count * 3) +
+                    ($post->downvoted_by_count * 1) -
+                    ($post->comments_count * 2) +
+                    ($post->bookmarks_count * 2);
 
-            $post->weighted_score = $score + rand(0, 10);
+                $post->weighted_score = $score + rand(0, 10);
+                return $post;
+            });
 
-            return $post;
-        })
-        ->sortByDesc('weighted_score');
+        $oneMinuteAgo = now()->subMinute();
+
+        if ($user) {
+            $recentUserPosts = $posts->filter(function ($post) use ($user, $oneMinuteAgo) {
+                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
+            })->sortByDesc('created_at');
+
+            $otherPosts = $posts->diff($recentUserPosts)->sortByDesc('weighted_score');
+
+            $mergedPosts = $recentUserPosts->merge($otherPosts);
+        } else {
+            $mergedPosts = $posts->sortByDesc('weighted_score');
+        }
+
         $badges = User::with('badges')->get();
 
-        
         return view('home', [
-            'posts' => $posts,
+            'posts' => $mergedPosts,
             'badges' => $badges,
         ]);
     }
@@ -245,17 +259,33 @@ class PostController extends Controller
      */
     public function show($postId)
     {
-        $post = Post::with('user')->withCount('upvotedBy')->findOrFail($postId);
-        $badges = User::with('badges');
-        $comments = Comment::with('user')->withCount('upvotedBy')->where('post_id', $postId)->orderBy('upvoted_by_count', 'desc')->get();
+        $user = Auth::user();
 
+        $post = Post::with('user')->withCount('upvotedBy')->findOrFail($postId);
+        $badges = User::with('badges')->get();
+        $comments = Comment::with('user')->withCount('upvotedBy')->where('post_id', $postId)->get();
+
+        if ($user) {
+            $userComments = $comments->filter(function($c) use ($user) {
+                return $c->user_id === $user->id;
+            })->sortByDesc('created_at');
+        
+            $otherComments = $comments->reject(function($c) use ($user) {
+                return $c->user_id === $user->id;
+            })->sortByDesc('upvoted_by_count');
+        
+            $mergedComments = $userComments->merge($otherComments);
+        } else {
+            $mergedComments = $comments->sortByDesc('upvoted_by_count');
+        }
 
         return view('post_detail', [
             'post' => $post,
             'badges' => $badges,
-            'comments' => $comments,
+            'comments' => $mergedComments,
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -380,7 +410,8 @@ class PostController extends Controller
         return response()->json(['message' => 'Success']);
     }
 
-    public function report(Request $request, Post $post) {
+    public function report(Request $request, Post $post)
+    {
         $request->validate([
             'reason' => 'required|string|max:255',
         ]);
@@ -392,7 +423,7 @@ class PostController extends Controller
         Auth::user()->reportedPosts()->attach($post->id, [
             'content' => $request->reason,
         ]);
-    
+
         return response()->json(['message' => 'Post reported successfully.']);
     }
 
