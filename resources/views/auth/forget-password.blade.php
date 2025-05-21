@@ -32,7 +32,7 @@
 
         <section
             class="min-w-full max-w-full w-full min-h-2 h-auto bg-sl-tertiary px-3 pt-3 pb-3 flex flex-col gap-3 border-2 border-sl-tertiary">
-            <form method="POST" action="/forget-password?m={{ $mode }}" enctype="multipart/form-data"
+            <form method="POST" action="/forget-password" enctype="multipart/form-data"
                 class="w-full h-auto flex flex-col gap-3">
                 @csrf
 
