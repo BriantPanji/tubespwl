@@ -17,7 +17,7 @@
         <section
             class="min-w-full max-w-full min-h-screen flex flex-col justify-center py-8 px-4 xs:px-20 sm:px-32 md:px-48 lg:px-72 xl:px-92 2xl:px-124 ">
             <img src="{{ asset('img/backgroundLogin.png') }}" alt="SudutLain"
-                class="size-[121%] absolute top-0 left-0 object-cover -z-99999 2xl:size-[100%]">
+                class="size-[123%] absolute top-0 left-0 object-cover -z-99999 2xl:size-[100%]">
 
             <div class=" max-w-full msax-h-full px-8  py-8 bg-sl-tertiary rounded-xl inline-flex flex-col justify-start items-start gap-2.5 shadow-lg">
                 <div
