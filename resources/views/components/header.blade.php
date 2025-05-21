@@ -90,6 +90,8 @@ window.addEventListener('scroll', () => {
             <a href="{{ route('post.create') }}" class="cursor-pointer flex items-center justify-center w-fit"><i
                     class="fa-light fa-square-plus"></i></a>
         @endif
+        @cannot('admin')
+            
         @auth
 
             @php
@@ -102,6 +104,7 @@ window.addEventListener('scroll', () => {
                 @endif
             </div>
         @endauth
+        @endcannot
             @can('admin')
                 <a href="/admin" class="cursor-pointer flex items-center justify-center w-fit text-2xl"><i class="fa-light fa-gear "></i></a>
             @endcan

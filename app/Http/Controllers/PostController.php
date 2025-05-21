@@ -32,14 +32,6 @@ class PostController extends Controller
                     ($post->downvoted_by_count * 1) -
                     ($post->comments_count * 2) +
                     ($post->bookmarks_count * 2);
-            ->orderBy('created_at', 'desc')
-            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->get()
-            ->map(function ($post) {
-                $score = ($post->upvoted_by_count * 3) +
-                    ($post->downvoted_by_count * 1) -
-                    ($post->comments_count * 2) +
-                    ($post->bookmarks_count * 2);
 
                 $post->weighted_score = $score + rand(0, 10);
                 return $post;
