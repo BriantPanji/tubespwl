@@ -2,7 +2,7 @@
     <x-slot:title>SudutLain - Beranda</x-slot:title>
     <x-item.postbanner></x-item.postbanner>
     @if ($posts->isEmpty())
-        <h1 class="text-center mt-4">Hasil pencarian tidak ditemukan</h1>
+        <h1 class="text-center mt-4">Pencarian "{{ request('search') }}" tidak ditemukan</h1>
     @else
         @foreach ($posts as $post)
             <article x-data x-ref="post_{{ $post->id }}"

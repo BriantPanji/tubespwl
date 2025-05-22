@@ -70,7 +70,7 @@
                 </article>
             @endif
         @empty
-            <p class="text-center text-sl-text/60">Kamu belum membuat komentar apa pun</p>
+            <p class="text-center text-sl-text/60">Kamu belum memiliki notifikasi apa pun</p>
         @endforelse
 
 </x-layout>
