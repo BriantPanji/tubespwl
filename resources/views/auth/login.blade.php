@@ -11,16 +11,16 @@
 
             
 {{-- CARD --}}
-            <div class=" max-w-full msax-h-full px-8  py-8 bg-sl-tertiary rounded-xl inline-flex flex-col justify-start items-start gap-2.5 shadow-lg">
+            <div class="text-sm lg:text-base max-w-full max-h-full px-8  py-8 bg-sl-tertiary rounded-xl inline-flex flex-col justify-start items-start gap-2.5 shadow-lg">
                 <div
-                class=" min-w-full max-w-full min-h-[20vh] max-h-[20vh] text-center flex items-center justify-center font-extrabold tracking-wider text-2xl ">
+                class=" min-w-full max-w-full min-h-[10vh] max-h-[10vh] text-center flex items-center justify-center font-extrabold tracking-wider text-2xl ">
                 <a href="/"><img src="{{ asset('img/logo/sudutlain_wm.png') }}" alt="SudutLain"></a>
             </div>
 
             <div class="min-w-full max-w-full min-h-fit flex flex-col justify-center items-center">
                 <fieldset class="min-w-full max-w-full flex flex-col justify-center items-center text-center">
                     <legend class="float-left font-semibold">Masuk ke akun Anda</legend>
-                    <span class="text-sm font-light mb-5">Silahkan login untuk melanjutkan ke <b>SudutLain</b></span>
+                    <span class="font-light mb-5">Silahkan login untuk melanjutkan ke <b>SudutLain</b></span>
                     <form method="POST" action="/login"
                     class="min-w-full max-w-full min-h-2 flex flex-col justify-center items-center gap-2.5 *:transition-all">
                     @csrf
