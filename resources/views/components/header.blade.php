@@ -57,17 +57,63 @@ window.addEventListener('scroll', () => {
     </div>
 
     {{-- BAGIAN KIRI HEADER: PP DAN LOGO --}}
-    <section class="flex items-center justify-start min-w-[25%]">
-        @auth
-            <a href="/profile" class="cursor-pointer"><img class="w-9 h-9 rounded-full"
-                    src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}" alt="profilepicture.jpg"></a>
-        @endauth
+    <section x-data="{isNavOpen: false}" class="flex items-center justify-start min-w-[25%] relative">
         @guest
             <a href="/login" class="cursor-pointer"><img class="w-9 h-9 rounded-full"
                     src="{{ asset('img/blankprofile.png') }}" alt="profilepicture.jpg"></a>
         @endguest
+        @auth
+            
+            <button @dblclick="window.location.href='/profile'" @click="isNavOpen = !isNavOpen" class="cursor-pointer"><img class="w-9 h-9 rounded-full hover:shadow-sm shadow-sl-text"
+                    src="{{ asset('img/blankprofile.png') }}" alt="profilepicture.jpg"></button>
+        @endauth
         <a href="/" class="cursor-pointer"><img class="h-9 max-h-9" src="{{ asset('img/logo/sudutlain_wm.png') }}"
                 alt=""></a>
+        @auth
+        <nav x-cloak x-show="isNavOpen && !hideHeader" @click.outside="isNavOpen=false" class="min-w-50 max-w-50 w-50 min-h-20 bg-sl-tertiary/60 backdrop-blur-3xl absolute top-11 left-1 rounded-lg px-1.5 py-1.5 flex flex-col  shadow-sl-text divide-y divide-sl-text/20 border border-sl-text/10" style="border-width:0.5px;">
+            <div class="min-w-full max-w-full min-h-10 h-10">
+                <a href="{{ route('profile') }}" class="flex items-center justify-start py-1 w-full min-h-full h-full max-h-full text-base gap-2 px-3 cursor-pointer hover:font-medium hover:bg-sl-septenary/20 transition-all duration-200 ease-in-out rounded-md">
+                    <i class="fa-light fa-user"></i>
+                    <span class=" text-sl-text/80">Profile</span>
+                </a>
+            </div>
+            @can('admin')
+                
+            <div class="min-w-full max-w-full min-h-10 h-10">
+                <a href="/admin" class="flex items-center justify-start py-1 w-full min-h-full h-full max-h-full text-base gap-2 px-3 cursor-pointer hover:font-medium hover:bg-sl-septenary/20 transition-all duration-200 ease-in-out rounded-md">
+                    <i class="fa-light fa-gear"></i>
+                    <span class=" text-sl-text/80">Admin</span>
+                </a>
+            </div>
+            @endcan
+            <div class="min-w-full max-w-full min-h-10 h-10">
+                <form action="{{ route('logout') }}" method="POST" class="min-w-full max-w-full h-full" >
+                    @csrf
+                    <button @click="
+                        (e) => {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Logout',
+                                text: 'Apakah Anda yakin ingin keluar?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Ya',
+                                cancelButtonText: 'Tidak'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $el.form.submit();
+                                }
+                            });
+                        }
+                    " type="submit" class="flex items-center justify-start py-1 w-full min-h-full h-full max-h-full text-base gap-2 px-3 cursor-pointer hover:font-medium hover:bg-sl-septenary/20 transition-all duration-200 ease-in-out rounded-md">
+                        <i class="fa-light fa-right-from-bracket"></i>
+                        <span class=" text-sl-text/80">Logout</span>
+                    </button>
+                </form>
+            </div>
+        </nav>
+        @endauth
+
     </section>
 
     {{-- BAGIAN KANAN HEADER: LOGO SEARCH DAN ADD POST --}}
@@ -90,10 +136,8 @@ window.addEventListener('scroll', () => {
             <a href="{{ route('post.create') }}" class="cursor-pointer flex items-center justify-center w-fit"><i
                     class="fa-light fa-square-plus"></i></a>
         @endif
-        @cannot('admin')
             
         @auth
-
             @php
                 $unreadCount = auth()->user()->unreadNotifications->count();
             @endphp
@@ -104,10 +148,6 @@ window.addEventListener('scroll', () => {
                 @endif
             </div>
         @endauth
-        @endcannot
-            @can('admin')
-                <a href="/admin" class="cursor-pointer flex items-center justify-center w-fit text-2xl"><i class="fa-light fa-gear "></i></a>
-            @endcan
     </section>
 
 </header>
