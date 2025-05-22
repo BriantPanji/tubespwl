@@ -138,3 +138,4 @@ require __DIR__.'/auth.php';
 Route::get('/badges',
  [\App\Http\Controllers\BadgeController::class,
   'index'])->name('badges.index');
+  

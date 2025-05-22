@@ -8,7 +8,7 @@
     @endif
 
     {{-- PROFIL UTAMA --}}
-    <section class="w-full bg-sl-tertiary rounded-md p-6 flex flex-col gap-6">
+    <section class="w-full bg-sl-tertiary rounded-md p-6 flex flex-col gap-6 text-sm 2xl:text-base">
         {{-- BAGIAN KIRI: FOTO + USERNAME & BIO --}}
         <div class="flex items-center gap-4">
             {{-- FOTO PROFIL --}}
