@@ -1,70 +1,79 @@
 <x-layout>
     <x-slot:title>SudutLain - Notifikasi</x-slot:title>
 
-    @php $notifications = auth()->user()->notifications @endphp
-    <section>
-        <h1 class="text-center text-2xl mb-2">Notifikasi</h1>
+    @php
+    $notifications = auth()->user()->notifications
+    @endphp
+    <h1 class="text-center text-md font-semibold xl:text-xl mb-2 mt-4">Notifikasi</h1>
+    <section class="bg-sl-tertiary rounded-lg">
         @forelse ($notifications as $notification)
-            {{-- @dd($notification->data) --}}
+            {{-- @dd($notification) --}}
             @if ($notification->type == 'App\Notifications\VoteNotification')
                 <article @click="window.location.href = '/post/{{ $notification->data['post_id'] }}'"
-                    class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 mb-2">
+                    class="md:max-w-full w-full min-h-16 h-auto rounded-md flex flex-col p-3">
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
                             <a href="/profile">
-                                <img class="w-9 h-9 rounded-full object-cover"
+                                <img class="w-9 rounded-full object-cover"
                                     src="{{ asset('storage/avatars/' . $notification->data['voter']['avatar']) }}"
                                     alt="Avatar">
-
                             </a>
-                            <div class="flex items-center">
-                                <p class="text-sm whitespace-pre">{{ $notification->data['message'] }} </p>
-                                <p class="text-sm text-sl-text/60 italic">Pada postingan:
-                                    <a class="underline hover:text-blue-400"
-                                        href="/post/{{ $notification->data['post_id'] }}">{{ $notification->data['post_title'] }}</a>
-                                </p>
+                            <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
+                                <div class="ml-3">
+                                    <div class="text-xs whitespace-pre flex">
+                                        <p class="font-bold">{{ $notification->data['voter']['display_name']}}</p> {{ $notification->data['message'] }} </div>
+                                    <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['post_created_at'])->diffForHumans() }}</p>
+
+                                </div>
+                                <div class="w-[50px] h-[50px]">
+                                    <img src="{{ asset("storage/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                </div>
                             </div>
                     </section>
                 </article>
             @elseif($notification->type == 'App\Notifications\VoteCommentNotification')
                 <article
                     @click="window.location.href = '/post/{{ $notification->data['post_id'] }}#comment-{{ $notification->data['comment_id'] }}'"
-                    class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 mb-2">
+                    class="md:max-w-full w-full min-h-16 h-auto rounded-md flex flex-col p-3">
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
                             <a href="/profile">
-                                <img class="w-9 h-9 rounded-full object-cover"
+                                <img class="w-9 rounded-full object-cover"
                                     src="{{ asset('storage/avatars/' . $notification->data['voter']['avatar']) }}"
                                     alt="Avatar">
-
                             </a>
-                            <div class="flex items-center">
-                                <p class="text-sm whitespace-pre">{{ $notification->data['message'] }} </p>
-                                <p class="text-sm text-sl-text/60 italic">Pada postingan:
-                                    <a class="underline hover:text-blue-400"
-                                        href="/post/{{ $notification->data['post_id'] }}">{{ $notification->data['post_title'] }}</a>
-                                </p>
+                            <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
+                                <div class="ml-3">
+                                    <div class="text-sm whitespace-pre flex">
+                                        <p class="font-bold">{{ $notification->data['voter']['display_name']}}</p> {{ $notification->data['message'] }} Anda "{{ Str::limit($notification->data['comment_content'], 15) }}" </div>
+                                        <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
+                                </div>
+                                <div class="w-[50px] h-[50px]">
+                                    <img src="{{ asset("storage/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                </div>
                             </div>
                     </section>
                 </article>
             @elseif($notification->type == 'App\Notifications\CommentNotification')
                 <article
                     @click="window.location.href = '/post/{{ $notification->data['post_id'] }}#comment-{{ $notification->data['comment_id'] }}'"
-                    class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 mb-2">
+                    class="md:max-w-full w-full min-h-16 h-auto rounded-md flex flex-col p-3">
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
                             <a href="/profile">
-                                <img class="w-9 h-9 rounded-full object-cover"
+                                <img class="w-9 rounded-full object-cover"
                                     src="{{ asset('storage/avatars/' . $notification->data['user']['avatar']) }}"
                                     alt="Avatar">
-
                             </a>
-                            <div class="flex items-center">
-                                <p class="text-sm whitespace-pre">{{ $notification->data['message'] }} </p>
-                                <p class="text-sm text-sl-text/60 italic">Pada postingan:
-                                    <a class="underline hover:text-blue-400"
-                                        href="/post/{{ $notification->data['post_id'] }}">{{ $notification->data['post_title'] }}</a>
-                                </p>
+                            <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
+                                <div class="ml-3">
+                                    <div class="text-sm whitespace-pre flex">
+                                        <p class="font-bold">{{ $notification->data['user']['display_name']}}</p> {{ $notification->data['message'] }} "{{ Str::limit($notification->data['comment_content'], 15) }}" </div>
+                                        <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
+                                </div>
+                                <div class="w-[50px] h-[50px]">
+                                    <img src="{{ asset("storage/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                </div>
                             </div>
                     </section>
                 </article>
@@ -72,5 +81,5 @@
         @empty
             <p class="text-center text-sl-text/60">Kamu belum memiliki notifikasi apa pun</p>
         @endforelse
-
+    </section>
 </x-layout>
