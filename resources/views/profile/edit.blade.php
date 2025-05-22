@@ -8,7 +8,7 @@
     </section>
 
     <section
-        class="min-w-full max-w-full w-full min-h-2 h-auto bg-sl-tertiary rounded-md px-3 pt-3 pb-3 flex flex-col gap-3 border-2 border-sl-tertiary">
+        class="min-w-full max-w-full w-full min-h-2 h-auto bg-sl-tertiary rounded-md px-3 pt-3 pb-3 flex flex-col gap-3 border-2 border-sl-tertiary text-sm xl:text-base">
         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data"
             class="w-full h-auto flex flex-col gap-3">
             @method('PATCH') <!-- Menggunakan PATCH, karena route menggunakan PATCH -->
