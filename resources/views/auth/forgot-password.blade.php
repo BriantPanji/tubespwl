@@ -23,6 +23,11 @@
         </script>
     @endif
 
+    <main
+            class="min-w-full max-w-full min-h-screen flex flex-col justify-center py-8 px-4 xs:px-20 sm:px-32 md:px-48 lg:px-72 xl:px-92 2xl:px-124 ">
+            <img src="{{ asset('img/backgroundLogin.png') }}" alt="SudutLain"
+                class="size-[100%] absolute top-0 left-0 object-cover -z-99999">
+
     <div class="p-4 max-w-[600px] xl:max-w-[700px] m-auto">
         <section
             class="w-full min-h-2 h-24 md:h-30 px-3 pb-2 bg-sl-tertiary rounded-t-md flex flex-col gap-1 justify-center items-center">
@@ -86,4 +91,6 @@
             </ol>
         </section>
     </div>
+
+    </main>
 </x-authlayout>
