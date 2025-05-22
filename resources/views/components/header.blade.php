@@ -32,7 +32,7 @@ window.addEventListener('scroll', () => {
         <article class="min-w-full max-w-full min-h-2 flex flex-col" x-data="searchHistoryComponent()">
             <div class="flex items-center justify-between px-4 py-2 text-sm text-sl-text/60 shadow-xs">
                 <span>Terbaru</span>
-                <span class="text-xs cursor-pointer" @click="deleteAllHistory">Hapus semua</span>
+                <span class="text-xs cursor-pointer" @click="deleteAllHistory()">Hapus semua</span>
             </div>
             <div class="min-w-full max-w-full min-h-2 max-h-36 h-auto overflow-y-auto overflow-x-clip customScrollbar">
                 <div class="flex flex-col min-w-full w-full max-w-full min-h-2 pr-3 *:!text-sm">
@@ -91,7 +91,7 @@ window.addEventListener('scroll', () => {
                     class="fa-light fa-square-plus"></i></a>
         @endif
         @cannot('admin')
-            
+
         @auth
 
             @php
@@ -133,7 +133,7 @@ window.addEventListener('scroll', () => {
                     .catch(error => {
                         console.error("Gagal menghapus history:", error);
                     });
-            }
+            },
 
             // Hapus semua history
             deleteAllHistory() {
