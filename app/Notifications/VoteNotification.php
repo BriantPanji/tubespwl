@@ -49,9 +49,11 @@ class VoteNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "{$this->voter->display_name} menyukai postinganmu.",
+            'message' => "menyukai postinganmu.",
             'post_id' => $this->post->id,
             'post_title' => $this->post->title,
+            'post_img' => $this->post->attachments[0]->namafile,
+            'post_created_at' => $this->post->created_at,
             'voter' => [
                 'username' => $this->voter->username,
                 'display_name' => $this->voter->display_name,

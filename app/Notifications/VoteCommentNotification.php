@@ -49,10 +49,13 @@ class VoteCommentNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "{$this->voter->display_name} menyukai komentarmu.",
+            'message' => "menyukai komentar",
             'comment_id' => $this->comment->id,
+            'comment_content' => $this->comment->content,
+            'comment_created_at' => $this->comment->created_at,
             'post_id' => $this->comment->post_id,
             'post_title' => $this->comment->post->title,
+            'post_img' => $this->comment->post->attachments[0]->namafile,
             'voter' => [
                 'username' => $this->voter->username,
                 'display_name' => $this->voter->display_name,
