@@ -210,52 +210,6 @@ class PostController extends Controller
         return redirect('/')->with('success', 'Post created successfully');
     }
 
-    //store comment
-    // public function storeComment(Request $request, $postId)
-    // {
-    //     $request->validate([
-    //         'content' => 'required|string|max:2048',
-    //     ]);
-
-    //     // Create the comment
-    //     $comment = new Comment();
-    //     $comment->post_id = $postId;
-    //     $comment->user_id = auth()->id();
-    //     $comment->content = $request->content;
-    //     $comment->save();
-
-    //     // badge untuk jumlah komentar
-    //     $user = auth()->user();
-    //     $commentCount = $user->comments()->count();
-
-    //     if ($commentCount >= 50 && !$user->badges->contains(15)) {
-    //         $user->badges()->attach(15);
-    //     } elseif ($commentCount >= 25 && !$user->badges->contains(14)) {
-    //         $user->badges()->attach(14);
-    //     } elseif ($commentCount >= 10 && !$user->badges->contains(13)) {
-    //         $user->badges()->attach(13);
-    //     }
-
-    //     $user = auth()->user();
-
-    //     // Badge untuk jumlah komentar panjang
-    //     $longCommentsCount = Comment::where('user_id', $user->id)
-    //         ->whereRaw('LENGTH(content) >= 500')
-    //         ->count();
-
-    //     // badge berdasarkan jumlah komentar panjang
-    //     if ($longCommentsCount >= 20 && !$user->badges->contains(24)) {
-    //         $user->badges()->attach(24);
-    //     } elseif ($longCommentsCount >= 10 && !$user->badges->contains(23)) {
-    //         $user->badges()->attach(23);
-    //     } elseif ($longCommentsCount >= 5 && !$user->badges->contains(22)) {
-    //         $user->badges()->attach(22);
-    //     }
-
-    //     return redirect()->route('post.detail', ['post' => $postId])->with('success', 'Komentar berhasil ditambahkan!');
-    // }
-
-
     /**
      * Display the specified resource.
      */

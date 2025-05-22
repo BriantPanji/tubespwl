@@ -8,9 +8,12 @@
     @endif
 
     {{-- PROFIL UTAMA --}}
-    <section class=" bg-sl-tertiary rounded-md p-6 flex flex-col gap-6">
+    <section class="relative bg-sl-tertiary rounded-md p-6 flex flex-col gap-6">
+        <button @click="history.back()" class="absolute top-4 left-4">
+            <i class="fa-light fa-chevron-left xl:text-xl"></i>
+        </button>
         {{-- BAGIAN KIRI: FOTO + USERNAME & BIO --}}
-        <div class="flex items-center gap-4">
+        <div class="flex mt-6 items-center gap-4">
             {{-- FOTO PROFIL --}}
             <div class="w-24 h-24 shrink-0">
                 <img class="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"

@@ -4,9 +4,12 @@
         <x-slot:title>Detail Postingan</x-slot:title>
 
         <article
-            class="min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
+            class="relative min-w-full max-w-full w-full min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-2">
+            <button @click="history.back()" class="absolute top-4 left-4 z-10 cursor-pointer">
+                <i class="fa-light fa-chevron-left xl:text-xl"></i>
+            </button>
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
-                <div class="max-w-[75%] h-full flex items-center gap-2">
+                <div class="max-w-[75%] h-full flex items-center gap-2 mt-10">
                     <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
                             src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
                     {{-- FOTO PROFIL USER --}}
