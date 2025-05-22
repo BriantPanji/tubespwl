@@ -26,6 +26,32 @@ class CommentController extends Controller
         $comment->content = $request->content;
         $comment->save();
 
+        $user = Auth::user();
+        $commentCount = $user->comments()->count();
+
+        if ($commentCount >= 50 && !$user->badges->contains(15)) {
+            $user->badges()->attach(15);
+        } elseif ($commentCount >= 25 && !$user->badges->contains(14)) {
+            $user->badges()->attach(14);
+        } elseif ($commentCount >= 10 && !$user->badges->contains(13)) {
+            $user->badges()->attach(13);
+        }
+
+        // Badge untuk jumlah komentar panjang
+        $longCommentsCount = Comment::where('user_id', $user->id)
+            ->whereRaw('LENGTH(content) >= 320')
+            ->count();
+
+        // badge berdasarkan jumlah komentar panjang
+        if ($longCommentsCount >= 20 && !$user->badges->contains(24)) {
+            $user->badges()->attach(24);
+        } elseif ($longCommentsCount >= 10 && !$user->badges->contains(23)) {
+            $user->badges()->attach(23);
+        } elseif ($longCommentsCount >= 5 && !$user->badges->contains(22)) {
+            $user->badges()->attach(22);
+        }
+
+
         if ($comment->user->id !== $comment->post->user_id) {
             $comment->post->user->notify(new CommentNotification($comment->user, $comment));
         }
