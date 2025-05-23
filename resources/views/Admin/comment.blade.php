@@ -1,11 +1,13 @@
-<x-layout>
+<x-adminlayout>
     <x-slot:title>SudutLain - Comment yang Dilaporkan</x-slot:title>
 
     <!-- Header Section -->
+    <section class="min-h-screen w-full bg-sl-base text-sl-text flex flex-col items-center px-4 md:px-18 lg:px-32 xl:px-40 2xl:px-52">
+
     <div
         class="container rounded-md bg-sl-tertiary flex justify-between items-center px-4 py-3 shadow-md shadow-black/40">
         <div class="flex items-center w-10">
-            <button @click="history.back()" class="text-white hover:text-sl-secondary transition">
+            <button @click="history.back()" class="text-white hover:text-sl-secondary transition cursor-pointer">
                 <i class="fa-light fa-chevron-left text-xl"></i>
             </button>
         </div>
@@ -57,4 +59,5 @@
             @endforeach
         @endif
     </div>
-</x-layout>
+    </section>
+</x-adminlayout>
