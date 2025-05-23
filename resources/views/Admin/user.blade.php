@@ -24,6 +24,10 @@
                 <p class="text-sm text-gray-400">Berikut adalah daftar user yang terdaftar di database SudutLain</p>
             </div>
 
+            <div class="min-w-full max-w-full min-h-2 rounded-md">
+                <input type="search" name="cari" id="cari" placeholder="Cari user berdasarkan nama, username, atau email" class="w-full h-10 px-4 bg-sl-tertiary ring-sl-septenary ring-1 text-sl-text rounded-md focus:outline-none focus:ring-2 focus:ring-sl-secondary/80 focus:border-transparent" x-model="inputValue">
+            </div>
+
             <div class="overflow-x-auto no-scrollbar rounded-md border border-sl-septenary">
                 <table class="w-full table-auto text-left bg-sl-tertiary rounded-md shadow-md shadow-black/40 divide-y-2 divide-sl-septenary">
                     <thead class="w-full h-10">
@@ -163,7 +167,85 @@
                                                 }
                                             })
                                     " class=" cursor-pointer text-red-500 hover:text-red-700 transition bg-sl-septenary/60 px-2 py-1 rounded-md"><i class="fa-light fa-trash"></i></button>
-                                    <button @click="" class=" cursor-pointer text-rose-600 hover:text-rose-800 transition bg-sl-septenary/60 px-2 py-1 rounded-md">Ban</button>
+                                    @if (!$user->is_admin)
+                                        @if ($user->is_banned)
+                                            <button @click="
+                                                    Swal.fire({
+                                                        title: 'Anda yakin?',
+                                                        text: 'User ini akan di-unban',
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Ya, saya yakin!',
+                                                        cancelButtonText: 'Batalkan'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            axios.post('{{ route('admin.unban-user', $user->id) }}', {
+                                                                _method: 'PATCH',
+                                                                data: {
+                                                                    _token: '{{ csrf_token() }}'
+                                                                }
+                                                            })
+                                                            .then(response => {
+                                                                    Swal.fire(
+                                                                        'Berhasil!',
+                                                                        'User ini sudah di-unbanned',
+                                                                        'success'
+                                                                    ).then(() => {
+                                                                        location.reload();
+                                                                    });
+                                                            })
+                                                            .catch(error => {
+                                                                Swal.fire(
+                                                                    'Gagal!',
+                                                                    'Terjadi kesalahan, silakan coba lagi',
+                                                                    'error'
+                                                                );
+                                                            });
+                                                        }
+                                                    })
+                                            " class=" cursor-pointer text-rose-600 hover:text-rose-800 transition bg-sl-septenary/60 px-2 py-1 rounded-md">Unban</button>
+                                        @else
+                                            <button @click="
+                                                    Swal.fire({
+                                                        title: 'Anda yakin?',
+                                                        text: 'User ini akan dibanned',
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Ya, saya yakin!',
+                                                        cancelButtonText: 'Batalkan'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            axios.post('{{ route('admin.ban-user', $user->id) }}', {
+                                                                _method: 'PATCH',
+                                                                data: {
+                                                                    _token: '{{ csrf_token() }}'
+                                                                }
+                                                            })
+                                                            .then(response => {
+                                                                    Swal.fire(
+                                                                        'Berhasil!',
+                                                                        'User ini sudah dibanned',
+                                                                        'success'
+                                                                    ).then(() => {
+                                                                        location.reload();
+                                                                    });
+                                                            })
+                                                            .catch(error => {
+                                                                Swal.fire(
+                                                                    'Gagal!',
+                                                                    'Terjadi kesalahan, silakan coba lagi',
+                                                                    'error'
+                                                                );
+                                                            });
+                                                        }
+                                                    })
+                                            " class=" cursor-pointer text-rose-600 hover:text-rose-800 transition bg-sl-septenary/60 px-2 py-1 rounded-md">Ban</button>
+                                        @endif
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

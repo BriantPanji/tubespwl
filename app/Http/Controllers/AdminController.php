@@ -100,6 +100,21 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'User has been deleted.');
     }
 
+    public function banUser(Request $request, User $user)
+    {
+        $user->is_banned = true;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User has been banned.');
+    }
+    public function unbanUser(Request $request, User $user)
+    {
+        $user->is_banned = false;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User has been unbanned.');
+    }
+
     public function showTags()
     {
         $tags = Tag::withCount('taggedPost')->get();

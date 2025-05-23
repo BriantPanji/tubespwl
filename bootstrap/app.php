@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\BannedUser;
 use App\Http\Middleware\EmailMustVerify;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -15,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
            'is_admin' => IsAdmin::class,
+           'not_banned' => BannedUser::class,
            'email_verified' => EmailMustVerify::class,
         ]);
     })
