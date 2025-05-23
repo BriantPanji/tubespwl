@@ -24,6 +24,12 @@
                 <p class="text-sm text-gray-400">Berikut adalah daftar tag yang terdaftar di database SudutLain</p>
             </div>
 
+            <div class="min-w-full max-w-full min-h-2 rounded-md">
+                <form method="GET" action="{{ route('admin.tags') }}" class="flex items-center gap-2">
+                    <input type="search" name="cari" id="cari" placeholder="Cari tag berdasarkan nama atau id" class="w-full h-10 px-4 bg-sl-tertiary ring-sl-septenary ring-1 text-sl-text rounded-md focus:outline-none focus:ring-2 focus:ring-sl-secondary/80 focus:border-transparent" autocomplete="cariuser">
+                </form>
+            </div>
+
             <div class="overflow-x-auto no-scrollbar rounded-md border border-sl-septenary">
                 <table class="w-full table-auto text-left bg-sl-tertiary rounded-md shadow-md shadow-black/40 divide-y-2 divide-sl-septenary">
                     <thead class="w-full h-10">
@@ -86,6 +92,7 @@
                     </tbody>
                 </table>
             </div>
+            {{ $tags->links() }}
         </div>
         
     </section>

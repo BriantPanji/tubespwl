@@ -88,7 +88,17 @@ class AdminController extends Controller
 
     public function showUsers()
     {
-        $users = User::get();
+        if (request('cari')) {
+            $search = request('cari');
+            $users = User::where(function($query) use ($search) {
+            $query->where('id', 'like', '%' . $search . '%')
+                  ->orWhere('display_name', 'like', '%' . $search . '%')
+                  ->orWhere('username', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+            })->paginate(3);
+        } else {
+            $users = User::paginate(3);
+        }
         return view('admin.user', compact('users'));
     }
     
@@ -117,7 +127,16 @@ class AdminController extends Controller
 
     public function showTags()
     {
-        $tags = Tag::withCount('taggedPost')->get();
+        // $tags = Tag::withCount('taggedPost')->get();
+        if (request('cari')) {
+            $search = request('cari');
+            $tags = Tag::where(function($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('id', 'like', '%' . $search . '%');
+            })->paginate(3);
+        } else {
+            $tags = Tag::paginate(3);
+        }
 
         return view('admin.tags', compact('tags'));
     }

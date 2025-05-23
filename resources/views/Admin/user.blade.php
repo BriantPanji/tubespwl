@@ -25,7 +25,9 @@
             </div>
 
             <div class="min-w-full max-w-full min-h-2 rounded-md">
-                <input type="search" name="cari" id="cari" placeholder="Cari user berdasarkan nama, username, atau email" class="w-full h-10 px-4 bg-sl-tertiary ring-sl-septenary ring-1 text-sl-text rounded-md focus:outline-none focus:ring-2 focus:ring-sl-secondary/80 focus:border-transparent" x-model="inputValue">
+                <form method="GET" action="{{ route('admin.user') }}" class="flex items-center gap-2">
+                    <input type="search" name="cari" id="cari" placeholder="Cari user berdasarkan nama, username, atau email" class="w-full h-10 px-4 bg-sl-tertiary ring-sl-septenary ring-1 text-sl-text rounded-md focus:outline-none focus:ring-2 focus:ring-sl-secondary/80 focus:border-transparent" autocomplete="cariuser">
+                </form>
             </div>
 
             <div class="overflow-x-auto no-scrollbar rounded-md border border-sl-septenary">
@@ -34,7 +36,7 @@
                         <tr class="text-white 
                             text-sm
                             font-semibold">
-                            <th class="px-4 py-2">No</th>
+                            <th class="px-4 py-2">Id</th>
                             <th class="px-4 py-2 max-w-20">Name</th>
                             <th class="px-4 py-2">Username</th>
                             <th class="px-4 py-2">Email</th>
@@ -47,7 +49,7 @@
                             <tr class="{{ $user->is_admin ? 'text-sl-secondary' : 'text-sl-text' }}
                                 text-sm
                                 {{ $user->is_admin ? 'font-semibold' : 'font-normal'}}">
-                                <td class="px-4 py-2">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2">{{ $user->id }}</td>
                                 <td class="px-4 py-2 max-w-20 truncate">{{ $user->display_name }}</td>
                                 <td class="px-4 py-2">{{ $user->username }}</td>
                                 <td class="px-4 py-2 max-w-25 truncate">{{ $user->email }}</td>
@@ -252,6 +254,7 @@
                     </tbody>
                 </table>
             </div>
+            {{ $users->links() }}
         </div>
         
     </section>
