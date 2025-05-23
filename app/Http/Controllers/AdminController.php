@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -53,6 +54,21 @@ class AdminController extends Controller
         ));
     }
 
+    public function makeAdmin(Request $request, User $user)
+    {
+        $user->is_admin = true;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User has been promoted to admin.');
+    }
+    public function revokeAdmin(Request $request, User $user)
+    {
+        $user->is_admin = false;
+        $user->save();
+
+        return redirect()->back()->with('success', 'Admin privileges have been revoked.');
+    }
+
     public function showPost()
     {
         $reportedPosts = Post::whereHas('reports') // Hanya ambil postingan yang punya laporan
@@ -69,4 +85,32 @@ class AdminController extends Controller
 
         return view('admin.comment', compact('reportedComs'));
     }
+
+    public function showUsers()
+    {
+        $users = User::get();
+        return view('admin.user', compact('users'));
+    }
+    
+
+    public function deleteUser(Request $request, User $user)
+    {
+        $user->delete();
+
+        return redirect()->back()->with('success', 'User has been deleted.');
+    }
+
+    public function showTags()
+    {
+        $tags = Tag::withCount('taggedPost')->get();
+
+        return view('admin.tags', compact('tags'));
+    }
+    public function deleteTag(Request $request, Tag $tag)
+    {
+        $tag->delete();
+
+        return redirect()->back()->with('success', 'Tag has been deleted.');
+    }
+
 }

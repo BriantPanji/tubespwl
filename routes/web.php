@@ -17,11 +17,21 @@ Route::middleware('email_verified')->group(function () {
 
     //Admin Dashboard
     Route::middleware(['auth', 'is_admin'])->group(function () {
-        Route::get('/admin', [AdminController::class, 'index'])->name('admin.post');
-    });
+        
+        Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+        Route::get('/admin/reportedPosts', [AdminController::class, 'showPost'])->name('admin.post');
+        Route::get('/admin/reportedComments', [AdminController::class, 'showCom'])->name('admin.comment');
 
-    Route::middleware(['auth', 'is_admin'])->group(function () {
-        Route::get('/admin/{tes}', [AdminController::class, 'showCom'])->name('admin.comment');
+        Route::get('/admin/users', [AdminController::class, 'showUsers'])->name('admin.user');
+        Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.delete-user');
+
+        Route::get('/admin/tags', [AdminController::class, 'showTags'])->name('admin.tags');
+        Route::delete('/admin/tags/{tag}', [AdminController::class, 'deleteTag'])->name('admin.delete-tag');
+
+        Route::post('/admin/make-admin/{user}', [AdminController::class, 'makeAdmin'])->name('admin.make-admin');
+        Route::post('/admin/revoke-admin/{user}', [AdminController::class, 'revokeAdmin'])->name('admin.revoke-admin');
+
+        
     });
 
 // Notifikasi
