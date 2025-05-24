@@ -17,7 +17,7 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
 
     //Admin Dashboard
     Route::middleware(['auth', 'is_admin'])->group(function () {
-        
+
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
         Route::get('/admin/reportedPosts', [AdminController::class, 'showPost'])->name('admin.post');
         Route::get('/admin/reportedComments', [AdminController::class, 'showCom'])->name('admin.comment');
@@ -33,7 +33,9 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
         Route::post('/admin/make-admin/{user}', [AdminController::class, 'makeAdmin'])->name('admin.make-admin');
         Route::post('/admin/revoke-admin/{user}', [AdminController::class, 'revokeAdmin'])->name('admin.revoke-admin');
 
-        
+        Route::get('/admin/edit-badge/{user}', [AdminController::class, 'controlBadge'])->name('admin.badge');
+        Route::patch('/admin/edit-badge/add/{user}', [AdminController::class, 'addBadge'])->name('admin.badge-add');
+        Route::delete('/admin/edit-badge/remove/{user}', [AdminController::class, 'removeBadge'])->name('admin.badge-remove');
     });
 
 // Notifikasi
@@ -150,4 +152,3 @@ require __DIR__.'/auth.php';
 Route::get('/badges',
  [\App\Http\Controllers\BadgeController::class,
   'index'])->name('badges.index');
-  

@@ -60,6 +60,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Badge::class, 'badge_pivots', 'user_id', 'badge_id');
     }
+    public function hasBadge(Badge $badge)
+    {
+        return $this->badges()->where('id', $badge->id)->exists();
+    }
+
 
     public function reportedPosts()
     {

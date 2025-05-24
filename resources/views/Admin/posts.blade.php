@@ -1,5 +1,5 @@
 <x-adminlayout>
-    <x-slot:title>SudutLain - User</x-slot:title>
+    <x-slot:title>SudutLain - Posts</x-slot:title>
 
 
     <section class="min-h-screen w-full bg-sl-base text-sl-text flex flex-col items-center px-4 md:px-18 lg:px-32 xl:px-40 2xl:px-52">
@@ -13,19 +13,19 @@
         </div>
         <div class="flex justify-center items-center gap-2">
             <i class="fa-light fa-exclamation-circle text-xl text-sl-secondary"></i>
-            <h1 class="text-white text-base xl:text-lg font-semibold">Users di database</h1>
+            <h1 class="text-white text-base xl:text-lg font-semibold">Posts di database</h1>
         </div>
         <div class="w-10"></div>
     </div>
 
         <div class="container flex flex-col gap-4 mt-5">
             <div class="flex flex-col gap-2">
-                <h1 class="text-white text-lg font-semibold">Daftar User</h1>
-                <p class="text-sm text-gray-400">Berikut adalah daftar user yang terdaftar di database SudutLain</p>
+                <h1 class="text-white text-lg font-semibold">Daftar Post</h1>
+                <p class="text-sm text-gray-400">Berikut adalah daftar post yang terdaftar di database SudutLain</p>
             </div>
 
             <div class="min-w-full max-w-full min-h-2 rounded-md">
-                <form method="GET" action="{{ route('admin.user') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('admin.posts') }}" class="flex items-center gap-2">
                     <input type="search" name="cari" id="cari" placeholder="Cari user berdasarkan nama, username, atau email" class="w-full h-10 px-4 bg-sl-tertiary ring-sl-septenary ring-1 text-sl-text rounded-md focus:outline-none focus:ring-2 focus:ring-sl-secondary/80 focus:border-transparent" autocomplete="cariuser">
                 </form>
             </div>
@@ -248,9 +248,7 @@
                                             " class=" cursor-pointer text-rose-600 hover:text-rose-800 transition bg-sl-septenary/60 px-2 py-1 rounded-md">Ban</button>
                                         @endif
                                     @endif
-                                    <a href="{{ route('admin.badge', $user->id) }}" class=" cursor-pointer text-teal-600 hover:text-teal-800 transition bg-sl-septenary/60 px-2 py-1 rounded-md"><i class="fa-light fa-ribbon"></i></a>
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
