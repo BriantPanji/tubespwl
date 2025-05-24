@@ -13,6 +13,11 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterUserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
+    return 'Storage linked successfully.';
+});
+
 Route::middleware(['email_verified', 'not_banned'])->group(function () {
 
     //Admin Dashboard
