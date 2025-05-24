@@ -14,8 +14,12 @@ use App\Http\Controllers\RegisterUserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::get('/linkstorage', function () {
-    Artisan::call('storage:link');
-    return 'Storage linked successfully.';
+//    Artisan::call('storage:link');
+//    return 'Storage linked successfully.';
+
+    $targetFolder = base_path().'/storage/app/public';
+    $linkFolder = $_SERVER['DOCUMENT_ROOT'].'/storage';
+    symlink($targetFolder, $linkFolder);
 });
 
 Route::middleware(['email_verified', 'not_banned'])->group(function () {
