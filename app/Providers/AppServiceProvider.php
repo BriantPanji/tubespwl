@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            \URL::forceScheme('https');
+        }
+
         Route::aliasMiddleware('isAdmin', IsAdmin::class);
 
         Gate::define('admin', function (?User $user) {
