@@ -1,5 +1,5 @@
 <x-adminlayout>
-    <x-slot:title></x-slot:title>SudutLain - Tags</x-slot:title>
+    <x-slot:title>SudutLain - Tags</x-slot:title>
 
 
     <section class="min-h-screen w-full bg-sl-base text-sl-text flex flex-col items-center px-4 md:px-18 lg:px-32 xl:px-40 2xl:px-52">
@@ -33,7 +33,7 @@
             <div class="overflow-x-auto no-scrollbar rounded-md border border-sl-septenary">
                 <table class="w-full table-auto text-left bg-sl-tertiary rounded-md shadow-md shadow-black/40 divide-y-2 divide-sl-septenary">
                     <thead class="w-full h-10">
-                        <tr class="text-white 
+                        <tr class="text-white
                             text-sm
                             font-semibold">
                             <th class="px-4 py-2">Id</th>
@@ -47,7 +47,7 @@
                             <tr class="text-sm text-sl-text">
                                 <td class="px-4 py-2">{{ $tag->id }}</td>
                                 <td class="px-4 py-2 max-w-20 truncate">{{ $tag->name }}</td>
-                                <td class="px-4 py-2 max-w-20 truncate">{{ $tag->tagged_post_count }} kali</td>
+                                <td class="px-4 py-2 max-w-20 truncate">{{ $tag->tagged_post_count ?? '0' }} kali</td>
                                 <td class="px-4 py-2 flex gap-2 *:shadow-md">
                                     <a href="/tagar/{{ $tag->name }}" class="text-cyan-600 hover:text-cyan-800 transition bg-sl-septenary/60 px-2 py-1 rounded-md"><i class="fa-light fa-eye"></i></a>
                                     <button @click="
@@ -94,6 +94,6 @@
             </div>
             {{ $tags->links() }}
         </div>
-        
+
     </section>
 </x-adminlayout>

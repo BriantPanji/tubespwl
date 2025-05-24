@@ -15,11 +15,11 @@ class AdminController extends Controller
         $userCount = User::count();
         $postCount = Post::count();
         $commentCount = Comment::count();
-        $reportedPostsCount = Post::whereHas('reports')->count(); 
+        $reportedPostsCount = Post::whereHas('reports')->count();
         $reportedCommentsCount = Comment::whereHas('reports')->count();
-        $votedPostsCount = Post::whereHas('votedBy')->count(); 
+        $votedPostsCount = Post::whereHas('votedBy')->count();
         $votedCommentsCount = Comment::whereHas('votes')->count();
-        $tagsCount = Post::with('tag')->get()->pluck('tag')->flatten()->unique('id')->count(); 
+        $tagsCount = Post::with('tag')->get()->pluck('tag')->flatten()->unique('id')->count();
 
         $admins = User::where('is_admin', true)->get();
 
@@ -41,13 +41,13 @@ class AdminController extends Controller
 
         return view('admin.dashboard', compact(
             'userCount',
-            'postCount', 
-            'commentCount', 
-            'reportedPostsCount', 
+            'postCount',
+            'commentCount',
+            'reportedPostsCount',
             'reportedCommentsCount',
-            'votedPostsCount', 
-            'votedCommentsCount', 
-            'tagsCount', 
+            'votedPostsCount',
+            'votedCommentsCount',
+            'tagsCount',
             'admins',
             'reportedPosts',
             'reportedComments'
@@ -101,7 +101,7 @@ class AdminController extends Controller
         }
         return view('admin.user', compact('users'));
     }
-    
+
 
     public function deleteUser(Request $request, User $user)
     {
@@ -130,12 +130,12 @@ class AdminController extends Controller
         // $tags = Tag::withCount('taggedPost')->get();
         if (request('cari')) {
             $search = request('cari');
-            $tags = Tag::where(function($query) use ($search) {
+            $tags = Tag::withCount('taggedPost')->where(function($query) use ($search) {
             $query->where('name', 'like', '%' . $search . '%')
                   ->orWhere('id', 'like', '%' . $search . '%');
             })->paginate(3);
         } else {
-            $tags = Tag::paginate(3);
+            $tags = Tag::withCount('taggedPost')->paginate(3);
         }
 
         return view('admin.tags', compact('tags'));
