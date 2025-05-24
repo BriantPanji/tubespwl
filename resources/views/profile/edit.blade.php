@@ -54,7 +54,7 @@
             <!-- Avatar -->
             <div class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
                 <label for="avatar" class="px-1 font-semibold">Avatar</label>
-                <input type="file" name="avatar" id="avatar"
+                <input type="file" name="avatar" id="avatar" accept="image/jpeg, image/png, image/jpg"
                     class="w-full rounded-sm border border-sl-primary bg-sl-tertiary text-sm text-sl-text file:mr-2 file:border-none file:bg-sl-primary/50 file:px-4 file:py-2 file:font-medium file:text-sl-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 truncate" />
                 <x-item.err-form name="avatar" />
             </div>
