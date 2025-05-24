@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Badge;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Tag;
@@ -95,9 +96,9 @@ class AdminController extends Controller
                   ->orWhere('display_name', 'like', '%' . $search . '%')
                   ->orWhere('username', 'like', '%' . $search . '%')
                   ->orWhere('email', 'like', '%' . $search . '%');
-            })->paginate(3);
+            })->paginate(10);
         } else {
-            $users = User::paginate(3);
+            $users = User::paginate(10);
         }
         return view('admin.user', compact('users'));
     }
@@ -125,6 +126,32 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'User has been unbanned.');
     }
 
+    public function  controlBadge(Request $request, User $user)
+    {
+        $userBadges = $user->badges;
+        $badges = Badge::all();
+
+        return view('admin.badge', compact('user', 'userBadges', 'badges'));
+    }
+    public function addBadge(Request $request, User $user)
+    {
+        $badge = Badge::find($request->badge_id);
+        if ($badge) {
+            $user->badges()->attach($badge);
+            return redirect()->back()->with('success', 'Badge has been added.');
+        }
+        return redirect()->back()->with('error', 'Badge not found.');
+    }
+    public  function removeBadge(Request $request, User $user)
+    {
+        $badge = Badge::find($request->badge_id);
+        if ($badge) {
+            $user->badges()->detach($badge);
+            return redirect()->back()->with('success', 'Badge has been removed.');
+        }
+        return redirect()->back()->with('error', 'Badge not found.');
+    }
+
     public function showTags()
     {
         // $tags = Tag::withCount('taggedPost')->get();
@@ -133,9 +160,9 @@ class AdminController extends Controller
             $tags = Tag::withCount('taggedPost')->where(function($query) use ($search) {
             $query->where('name', 'like', '%' . $search . '%')
                   ->orWhere('id', 'like', '%' . $search . '%');
-            })->paginate(3);
+            })->paginate(10);
         } else {
-            $tags = Tag::withCount('taggedPost')->paginate(3);
+            $tags = Tag::withCount('taggedPost')->paginate(10);
         }
 
         return view('admin.tags', compact('tags'));
