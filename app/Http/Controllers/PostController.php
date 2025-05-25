@@ -53,7 +53,7 @@ class PostController extends Controller
 
         $badges = User::with('badges')->get();
 
-        
+
         return view('home', [
             'posts' => $mergedPosts,
             'badges' => $badges,
@@ -172,7 +172,8 @@ class PostController extends Controller
         foreach ($request->file('images', []) as $file) {
             if ($file) {
                 $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('', $fileName, 'posts');
+//                $file->storeAs('', $fileName, 'posts');
+                $file->storeAs('posts', $fileName, 'public');
 
                 PostAttachment::create([
                     'namafile' => $fileName,
@@ -225,11 +226,11 @@ class PostController extends Controller
             $userComments = $comments->filter(function($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('created_at');
-        
+
             $otherComments = $comments->reject(function($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('upvoted_by_count');
-        
+
             $mergedComments = $userComments->merge($otherComments);
         } else {
             $mergedComments = $comments->sortByDesc('upvoted_by_count');

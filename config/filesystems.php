@@ -38,32 +38,58 @@ return [
             'report' => false,
         ],
 
-        'public' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
-            'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
-        ],
+//        'public' => [
+//            'driver' => 'local',
+//            'root' => storage_path('app/public'),
+//            'url' => env('APP_URL').'/storage',
+//            'visibility' => 'public',
+//            'throw' => false,
+//            'report' => false,
+//        ],
+//
+//        'avatars' => [
+//            'driver' => 'local',
+//            'root' => storage_path('app/public/avatars'),
+//            'url' => env('APP_URL').'/storage/avatars',
+//            'visibility' => 'public',
+//            'throw' => false,
+//            'report' => false,
+//        ],
+//
+//        'posts' => [
+//            'driver' => 'local',
+//            'root' => storage_path('app/public/posts'),
+//            'url' => env('APP_URL').'/storage/posts',
+//            'visibility' => 'public',
+//            'throw' => false,
+//            'report' => false,
+//        ],
+            'public' => [
+                'driver' => 'local',
+                'root' => public_path('uploads'),
+                'url' => env('APP_URL').'/uploads',
+                'visibility' => 'public',
+                'throw' => false,
+                'report' => false,
+            ],
 
-        'avatars' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public/avatars'),
-            'url' => env('APP_URL').'/storage/avatars',
-            'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
-        ],
+            'avatars' => [
+                'driver' => 'local',
+                'root' => public_path('uploads/avatars'),
+                'url' => env('APP_URL').'/uploads/avatars',
+                'visibility' => 'public',
+                'throw' => false,
+                'report' => false,
+            ],
 
-        'posts' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public/posts'),
-            'url' => env('APP_URL').'/storage/posts',
-            'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
-        ],
+            'posts' => [
+                'driver' => 'local',
+                'root' => public_path('uploads/posts'),
+                'url' => env('APP_URL').'/uploads/posts',
+                'visibility' => 'public',
+                'throw' => false,
+                'report' => false,
+            ],
 
         's3' => [
             'driver' => 's3',

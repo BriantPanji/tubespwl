@@ -162,7 +162,7 @@
                 </section>
                 <section @click="window.location.href = '/post/{{ $post->id }}'" class="w-full h-auto">
                     <img class="!aspect-video rounded-xl object-cover w-full"
-                        src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}">
+                        src="{{ asset('uploads/posts/' . $post->attachments[0]->namafile) }}">
                 </section>
                 <section
                     class="w-full min-h-3 h-10 flex items-center bg-white/10 mt-1 rounded-md px-3 md:px-5 xl:px-8 2xl:px-10 text-2xl justify-between">
