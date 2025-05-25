@@ -22,6 +22,14 @@ Route::get('/linkstorage', function () {
     symlink($targetFolder, $linkFolder);
 });
 
+Route::get('/uploads/{path}', function ($path) {
+    $filePath = public_path('uploads/' . $path);
+    if (file_exists($filePath)) {
+        return response()->file($filePath);
+    }
+    abort(404);
+})->where('path', '.*');
+
 Route::middleware(['email_verified', 'not_banned'])->group(function () {
 
     //Admin Dashboard
