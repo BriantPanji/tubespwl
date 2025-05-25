@@ -11,7 +11,7 @@
                     <div @click="window.location.href = '/post/{{ $post->id }}'"
                         class="max-w-[75%] h-full flex items-center gap-2">
                         <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full object-cover"
-                                src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
+                                src="{{ asset('uploads/avatars/' . $post->user->avatar) }}"></a>
                         {{-- FOTO PROFIL USER --}}
                         <div class="flex flex-col h-full justify-center">
                             <a href="/profile/{{ $post->user->username }}"

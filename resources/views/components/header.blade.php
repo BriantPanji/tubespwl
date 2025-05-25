@@ -60,12 +60,12 @@ window.addEventListener('scroll', () => {
     <section x-data="{isNavOpen: false}" class="flex items-center justify-start min-w-[25%] relative">
         @guest
             <a href="/login" class="cursor-pointer"><img class="w-9 h-9 rounded-full object-cover"
-                    src="{{ asset('storage/avatars/blankprofile.png') }}" alt="profilepicture.jpg"></a>
+                    src="{{ asset('uploads/avatars/blankprofile.png') }}" alt="profilepicture.jpg"></a>
         @endguest
         @auth
 
             <button @dblclick="window.location.href='/profile'" @click="isNavOpen = !isNavOpen" class="cursor-pointer"><img class="w-9 h-9 rounded-full hover:shadow-sm shadow-sl-text"
-                    src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}" alt="profilepicture.jpg"></button>
+                    src="{{ asset('uploads/avatars/' . auth()->user()->avatar) }}" alt="profilepicture.jpg"></button>
         @endauth
         <a href="/" class="cursor-pointer"><img class="h-9 max-h-9" src="{{ asset('img/logo/sudutlain_wm.png') }}"
                 alt=""></a>

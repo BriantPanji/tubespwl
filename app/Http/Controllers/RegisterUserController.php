@@ -90,7 +90,8 @@ class RegisterUserController extends Controller
 
         // Cek apakah ada avatar yang di-upload
         if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('', 'avatars');
+//            $avatarPath = $request->file('avatar')->store('', 'avatars');
+            $avatarPath = $request->file('avatar')->store('avatars', 'public'); // Simpan di disk 'public' pada folder 'avatars'
             $user->update([
                 'avatar' => $avatarPath, // Simpan path avatar baru
             ]);

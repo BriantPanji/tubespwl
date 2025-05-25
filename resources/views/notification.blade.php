@@ -15,7 +15,7 @@
                         <div class="flex items-center gap-2">
                             <a href="/profile">
                                 <img class="w-9 rounded-full object-cover"
-                                    src="{{ asset('storage/avatars/' . $notification->data['voter']['avatar']) }}"
+                                    src="{{ asset('uploads/avatars/' . $notification->data['voter']['avatar']) }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
@@ -26,7 +26,7 @@
 
                                 </div>
                                 <div class="w-[50px] h-[50px]">
-                                    <img src="{{ asset("storage/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                    <img src="{{ asset("uploads/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
                                 </div>
                             </div>
                     </section>
@@ -39,7 +39,7 @@
                         <div class="flex items-center gap-2">
                             <a href="/profile">
                                 <img class="w-9 rounded-full object-cover"
-                                    src="{{ asset('storage/avatars/' . $notification->data['voter']['avatar']) }}"
+                                    src="{{ asset('uploads/avatars/' . $notification->data['voter']['avatar']) }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
@@ -49,7 +49,7 @@
                                         <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
                                 </div>
                                 <div class="w-[50px] h-[50px]">
-                                    <img src="{{ asset("storage/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                    <img src="{{ asset("uploads/post/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
                                 </div>
                             </div>
                     </section>
@@ -62,7 +62,7 @@
                         <div class="flex items-center gap-2">
                             <a href="/profile">
                                 <img class="w-9 rounded-full object-cover"
-                                    src="{{ asset('storage/avatars/' . $notification->data['user']['avatar']) }}"
+                                    src="{{ asset('uploads/avatars/' . $notification->data['user']['avatar']) }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
@@ -72,7 +72,7 @@
                                         <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
                                 </div>
                                 <div class="w-[50px] h-[50px]">
-                                    <img src="{{ asset("storage/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                    <img src="{{ asset("uploads/post/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
                                 </div>
                             </div>
                     </section>
