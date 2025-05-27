@@ -23,7 +23,6 @@
     <section class="min-w-full max-w-full w-full min-h-2 h-auto bg-sl-tertiary rounded-md px-3 pt-3 pb-3 flex flex-col gap-3 border-2 border-sl-tertiary">
         {{--        <legend class="float-start font-semibold text-xl">Buat Postingan</legend>--}}
         <form method="POST" action="{{ route('post.store') }}" enctype="multipart/form-data" class="w-full h-auto flex flex-col gap-3">
-            @method('PATCH')
             @csrf
             <div
                 class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
