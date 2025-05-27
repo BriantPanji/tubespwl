@@ -26,7 +26,7 @@
 
                                 </div>
                                 <div class="w-[50px] h-[50px]">
-                                    <img src="{{ asset("uploads/posts/" . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                    <img src="{{ asset(\Illuminate\Support\Str::startsWith($post->attachments[0]->namafile, 'http') ? $post->attachments[0]->namafile : 'uploads/posts/' . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
                                 </div>
                             </div>
                     </section>

@@ -192,7 +192,7 @@
                     @foreach ($post->attachments as $attachment)
                         <div class="swiper-slide h-full">
                             <img class="w-full h-full rounded-xl"
-                                src="{{ asset('uploads/posts/' . $attachment->namafile) }}">
+                                src="{{ asset(\Illuminate\Support\Str::startsWith($post->attachments[0]->namafile, 'http') ? $post->attachments[0]->namafile : 'uploads/posts/' . $attachment->namafile) }}">
                         </div>
                     @endforeach
                 </div>

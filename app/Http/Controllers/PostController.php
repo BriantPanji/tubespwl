@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\VoteNotification;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use ImageKit\ImageKit;
 
 class PostController extends Controller
 {
@@ -158,7 +160,7 @@ class PostController extends Controller
 
 
         $post = Post::create([
-            'user_id' => Auth::id(),
+            'user_id' => Auth::id() ?? 11,
             'title' => $request->title,
             'content' => $request->content,
             'location' => $request->location,
@@ -171,12 +173,30 @@ class PostController extends Controller
 
         foreach ($request->file('images', []) as $file) {
             if ($file) {
-                $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-//                $file->storeAs('', $fileName, 'posts');
-                $file->storeAs('posts', $fileName, 'public');
+//                $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+////                $file->storeAs('', $fileName, 'posts');
+//                $file->storeAs('posts', $fileName, 'public');
+                $base64 = base64_encode(file_get_contents($file->getRealPath()));
+
+                $imageKit = new ImageKit(
+                    env('IMAGEKIT_PUBLIC_KEY'),
+                    env('IMAGEKIT_PRIVATE_KEY'),
+                    env('IMAGEKIT_URL_ENDPOINT')
+                );
+
+                $upload = $imageKit->upload([
+                    'file' => $base64,
+                    'fileName' => uniqid() . '.' . $file->getClientOriginalExtension(),
+                    'useUniqueFileName' => true,
+                ]);
+
+                if ($upload->error) {
+                    return redirect()->back()->withErrors(['images' => 'Failed to upload image: ' . $upload->error->message]);
+                }
+
 
                 PostAttachment::create([
-                    'namafile' => $fileName,
+                    'namafile' => $upload->result->url,
                     'post_id' => $post->id,
                 ]);
             }

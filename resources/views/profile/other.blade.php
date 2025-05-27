@@ -292,7 +292,7 @@
                 <a href="/post/{{ $post->id }}">
                     <div class="overflow-hidden">
                         <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-[1.1] overflow-hidden duration-300"
-                            src="{{ asset('uploads/posts/' . $post->attachments[0]->namafile) }}"
+                            src="{{ asset(\Illuminate\Support\Str::startsWith($post->attachments[0]->namafile, 'http') ? $post->attachments[0]->namafile : 'uploads/posts/' . $post->attachments[0]->namafile) }}"
                             alt="Bookmark Image" />
                     </div>
 

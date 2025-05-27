@@ -13,22 +13,26 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterUserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
-Route::get('/linkstorage', function () {
-//    Artisan::call('storage:link');
-//    return 'Storage linked successfully.';
+//Route::get('/linkstorage', function () {
+////    Artisan::call('storage:link');
+////    return 'Storage linked successfully.';
+//
+//    $targetFolder = base_path().'/storage/app/public';
+//    $linkFolder = $_SERVER['DOCUMENT_ROOT'].'/storage';
+//    symlink($targetFolder, $linkFolder);
+//});
+//
+//Route::get('/uploads/{path}', function ($path) {
+//    $filePath = public_path('uploads/' . $path);
+//    if (file_exists($filePath)) {
+//        return response()->file($filePath);
+//    }
+//    abort(404);
+//})->where('path', '.*');
 
-    $targetFolder = base_path().'/storage/app/public';
-    $linkFolder = $_SERVER['DOCUMENT_ROOT'].'/storage';
-    symlink($targetFolder, $linkFolder);
-});
+Route::get('/post/add', [PostController::class, 'create'])->name('post.create');
+Route::post('/post/add', [PostController::class, 'store'])->name('post.store');
 
-Route::get('/uploads/{path}', function ($path) {
-    $filePath = public_path('uploads/' . $path);
-    if (file_exists($filePath)) {
-        return response()->file($filePath);
-    }
-    abort(404);
-})->where('path', '.*');
 
 Route::middleware(['email_verified', 'not_banned'])->group(function () {
 
@@ -60,8 +64,6 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
 
     // Post
     Route::get('/', [PostController::class, 'index']);
-    Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
-    Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
     Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');
     Route::post('/comment/{post}', [CommentController::class, 'store'])->middleware('auth')->name('post.comment');
 

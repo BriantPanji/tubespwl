@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
            'not_banned' => BannedUser::class,
            'email_verified' => EmailMustVerify::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            '/post*'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

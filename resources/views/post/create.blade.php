@@ -1,6 +1,18 @@
 <x-layout>
     <x-slot:title>SudutLain - Membuat Postingan</x-slot:title>
 
+    @if($errors->any())
+        <script>
+            Swal.fire({
+                title: 'Ada yang salah!',
+                text: '{{ $errors->first() }}',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        </script>
+
+    @endif
+
     <section
         class="w-full min-h-2 h-24 md:h-30 px-3 pb-2 bg-sl-tertiary rounded-md flex flex-col gap-1 justify-center items-center ">
         <h1 class="font-bold text-xl md:text-2xl text-purple-700">Buat Postingan</h1>
@@ -41,7 +53,7 @@
                        placeholder="Ayam Penyet Mas Panji" required autocomplete="off">
                 <x-item.err-form name="place_name"/>
             </div>
-            
+
             <div
                 class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">
                 <label for="location" class="px-1 font-semibold">Lokasi:</label>
@@ -60,7 +72,7 @@
                        placeholder="https://maps.app.goo.gl/a4vv1n6h8e87g4uq" required autocomplete="off">
                 <x-item.err-form name="gmap_url"/>
             </div>
-            
+
 
             <div
                 class="w-full h-auto flex flex-col gap-2 rounded-md px-2 pt-2 bg-[#28202e] pb-2.5 group">

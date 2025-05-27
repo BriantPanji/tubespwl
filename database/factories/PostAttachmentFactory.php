@@ -18,7 +18,8 @@ class PostAttachmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'namafile'=> 'blankimage.png',
+//            'namafile'=> 'blankimage.png',
+            'namafile'=> 'https://i.imghippo.com/files/fIOm9308uwY.png',
             'post_id'=>Post::inRandomOrder()->first()->id
         ];
     }
