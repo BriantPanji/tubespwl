@@ -53,7 +53,7 @@ class PostController extends Controller
 
         $badges = User::with('badges')->get();
 
-        
+
         return view('home', [
             'posts' => $mergedPosts,
             'badges' => $badges,
@@ -62,7 +62,7 @@ class PostController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->search;
+        $search = $request->keyword;
         $search = trim(strip_tags($search));
 
         // History
@@ -222,14 +222,14 @@ class PostController extends Controller
         $comments = Comment::with('user')->withCount('upvotedBy')->where('post_id', $postId)->get();
 
         if ($user) {
-            $userComments = $comments->filter(function($c) use ($user) {
+            $userComments = $comments->filter(function ($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('created_at');
-        
-            $otherComments = $comments->reject(function($c) use ($user) {
+
+            $otherComments = $comments->reject(function ($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('upvoted_by_count');
-        
+
             $mergedComments = $userComments->merge($otherComments);
         } else {
             $mergedComments = $comments->sortByDesc('upvoted_by_count');
@@ -397,9 +397,9 @@ class PostController extends Controller
             ->get()
             ->map(function ($post) {
                 $score = ($post->upvoted_by_count * 3) +
-                            ($post->downvoted_by_count * 1) -
-                            ($post->comments_count * 2) +
-                            ($post->bookmarks_count * 2);
+                    ($post->downvoted_by_count * 1) -
+                    ($post->comments_count * 2) +
+                    ($post->bookmarks_count * 2);
 
                 $post->weighted_score = $score + rand(0, 10);
 
@@ -411,5 +411,4 @@ class PostController extends Controller
             'posts' => $posts,
         ]);
     }
-
 }
