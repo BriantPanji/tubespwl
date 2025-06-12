@@ -114,3 +114,7 @@ html {
   background: var(--color-sl-tertiary);
   border-radius: 0.5rem;
 }
+
+@layer utilities{
+  .border-r-hairline { border-right-width: 0.5px; }
+}
