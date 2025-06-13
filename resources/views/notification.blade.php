@@ -5,7 +5,10 @@
     $notifications = auth()->user()->notifications
     @endphp
     <h1 class="text-center text-md font-semibold xl:text-xl mb-2 mt-4">Notifikasi</h1>
-    <section class="bg-sl-tertiary rounded-lg">
+    <section @class([
+        'rounded-lg',
+        'bg-sl-tertiary rounded-lg' => $notifications->isNotEmpty()
+    ])>
         @forelse ($notifications as $notification)
             {{-- @dd($notification) --}}
             @if ($notification->type == 'App\Notifications\VoteNotification')

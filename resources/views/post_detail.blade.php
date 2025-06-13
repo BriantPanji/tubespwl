@@ -8,6 +8,7 @@
             <button @click="history.back()" class="absolute top-4 left-4 z-10 cursor-pointer">
                 <i class="fa-light fa-chevron-left xl:text-xl"></i>
             </button>
+            <small class="absolute right-4 top-4 text-xs opacity-50 ">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</small>
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2 mt-10">
                     <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
@@ -23,7 +24,7 @@
                             @if ($display_name)
                                 <span>{{ $post->user->display_name }}</span>
                             @else
-                                <span>{{ $post->user->usename }}</span>
+                                <span>{{ $post->user->username }}</span>
                             @endif
 
                         </a>
