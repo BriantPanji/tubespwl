@@ -3,7 +3,7 @@
     <x-item.postbanner></x-item.postbanner>
 
     <div x-data="{
-        posts: {{ json_encode($posts->items()) }},
+        posts: {!! Illuminate\Support\Js::from($posts->items())->toHtml() ?: '[]' !!},
         currentPage: {{ $posts->currentPage() }},
         lastPage: {{ $posts->lastPage() }},
         loading: false,
@@ -18,6 +18,10 @@
 
             axios.get(`/load-more-posts?page=${this.currentPage}`)
                 .then(response => {
+                    console.log('Before concat - this.posts type:', typeof this.posts, 'Is array:', Array.isArray(this.posts));
+                    console.log('Before concat - this.posts value:', JSON.stringify(this.posts)); // To see the actual content
+                    console.log('Before concat - response.data.data type:', typeof response.data.data, 'Is array:', Array.isArray(response.data.data));
+                    console.log('Before concat - response.data.data value:', JSON.stringify(response.data.data)); // To see the actual content
                     this.posts = this.posts.concat(response.data.data);
                     this.lastPage = response.data.last_page;
                     this.hasMorePages = response.data.next_page_url !== null;
@@ -41,13 +45,13 @@
 
     @if ($posts->isEmpty() && !request('search'))
         {{-- This handles initial empty state for non-search pages --}}
-        <h1 class="text-center mt-4">Tidak ada postingan untuk saat ini.</h1>
+        <h1 class="text-center text-xs mt-4">Tidak ada postingan untuk saat ini.</h1>
     @elseif ($posts->isEmpty() && request('search'))
         {{-- This handles initial empty state for search results --}}
         <h1 class="text-center mt-4" x-text="`Pencarian '${searchQuery}' tidak ditemukan`"></h1>
     @endif
 
-    
+
         <template x-for="(post, index) in posts" :key="post.id" class="w-full max-w-full flex flex-col gap-y-4">
             <article :x-ref="`post_${post.id}`"
                 class="min-h-16 h-auto bg-sl-tertiary rounded-md flex flex-col p-3 gap-y-4 mb-4">
@@ -72,7 +76,7 @@
                     </div>
                     <div x-cloak x-show="showOption" @click.outside="showOption = false"
                         class="absolute top-8 right-0 min-w-20 max-w-25 h-fit bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col *:items-center *:justify-center *:text-center **:text-center gap-y-2 p-1 text-xs text-sl-text/90 z-50">
-                        
+
                         <template x-if="post.allow_edit === true">
                             <button @click="window.location.href=`/post/${post.id}/edit`"
                                 class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1 text-left"
@@ -82,7 +86,7 @@
                         </template>
 
                         <template x-if="post.allow_edit === true">
-                                
+
                             <button @click="
                                     Swal.fire({
                                         title: 'Hapus Postingan',
@@ -94,7 +98,7 @@
                                         allowOutsideClick: false
                                     }).then((result) => {
                                         if (result.isConfirmed) {
-                                            axios.post(`/post/${post.id}`, { _method: 'DELETE' }) 
+                                            axios.post(`/post/${post.id}`, { _method: 'DELETE' })
                                             .then(() => {
                                                 Swal.fire('Berhasil!', 'Postingan berhasil dihapus!', 'success');
                                                 posts = posts.filter(p => p.id !== post.id);
@@ -130,7 +134,7 @@
                                     }).then((result) => {
                                         if (result.isConfirmed) {
                                             const reason = result.value;
-                                            axios.post(`/post/${post.id}/report`, { reason: reason }) 
+                                            axios.post(`/post/${post.id}/report`, { reason: reason })
                                             .then(() => {
                                                 Swal.fire('Berhasil!', 'Postingan berhasil dilaporkan!', 'success');
                                             })
@@ -181,7 +185,7 @@
                 </section>
                 <section @click="window.location.href = `/post/${post.id}`" class="w-full h-auto cursor-pointer" x-show="post.attachments && post.attachments.length > 0">
                     <img class="!aspect-video rounded-xl object-cover w-full"
-                        :src="`{{ asset('storage/posts/') }}/${post.attachments[0].namafile}`" 
+                        :src="`{{ asset('storage/posts/') }}/${post.attachments[0].namafile}`"
                         onerror="this.style.display='none';"> {{-- Hide if image fails to load --}}
                 </section>
                 <section
@@ -299,14 +303,14 @@
             </article>
         </template>
 
-        <div x-show="loading" class="text-center my-4">
-            <i class="fa-solid fa-spinner fa-spin text-2xl text-sl-secondary"></i> Loading more posts...
+        <div x-show="loading" class="text-center text-xs my-4 flex items-center justify-center gap-2 text-neutral-400">
+            <i class="fa-solid fa-spinner fa-spin text-lg text-sl-quaternary"></i> Loading postingan lain...
         </div>
 
-        <div x-show="!hasMorePages && posts.length > 0 && !loading" class="text-center my-4 text-sl-secondary">
-            Tidak ada postingan lainnya.
+        <div x-show="!hasMorePages && posts.length > 0 && !loading" class="text-center text-xs my-4 text-neutral-500 select-none">
+            Kamu mencapai ujung dunia. Tidak ada postingan lainnya.
         </div>
-        
+
         {{-- Client-side empty state for search after initial load (if posts array becomes empty) --}}
         <template x-if="posts.length === 0 && !loading && searchQuery">
             <h1 class="text-center mt-4" x-text="`Pencarian '${searchQuery}' tidak ditemukan`"></h1>

@@ -34,7 +34,7 @@ class PostController extends Controller
                     ($post->comments_count * 2) +
                     ($post->bookmarks_count * 2);
 
-                $post->weighted_score = $score + rand(0, 10);
+                $post->weighted_score = $score; // + rand(0, 10);
 
                 if (Auth::check()) {
                     $authedUser = Auth::user();
@@ -67,11 +67,11 @@ class PostController extends Controller
         }
 
         // Replace the collection in the paginator instance
-        $posts->setCollection($mergedPosts);
+        $posts->setCollection($mergedPosts->values());
 
         $badges = User::with('badges')->get();
 
-        
+
         return view('home', [
             'posts' => $posts,
             'badges' => $badges,
@@ -94,7 +94,7 @@ class PostController extends Controller
                 ($post->comments_count * 2) +
                 ($post->bookmarks_count * 2);
 
-            $post->weighted_score = $score + rand(0, 10);
+            $post->weighted_score = $score;//  + rand(0, 10);
 
             if (Auth::check()) {
                 $authedUser = Auth::user(); // $user is already available in this method's scope, but using $authedUser to avoid conflict if any scope issue.
@@ -125,9 +125,9 @@ class PostController extends Controller
         } else {
             $mergedPosts = $processedPosts->sortByDesc('weighted_score');
         }
-        
+
         // Replace the collection in the paginator instance
-        $posts->setCollection($mergedPosts);
+        $posts->setCollection($mergedPosts->values());
 
         return response()->json($posts);
     }
@@ -155,19 +155,78 @@ class PostController extends Controller
         }
 
         // $posts = DB::table('posts')->with('user', 'attachments', 'comments')->where('content', 'like', "%" . $search . "%")->get();
-        $posts = Post::with('user', 'attachments', 'comments', 'tag')->where(function ($query) use ($search) {
-            $query->where('title', 'like', "%{$search}%")
-                ->orWhere('content', 'like', "%{$search}%")
-                ->orWhere('location', 'like', "%{$search}%")
-                ->orWhere('gmap_url', 'like', "%{$search}%")
-                ->orWhere('place_name', 'like', "%{$search}%")
-                ->orWhereHas('user', function ($query) use ($search) {
-                    $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
-                })
-                ->orWhereHas('tag', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%");
-                });
-        })->withCount('upvotedBy')->get();
+//        $posts = Post::with('user', 'attachments', 'comments', 'tag')->where(function ($query) use ($search) {
+//            $query->where('title', 'like', "%{$search}%")
+//                ->orWhere('content', 'like', "%{$search}%")
+//                ->orWhere('location', 'like', "%{$search}%")
+//                ->orWhere('gmap_url', 'like', "%{$search}%")
+//                ->orWhere('place_name', 'like', "%{$search}%")
+//                ->orWhereHas('user', function ($query) use ($search) {
+//                    $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
+//                })
+//                ->orWhereHas('tag', function ($query) use ($search) {
+//                    $query->where('name', 'like', "%{$search}%");
+//                });
+//        })->withCount('upvotedBy')->get();
+
+        $user = Auth::user();
+
+        $posts = Post::with('user.badges', 'attachments', 'comments')
+            ->orderBy('created_at', 'desc')
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->where('title', 'like', "%$search%")
+            ->orWhere('content', 'like', "%{$search}%")
+            ->orWhere('location', 'like', "%{$search}%")
+            ->orWhere('gmap_url', 'like', "%{$search}%")
+            ->orWhere('place_name', 'like', "%{$search}%")
+            ->orWhereHas('user', function ($query) use ($search) {
+                $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
+            })
+            ->orWhereHas('tag', function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->paginate(10);
+
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            $score = ($post->upvoted_by_count * 3) +
+                ($post->downvoted_by_count * 1) -
+                ($post->comments_count * 2) +
+                ($post->bookmarks_count * 2);
+
+            $post->weighted_score = $score + rand(0, 10);
+
+            if (Auth::check()) {
+                $authedUser = Auth::user();
+                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
+                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
+                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+            } else {
+                $post->upvoted_by_user = false;
+                $post->downvoted_by_user = false;
+                $post->bookmarked_by_user = false;
+            }
+
+            $post->allow_edit = Gate::allows('edit-post', $post);
+            return $post;
+        });
+
+        $oneMinuteAgo = now()->subMinute();
+        $processedPosts = $posts->getCollection();
+
+        if ($user) {
+            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
+                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
+            })->sortByDesc('created_at');
+
+            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
+
+            $mergedPosts = $recentUserPosts->merge($otherPosts);
+        } else {
+            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
+        }
+
+        // Replace the collection in the paginator instance
+        $posts->setCollection($mergedPosts->values());
 
         return view('home', [
             'posts' => $posts,
@@ -297,11 +356,11 @@ class PostController extends Controller
             $userComments = $comments->filter(function($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('created_at');
-        
+
             $otherComments = $comments->reject(function($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('upvoted_by_count');
-        
+
             $mergedComments = $userComments->merge($otherComments);
         } else {
             $mergedComments = $comments->sortByDesc('upvoted_by_count');
@@ -418,7 +477,7 @@ class PostController extends Controller
         } elseif ($totalVotes >= 20 && !$user->badges->contains(19)) {
             $user->badges()->attach(19);
         }
-        
+
         $post->refresh();
         return response()->json([
             'message' => 'Post upvoted successfully.',
@@ -516,7 +575,7 @@ class PostController extends Controller
                         ($post->comments_count * 2) +
                         ($post->bookmarks_count * 2);
 
-            $post->weighted_score = $score + rand(0, 10);
+            $post->weighted_score = $score;// + rand(0, 10);
 
             if (Auth::check()) {
                 $authedUser = Auth::user();
@@ -530,7 +589,7 @@ class PostController extends Controller
             }
             return $post;
         });
-        
+
         // Apply sorting to the collection. The existing sorting logic in showTag might need adjustment
         // if it was relying on $user variable from outside the transform for its own filtering/sorting.
         // However, the current sorting is only by weighted_score which is fine.
@@ -538,14 +597,13 @@ class PostController extends Controller
         // This method currently sorts all posts by 'weighted_score'.
         // If the same complex sorting as index() is required, it should be added here.
         // For now, just applying the sortByDesc as it was.
-        $user = Auth::user(); // This is needed if we were to apply the same complex sorting as index()
         $processedPosts = $posts->getCollection(); // Get collection for potential complex sort
 
         // Replicating the sorting from index() method for consistency, if desired.
         // If not, the simple sortByDesc('weighted_score') is fine.
         // For now, let's stick to the original sorting of showTag which was just by weighted_score.
         $finalSortedPosts = $processedPosts->sortByDesc('weighted_score');
-        $posts->setCollection($finalSortedPosts);
+        $posts->setCollection($finalSortedPosts->values());
 
 
         return view('home', [
