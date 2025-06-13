@@ -23,41 +23,113 @@ class PostController extends Controller
     {
         $user = Auth::user();
 
-        $posts = Post::with('user', 'attachments', 'comments')
+        $posts = Post::with('user.badges', 'attachments', 'comments')
             ->orderBy('created_at', 'desc')
             ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->get()
-            ->map(function ($post) {
-                $score = ($post->upvoted_by_count * 3) +
+            ->paginate(10);
+
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            $score = ($post->upvoted_by_count * 3) +
                     ($post->downvoted_by_count * 1) -
                     ($post->comments_count * 2) +
                     ($post->bookmarks_count * 2);
 
-                $post->weighted_score = $score + rand(0, 10);
+                $post->weighted_score = $score; // + rand(0, 10);
+
+                if (Auth::check()) {
+                    $authedUser = Auth::user();
+                    $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
+                    $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
+                    $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+                } else {
+                    $post->upvoted_by_user = false;
+                    $post->downvoted_by_user = false;
+                    $post->bookmarked_by_user = false;
+                }
+
+                $post->allow_edit = Gate::allows('edit-post', $post);
                 return $post;
             });
 
         $oneMinuteAgo = now()->subMinute();
+        $processedPosts = $posts->getCollection();
 
         if ($user) {
-            $recentUserPosts = $posts->filter(function ($post) use ($user, $oneMinuteAgo) {
+            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
                 return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
             })->sortByDesc('created_at');
 
-            $otherPosts = $posts->diff($recentUserPosts)->sortByDesc('weighted_score');
+            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
 
             $mergedPosts = $recentUserPosts->merge($otherPosts);
         } else {
-            $mergedPosts = $posts->sortByDesc('weighted_score');
+            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
         }
+
+        // Replace the collection in the paginator instance
+        $posts->setCollection($mergedPosts->values());
 
         $badges = User::with('badges')->get();
 
-        
+
         return view('home', [
-            'posts' => $mergedPosts,
+            'posts' => $posts,
             'badges' => $badges,
         ]);
+    }
+
+    public function loadMorePosts(Request $request)
+    {
+        $user = Auth::user();
+        $page = $request->page ?? 1;
+
+        $posts = Post::with('user.badges', 'attachments', 'comments')
+            ->orderBy('created_at', 'desc')
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->paginate(10, ['*'], 'page', $page);
+
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            $score = ($post->upvoted_by_count * 3) +
+                ($post->downvoted_by_count * 1) -
+                ($post->comments_count * 2) +
+                ($post->bookmarks_count * 2);
+
+            $post->weighted_score = $score;//  + rand(0, 10);
+
+            if (Auth::check()) {
+                $authedUser = Auth::user(); // $user is already available in this method's scope, but using $authedUser to avoid conflict if any scope issue.
+                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
+                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
+                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+            } else {
+                $post->upvoted_by_user = false;
+                $post->downvoted_by_user = false;
+                $post->bookmarked_by_user = false;
+            }
+
+            $post->allow_edit = Gate::allows('edit-post', $post);
+            return $post;
+        });
+
+        $oneMinuteAgo = now()->subMinute();
+        $processedPosts = $posts->getCollection();
+
+        if ($user) {
+            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
+                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
+            })->sortByDesc('created_at');
+
+            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
+
+            $mergedPosts = $recentUserPosts->merge($otherPosts);
+        } else {
+            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
+        }
+
+        // Replace the collection in the paginator instance
+        $posts->setCollection($mergedPosts->values());
+
+        return response()->json($posts);
     }
 
     public function search(Request $request)
@@ -83,19 +155,78 @@ class PostController extends Controller
         }
 
         // $posts = DB::table('posts')->with('user', 'attachments', 'comments')->where('content', 'like', "%" . $search . "%")->get();
-        $posts = Post::with('user', 'attachments', 'comments', 'tag')->where(function ($query) use ($search) {
-            $query->where('title', 'like', "%{$search}%")
-                ->orWhere('content', 'like', "%{$search}%")
-                ->orWhere('location', 'like', "%{$search}%")
-                ->orWhere('gmap_url', 'like', "%{$search}%")
-                ->orWhere('place_name', 'like', "%{$search}%")
-                ->orWhereHas('user', function ($query) use ($search) {
-                    $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
-                })
-                ->orWhereHas('tag', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%");
-                });
-        })->withCount('upvotedBy')->get();
+//        $posts = Post::with('user', 'attachments', 'comments', 'tag')->where(function ($query) use ($search) {
+//            $query->where('title', 'like', "%{$search}%")
+//                ->orWhere('content', 'like', "%{$search}%")
+//                ->orWhere('location', 'like', "%{$search}%")
+//                ->orWhere('gmap_url', 'like', "%{$search}%")
+//                ->orWhere('place_name', 'like', "%{$search}%")
+//                ->orWhereHas('user', function ($query) use ($search) {
+//                    $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
+//                })
+//                ->orWhereHas('tag', function ($query) use ($search) {
+//                    $query->where('name', 'like', "%{$search}%");
+//                });
+//        })->withCount('upvotedBy')->get();
+
+        $user = Auth::user();
+
+        $posts = Post::with('user.badges', 'attachments', 'comments')
+            ->orderBy('created_at', 'desc')
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->where('title', 'like', "%$search%")
+            ->orWhere('content', 'like', "%{$search}%")
+            ->orWhere('location', 'like', "%{$search}%")
+            ->orWhere('gmap_url', 'like', "%{$search}%")
+            ->orWhere('place_name', 'like', "%{$search}%")
+            ->orWhereHas('user', function ($query) use ($search) {
+                $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
+            })
+            ->orWhereHas('tag', function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->paginate(10);
+
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            $score = ($post->upvoted_by_count * 3) +
+                ($post->downvoted_by_count * 1) -
+                ($post->comments_count * 2) +
+                ($post->bookmarks_count * 2);
+
+            $post->weighted_score = $score + rand(0, 10);
+
+            if (Auth::check()) {
+                $authedUser = Auth::user();
+                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
+                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
+                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+            } else {
+                $post->upvoted_by_user = false;
+                $post->downvoted_by_user = false;
+                $post->bookmarked_by_user = false;
+            }
+
+            $post->allow_edit = Gate::allows('edit-post', $post);
+            return $post;
+        });
+
+        $oneMinuteAgo = now()->subMinute();
+        $processedPosts = $posts->getCollection();
+
+        if ($user) {
+            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
+                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
+            })->sortByDesc('created_at');
+
+            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
+
+            $mergedPosts = $recentUserPosts->merge($otherPosts);
+        } else {
+            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
+        }
+
+        // Replace the collection in the paginator instance
+        $posts->setCollection($mergedPosts->values());
 
         return view('home', [
             'posts' => $posts,
@@ -225,11 +356,11 @@ class PostController extends Controller
             $userComments = $comments->filter(function($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('created_at');
-        
+
             $otherComments = $comments->reject(function($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('upvoted_by_count');
-        
+
             $mergedComments = $userComments->merge($otherComments);
         } else {
             $mergedComments = $comments->sortByDesc('upvoted_by_count');
@@ -308,12 +439,26 @@ class PostController extends Controller
         if ($user->hasDownvotedPost($post)) {
             $user->votedPost()->detach($post);
             $user->votedPost()->attach($post, ['is_upvoted' => true]);
-            return response()->json(['message' => 'Downvote removed and upvote added successfully.']);
+            $post->refresh();
+            return response()->json([
+                'message' => 'Downvote removed and upvote added successfully.',
+                'upvoted_by_count' => $post->upvotedBy()->count(),
+                'downvoted_by_count' => $post->downvotedBy()->count(),
+                'upvoted_by_user' => true,
+                'downvoted_by_user' => false
+            ]);
         }
 
         if ($user->hasUpvotedPost($post)) {
             $user->votedPost()->detach($post);
-            return response()->json(['message' => 'Upvote removed successfully.']);
+            $post->refresh();
+            return response()->json([
+                'message' => 'Upvote removed successfully.',
+                'upvoted_by_count' => $post->upvotedBy()->count(),
+                'downvoted_by_count' => $post->downvotedBy()->count(),
+                'upvoted_by_user' => false,
+                'downvoted_by_user' => false
+            ]);
         }
 
         $user->votedPost()->attach($post, ['is_upvoted' => true]);
@@ -333,7 +478,14 @@ class PostController extends Controller
             $user->badges()->attach(19);
         }
 
-        return response()->json(['message' => 'Post upvoted successfully.']);
+        $post->refresh();
+        return response()->json([
+            'message' => 'Post upvoted successfully.',
+            'upvoted_by_count' => $post->upvotedBy()->count(),
+            'downvoted_by_count' => $post->downvotedBy()->count(),
+            'upvoted_by_user' => true,
+            'downvoted_by_user' => false
+        ]);
     }
 
     public function downvote(Request $request, Post $post)
@@ -343,17 +495,37 @@ class PostController extends Controller
         if ($user->hasUpvotedPost($post)) {
             $user->votedPost()->detach($post);
             $user->votedPost()->attach($post, ['is_upvoted' => false]);
-            return response()->json(['message' => 'Upvote removed and downvote added successfully.']);
+            $post->refresh();
+            return response()->json([
+                'message' => 'Upvote removed and downvote added successfully.',
+                'upvoted_by_count' => $post->upvotedBy()->count(),
+                'downvoted_by_count' => $post->downvotedBy()->count(),
+                'upvoted_by_user' => false,
+                'downvoted_by_user' => true
+            ]);
         }
 
         if ($user->hasDownvotedPost($post)) {
             $user->votedPost()->detach($post);
-            return response()->json(['message' => 'Downvote removed successfully.']);
+            $post->refresh();
+            return response()->json([
+                'message' => 'Downvote removed successfully.',
+                'upvoted_by_count' => $post->upvotedBy()->count(),
+                'downvoted_by_count' => $post->downvotedBy()->count(),
+                'upvoted_by_user' => false,
+                'downvoted_by_user' => false
+            ]);
         }
 
         $user->votedPost()->attach($post, ['is_upvoted' => false]);
-
-        return response()->json(['message' => 'Post downvoted successfully.']);
+        $post->refresh();
+        return response()->json([
+            'message' => 'Post downvoted successfully.',
+            'upvoted_by_count' => $post->upvotedBy()->count(),
+            'downvoted_by_count' => $post->downvotedBy()->count(),
+            'upvoted_by_user' => false,
+            'downvoted_by_user' => true
+        ]);
     }
 
     public function bookmark(Post $post)
@@ -388,27 +560,55 @@ class PostController extends Controller
 
     public function showTag($tag)
     {
-        $posts = Post::with('user', 'attachments', 'comments')
+        // $user = Auth::user(); // Defined for consistency if needed by sorting logic later, but Auth::check() is preferred for the transform
+        $posts = Post::with('user.badges', 'attachments', 'comments')
             ->whereHas('tag', function ($query) use ($tag) {
                 $query->where('name', $tag);
             })
             ->orderBy('created_at', 'desc')
             ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->get()
-            ->map(function ($post) {
-                $score = ($post->upvoted_by_count * 3) +
-                            ($post->downvoted_by_count * 1) -
-                            ($post->comments_count * 2) +
-                            ($post->bookmarks_count * 2);
+            ->paginate(10);
 
-                $post->weighted_score = $score + rand(0, 10);
+        $posts->getCollection()->transform(function ($post) {
+            $score = ($post->upvoted_by_count * 3) +
+                        ($post->downvoted_by_count * 1) -
+                        ($post->comments_count * 2) +
+                        ($post->bookmarks_count * 2);
 
-                return $post;
-            })
-            ->sortByDesc('weighted_score');
+            $post->weighted_score = $score;// + rand(0, 10);
+
+            if (Auth::check()) {
+                $authedUser = Auth::user();
+                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
+                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
+                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+            } else {
+                $post->upvoted_by_user = false;
+                $post->downvoted_by_user = false;
+                $post->bookmarked_by_user = false;
+            }
+            return $post;
+        });
+
+        // Apply sorting to the collection. The existing sorting logic in showTag might need adjustment
+        // if it was relying on $user variable from outside the transform for its own filtering/sorting.
+        // However, the current sorting is only by weighted_score which is fine.
+        // The complex sorting logic from index() method (recent user posts first) is not replicated here.
+        // This method currently sorts all posts by 'weighted_score'.
+        // If the same complex sorting as index() is required, it should be added here.
+        // For now, just applying the sortByDesc as it was.
+        $processedPosts = $posts->getCollection(); // Get collection for potential complex sort
+
+        // Replicating the sorting from index() method for consistency, if desired.
+        // If not, the simple sortByDesc('weighted_score') is fine.
+        // For now, let's stick to the original sorting of showTag which was just by weighted_score.
+        $finalSortedPosts = $processedPosts->sortByDesc('weighted_score');
+        $posts->setCollection($finalSortedPosts->values());
+
 
         return view('home', [
             'posts' => $posts,
+            // 'badges' => $badges, // $badges variable is not defined in this method currently
         ]);
     }
 
