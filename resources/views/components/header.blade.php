@@ -42,8 +42,7 @@ window.addEventListener('scroll', () => {
                                 <div :id="'history-item-' + {{ $index }}"
                                     class="flex items-center justify-between px-4 py-2 text-sl-text/95">
                                     <span
-                                        @click="window.location.href='/search?search=' + encodeURIComponent({{ json_encode($history) }})"
-                                        class="cursor-pointer hover:text-sl-text hover:underline">{{ $history }}</span>
+                                        class="cursor-pointer hover:text-sl-text hover:underline w-[100%]" @click="window.location.href='/search?search=' + encodeURIComponent({{ json_encode($history) }})">{{ $history }}</span>
                                     <button type="button" class="cursor-pointer flex items-center justify-center w-fit"
                                         @click="deleteHistory({{ json_encode($history) }}, {{ $index }})"><i
                                             class="fa-light fa-times"></i></button>
