@@ -24,8 +24,8 @@
     <title>{{ $title }}</title>
 </head>
 
-<body x-init="console.log('ALPINEJS INITIALIZE')" class="min-w-full max-w-full min-h-screen w-full h-full bg-sl-base text-sl-text">
-    
+<body x-init="console.log('ALPINEJS INITIALIZE')" class="min-w-full max-w-full min-h-screen w-full h-full bg-sl-base text-sl-text relative">
+
 
     @php
         $links = [
@@ -51,10 +51,10 @@
                 lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // prevent negative
             })
             "
-        class="min-w-full max-w-full min-h-screen w-full h-full bg-sl-base text-sl-text relative pb-10"
+        class="min-w-full max-w-full min-h-screen w-full h-full bg-sl-base text-sl-text relative pb-60 xs:pb-50 sm:pb-40"
         >
         <nav @click.outside="navOpen = false">
-            <header 
+            <header
                 :class="[
                     navOpen ? 'border-b-white' : 'border-b-transparent',
                     hideHeader ? '-top-20' : 'top-0'

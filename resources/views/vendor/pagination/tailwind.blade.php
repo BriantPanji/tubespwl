@@ -2,22 +2,22 @@
     <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="flex items-center justify-between">
         <div class="flex justify-between flex-1 sm:hidden">
             @if ($paginator->onFirstPage())
-                <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium bg-sl-tertiary border border-sl-quaternary cursor-default leading-5 rounded-md text-gray-600">
-                    {!! __('pagination.previous') !!}
+                <span class="relative inline-flex items-center px-4 py-2 text-xl font-medium bg-sl-tertiary border border-sl-quaternary cursor-default leading-5 rounded-md text-gray-600">
+                    <i class="text-xl fa-light fa-square-chevron-left"></i>
                 </span>
             @else
-                <a href="{{ $paginator->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium bg-sl-tertiary border border-sl-quaternary leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 transition ease-in-out duration-150 text-gray-300 focus:border-blue-700 active:bg-gray-700 active:text-gray-300">
-                    {!! __('pagination.previous') !!}
+                <a href="{{ $paginator->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-xl font-medium bg-sl-tertiary border border-sl-quaternary leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 transition ease-in-out duration-150 text-gray-300 focus:border-blue-700 active:bg-gray-700 active:text-gray-300">
+                    <i class="text-xl fa-light fa-square-chevron-left"></i>
                 </a>
             @endif
 
             @if ($paginator->hasMorePages())
-                <a href="{{ $paginator->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium  bg-sl-tertiary border border-sl-quaternary leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 transition ease-in-out duration-150 text-gray-300 focus:border-blue-700 active:bg-gray-700 active:text-gray-300">
-                    {!! __('pagination.next') !!}
+                <a href="{{ $paginator->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 ml-3 text-xl font-medium  bg-sl-tertiary border border-sl-quaternary leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 transition ease-in-out duration-150 text-gray-300 focus:border-blue-700 active:bg-gray-700 active:text-gray-300">
+                    <i class="text-xl fa-light fa-square-chevron-right"></i>
                 </a>
             @else
-                <span class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium  bg-sl-tertiary border border-sl-quaternary cursor-default leading-5 rounded-md text-gray-600">
-                    {!! __('pagination.next') !!}
+                <span class="relative inline-flex items-center px-4 py-2 ml-3 text-xl font-medium  bg-sl-tertiary border border-sl-quaternary cursor-default leading-5 rounded-md text-gray-600">
+                    <i class="text-xl fa-light fa-square-chevron-right"></i>
                 </span>
             @endif
         </div>

@@ -132,6 +132,31 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
+    public function loadRandomPosts(Request $request) {
+
+        $posts = Post::with(['attachments' => function ($query) {
+            $query->limit(1); // hanya ambil satu gambar
+        }, 'user'])
+            ->inRandomOrder()
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->limit(10)
+            ->get();
+
+        // Transformasi skor dan info tambahan
+        $transformed = $posts->map(function ($post) {
+            return [
+                'id' => $post->id,
+                'title' => $post->title,
+                'content' => $post->content,
+                'image' => $post->attachments->first()?->namafile ?? null, // pastikan ada relasi 'url' di Attachment model
+            ];
+        });
+
+        $sorted = $transformed->values();
+
+        return response()->json($sorted);
+    }
+
     public function search(Request $request)
     {
         $search = $request->search;

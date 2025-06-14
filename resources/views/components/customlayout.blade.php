@@ -24,7 +24,7 @@
     <title>{{ $title }}</title>
 </head>
 
-<body x-init="console.log('ALPINEJS INITIALIZE')" class="min-w-full max-w-full min-h-screen w-full h-full bg-sl-base text-sl-text">
+<body x-init="console.log('ALPINEJS INITIALIZE')" class="min-w-full max-w-full min-h-screen w-full h-full bg-sl-base text-sl-text relative">
     <x-header></x-header>
         {{ $slot }}
     <x-footer></x-footer>
