@@ -1,4 +1,4 @@
-<footer class="min-w-full max-w-full min-h-50 sm:min-h-32 w-full px-7 py-7 text-sl-text bg-sl-tertiary flex flex-col sm:flex-row ">
+<footer class="min-w-full max-w-full min-h-50 sm:min-h-32 w-full px-7 py-7 text-sl-text bg-sl-tertiary flex flex-col sm:flex-row absolute bottom-0 z-100 ">
     <section class="max-w-full min-h-2 w-full sm:max-w-[35%] md:max-w-55 flex flex-col items-start text-sl-text/70 gap-1 sm:justify-center">
         <img class="h-auto max-h-7 w-auto object-contain grayscale hover:grayscale-0 transition-all" src="{{ asset('img/logo/sudutlain_kombinasi1.png') }}">
         <span class="text-xs font-bold">Sebarkan setiap sudut ke dunia</span>

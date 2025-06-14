@@ -44,6 +44,7 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
     // Post
     Route::get('/', [PostController::class, 'index']);
     Route::get('/load-more-posts', [PostController::class, 'loadMorePosts'])->name('posts.loadMore');
+    Route::get('/load-popular-posts', [PostController::class, 'loadRandomPosts'])->name('posts.loadRandom');
     Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
     Route::patch('/post/add', [PostController::class, 'store'])->name('post.store')->middleware('auth');
     Route::get('/post/{post}', [PostController::class, 'show'])->name('post.detail');

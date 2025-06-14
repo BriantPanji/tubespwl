@@ -184,7 +184,7 @@
                     </div>
                 </section>
                 <section @click="window.location.href = `/post/${post.id}`" class="w-full h-auto cursor-pointer" x-show="post.attachments && post.attachments.length > 0">
-                    <img class="!aspect-video rounded-xl object-cover w-full"
+                    <img class="!aspect-video rounded-xl object-cover w-full h-auto"
                         :src="`{{ asset('storage/posts/') }}/${post.attachments[0].namafile}`"
                         onerror="this.style.display='none';"> {{-- Hide if image fails to load --}}
                 </section>

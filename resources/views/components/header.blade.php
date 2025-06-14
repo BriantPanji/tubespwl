@@ -9,10 +9,10 @@ window.addEventListener('scroll', () => {
     :class="{
         '-translate-y-full': hideHeader,
         'translate-y-0': !hideHeader,
-        'bg-sl-base/10 backdrop-blur-xs shadow-md': scrolled,
+        'bg-sl-base/10 backdrop-blur-xs shadow-sm': scrolled,
         'bg-sl-base shadow-none': !scrolled
     }"
-    class="transition-all duration-300 min-w-full !max-w-full w-full min-h-19 h-19 max-h-19 sticky top-0 z-100 flex items-center justify-between px-5 xs:px-10 lg:px-20 xl:px-32 2xl:px-40">
+    class="transition-all duration-300 min-w-full border-b-neutral-700 border-b-[.5px] !max-w-full w-full min-h-19 h-19 max-h-19 sticky top-0 z-100 flex items-center justify-between px-5 xs:px-10 lg:pr-20 xl:pr-32 2xl:pr-40">
 
     {{-- POPUP MODAL UNTUK KETIKA SEARCHBAR DITEKAN, KENAPA DIPISAH? BIAR GAMPANG AJA NGODINGNYA AWIKWOK --}}
     <div @click.outside="open=!open" x-show="open & !hideHeader" x-cloak
@@ -64,13 +64,15 @@ window.addEventListener('scroll', () => {
         @endguest
         @auth
 
-            <button @dblclick="window.location.href='/profile'" @click="isNavOpen = !isNavOpen" class="cursor-pointer"><img class="w-9 h-9 rounded-full hover:shadow-sm shadow-sl-text"
+            <button @dblclick="window.location.href='/profile'" @click="isNavOpen = !isNavOpen" class="cursor-pointer lg:!cursor-default"><img class="w-9 h-9 rounded-full hover:shadow-sm shadow-sl-text"
                     src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}" alt="profilepicture.jpg"></button>
         @endauth
         <a href="/" class="cursor-pointer"><img class="h-9 max-h-9" src="{{ asset('img/logo/sudutlain_wm.png') }}"
                 alt=""></a>
         @auth
-        <nav x-cloak x-show="isNavOpen && !hideHeader" @click.outside="isNavOpen=false" class="min-w-50 max-w-50 w-50 min-h-10 bg-sl-tertiary/60 backdrop-blur-3xl absolute top-11 left-1 rounded-lg px-1.5 py-1.5 flex flex-col  shadow-sl-text divide-y divide-sl-text/20 border border-sl-text/10" style="border-width:0.5px;">
+        <nav x-cloak x-show="isNavOpen && !hideHeader" @click.outside="isNavOpen=false"
+             :class="scrolled ? 'bg-sl-tertiary/95 backdrop-blur-xs' : 'bg-sl-tertiary backdrop-blur-none'"
+             class="min-w-50 max-w-50 w-50 min-h-10 lg:!hidden lg:!cursor-default  absolute top-11 left-1 rounded-lg px-1.5 py-1.5 flex flex-col  shadow-sl-text divide-y divide-sl-text/20 border border-sl-text/10" style="border-width:0.5px;">
             @if (!Request::is('profile'))
                 <div class="min-w-full max-w-full min-h-10 h-10">
                     <a href="{{ route('profile') }}" class="flex items-center justify-start py-1 w-full min-h-full h-full max-h-full text-base gap-2 px-3 cursor-pointer hover:font-medium hover:bg-sl-septenary/20 transition-all duration-200 ease-in-out rounded-md">
