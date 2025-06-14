@@ -1,7 +1,34 @@
 <x-layout>
     <x-slot:title>SudutLain - Beranda</x-slot:title>
-    <x-item.postbanner></x-item.postbanner>
+    @if(request()->is('search'))
+    <div class="flex flex-col mb-1 gap-1.5 bg-sl-tertiary px-3 pb-3 pt-2 rounded-sm">
+        <div class="flex justify-between">        
+            <span class="text-sl-senary text-base font-medium">Sort by:</span>
+            <button type="button" @click="window.location.href = '{{ route('search', parameters: ['search' => $search, 'sortby' => request('sortby', 'popularitas'), 'orderby' => request('orderby', 'ASC') === 'ASC' ? 'DESC' : 'ASC'])}}'"><i class="fa-light {{ request('orderby', 'ASC') === 'ASC' ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'}}"></i></button>
+        </div>
+        <div class="flex justify-center text-center gap-x-4">
+                <a href="{{ route('search', parameters: ['search' => $search, 'sortby' => 'popularitas', 'orderby' => request('orderby', 'ASC')]) }}"
+                class="w-1/4 px-3 py-1 rounded {{ $sortby=='popularitas' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    Popularitas
+                </a>
+                <a href="{{ route('search', ['search' => $search, 'sortby' => 'upvotes', 'orderby' => request('orderby', 'ASC')]) }}"
+                class="w-1/4 px-3 py-1 rounded {{ $sortby=='upvotes' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    Votes
+                </a>
+                <a href="{{ route('search', ['search' => $search, 'sortby' => 'comments', 'orderby' => request('orderby', 'ASC')]) }}"
+                class="w-1/4 px-3 py-1 rounded {{ $sortby=='comments' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    Comments
+                </a>
+                <a href="{{ route('search', ['search' => $search, 'sortby' => 'title', 'orderby' => request('orderby', 'ASC')]) }}"
+                class="w-1/4 px-3 py-1 rounded {{ $sortby=='title' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    Title A→Z
+                </a>
 
+        </div>
+    </div>
+    @else
+    <x-item.postbanner></x-item.postbanner>
+    @endif
     <div x-data="{
         posts: {!! Illuminate\Support\Js::from($posts->items())->toHtml() ?: '[]' !!},
         currentPage: {{ $posts->currentPage() }},
