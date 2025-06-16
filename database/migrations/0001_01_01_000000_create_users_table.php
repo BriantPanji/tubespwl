@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_admin')->default(false)->nullable(false);
             $table->boolean('is_banned')->default(false)->nullable(false);
             $table->string('avatar')->default('blankprofile.png')->nullable(false);
+            $table->string('avatar_imgkit_id')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

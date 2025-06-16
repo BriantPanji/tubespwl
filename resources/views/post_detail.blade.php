@@ -1,6 +1,14 @@
     <x-layout>
 
-        {{-- @dd($comments) --}}
+        @if (session('bct'))
+        <script>
+            Swal.fire({
+                title: "Berhasil",
+                text: "{{ session()->get('success') }}",
+                icon: "success"
+            });
+        </script>
+    @endif
         <x-slot:title>Detail Postingan</x-slot:title>
 
         <article
@@ -12,7 +20,7 @@
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2 mt-10">
                     <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
-                            src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
+                            src="{{ config('app.imagekit.url_endpoint') . $post->user->avatar }}"></a>
                     {{-- FOTO PROFIL USER --}}
                     <div class="flex flex-col h-full justify-center">
                         <a href="/profile/{{ $post->user->username }}"
@@ -67,7 +75,8 @@
                                             _token: '{{ csrf_token() }}'
                                         }
                                     })
-                                    .then(() => {
+                                    .then((res) => {
+                                        console.log(res);   
                                         Swal.fire('Berhasil!', 'Postingan berhasil dihapus!', 'success')
                                         .then(() => {
                                             window.location.href = '/';
@@ -193,7 +202,7 @@
                     @foreach ($post->attachments as $attachment)
                         <div class="swiper-slide h-full">
                             <img class="w-full h-full rounded-xl"
-                                src="{{ asset('storage/posts/' . $attachment->namafile) }}">
+                                src="{{ config('app.imagekit.url_endpoint') . $attachment->namafile }}">
                         </div>
                     @endforeach
                 </div>
@@ -358,10 +367,10 @@
                 <div class="">
                     <div class="flex justify-between items-center">
                         @auth
-                            <img src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}" class="w-[32px] rounded-full"
+                            <img src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}" class="w-[32px] rounded-full"
                                 alt="Foto User">
                         @else
-                            <img src="{{ asset('img/blankprofile.png') }}" class="w-[32px] rounded-full"
+                            <img src="{{ config('app.imagekit.url_endpoint') . '/blankprofile.png' }}" class="w-[32px] rounded-full"
                                 alt="Foto Default">
                         @endauth
                         <input type="text" name="content" id="comment"
@@ -383,7 +392,7 @@
             @forelse ($comments as $comment)
                 <div x-ref="comment_{{ $comment->id }}" class="mt-1 px-3">
                     <div class="flex gap-2.5 items-start">
-                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ asset('storage/avatars/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
+                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ config('app.imagekit.url_endpoint') . $comment->user->avatar }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
                             alt="Foto User">
                         <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
                             <div class="py-.5 px-2.5">
