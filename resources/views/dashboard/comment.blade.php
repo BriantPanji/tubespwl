@@ -34,7 +34,7 @@
                 <div class="flex items-center gap-2">
                     <a href="/profile">
                         <img class="w-9 h-9 rounded-full object-cover"
-                            src="{{ config('app.imagekit.url_endpoint' . $comment->user->avatar) }}" alt="Avatar">
+                            src="{{ config('app.imagekit.url_endpoint') . $comment->user->avatar }}" alt="Avatar">
                     </a>
                     <div>
                         <p class="font-semibold text-sl-text/90">

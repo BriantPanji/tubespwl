@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\VoteNotification;
 use Illuminate\Support\Facades\Validator;
+use ImageKit\ImageKit;
 
 class PostController extends Controller
 {
@@ -328,17 +329,32 @@ class PostController extends Controller
 
         $post->tag()->sync($hashtagIds);
 
+        $imageKit = new ImageKit(
+            config('app.imagekit.public_key'),
+            config('app.imagekit.private_key'),
+            config('app.imagekit.url_endpoint')
+        );
 
         foreach ($request->file('images', []) as $file) {
-            if ($file) {
-                $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('', $fileName, 'posts');
+            $filenya = base64_encode(file_get_contents($file->getRealPath()));
 
-                PostAttachment::create([
-                    'namafile' => $fileName,
-                    'post_id' => $post->id,
-                ]);
+            $namaFilenya = uniqid() . '.' . $file->getClientOriginalExtension();
+            $uploadnya = $imageKit->uploadFIle([
+                'file' => $filenya, // Get the file content
+                'fileName' => $namaFilenya,
+                'useUniqueFileName' => true,
+            ]);
+
+            if ($uploadnya->error !== null) {
+                return redirect()->back()->withErrors(['images' => 'Error uploading image: ' . $uploadnya->error]);
             }
+
+            PostAttachment::create([
+                'namafile' => $uploadnya->result->name,
+                'post_id' => $post->id,
+                'imgkit_id' => $uploadnya->result->fileId,
+            ]);
+
         }
 
         $user = Auth::user();
@@ -456,12 +472,27 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         Gate::authorize('edit-post', $post);
-        $post->delete();
+        
+        $imageKit = new ImageKit(
+            config('app.imagekit.public_key'),
+            config('app.imagekit.private_key'),
+            config('app.imagekit.url_endpoint')
+        );
 
+        foreach ($post->attachments as $attachment) {
+            if ($attachment->namafile === 'blankimage.png') continue;
+            $hslnya = $imageKit->deleteFile($attachment->imgkit_id);
+            if ($hslnya->error) {
+                return response()->json([
+                    'message' => 'Error deleting image: ' . $hslnya->error->message
+                ], 500);
+            }
+        }
+        
+        $post->delete();
         session()->flash('clear_home_cache', 'true'); // Add this line
         return redirect('/')->with('success', 'Post deleted successfully');
     }
-
 
     public function upvote(Request $request, Post $post)
     {

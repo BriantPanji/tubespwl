@@ -16,7 +16,7 @@
                 {{-- FOTO PROFIL --}}
                 <div class="w-24 h-24 shrink-0">
                     <img class="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
-                         src="{{ config('app.imagekit.url_endpoint' . $user->avatar) }}" alt="Foto Profil">
+                         src="{{ config('app.imagekit.url_endpoint') . $user->avatar }}" alt="Foto Profil">
                 </div>
 
                 {{-- USERNAME & BADGE --}}
