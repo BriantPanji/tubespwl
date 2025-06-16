@@ -196,6 +196,36 @@ class PostSeeder extends Seeder
                 'namaFile'   => ['MF.jpg'],
                 'hashtags'   => [10,9,6],
             ],
+            [
+                'title'      => 'Bakso Murni Telong, Tempat Makan Bakso Khas Medan',
+                'content'    => 'Bakso Murni Telong adalah tempat makan bakso dengan cita rasa yang khas dan bahan-bahan berkualitas. Tempatnya sederhana namun nyaman, cocok untuk makan bersama keluarga atau teman.',
+                'location'   => 'Jl. Sisingamangaraja No.460A, Sitirejo II, Kec. Medan Amplas, Kota Medan, Sumatera Utara 20217',
+                'gmap_url'   => 'https://maps.app.goo.gl/VouzBEd99icNqmB48',
+                'place_name' => 'Bakso Murni Telong',
+                'user_id'    => 1,
+                'namaFile'     => ['bms.jpg', 'bms2.jpg'],
+                'hashtags' => [7,8,9]
+            ],
+            [
+                'title'      => 'Tempat Es Krim yang kekinian',
+                'content'    => 'Cooler city dengan vibes cozy yang cocok buat nongkrong dan menikmati es krim rasa unik seperti klepon, martabak, waffle, sampai durian Medan!',
+                'location'   => 'Komplek Epicentrum, Jl. Dr. Mansyur No.98A, Padang Bulan Selayang I, Medan Selayang, Medan City, North Sumatra',
+                'gmap_url'   => 'https://maps.app.goo.gl/ru6JP5GTtJWGra5F8',
+                'place_name' => 'Cooler City',
+                'user_id'    => 1,
+                'namaFile'     => ['cooler (1).jpg', 'cooler (2).jpg', 'cooler (3).jpg'],
+                'hashtags' => [1, 2, 4]
+            ],
+            [
+                'title'      => 'Tempat makan berkodee',
+                'content'    => 'Barkode pasbar tempat makann dengan tema kode kode seperti QR Code sesuai dengan namanya,. Tempatnya asik, seru, nyaman untuk nugas. COCOK JUGA UNTUK KUMPUL KELUARGA.',
+                'location'   => 'Jl. Ps. Baru No.39, Titi Rantai, Kec. Medan Baru, Kota Medan, Sumatera Utara 20157',
+                'gmap_url'   => 'https://maps.app.goo.gl/uLcyHcWYMoR72nBR8',
+                'place_name' => 'Barkode Pasbar',
+                'user_id'    => 1,
+                'namaFile'     => ['barkode.jpg', 'barkode2.jpg', 'barkode3.jpg'],
+                'hashtags' => [1, 2, 3, 4, 5]
+            ],
         ];
 
         foreach ($posts as $post) {

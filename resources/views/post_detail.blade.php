@@ -147,9 +147,9 @@
                     {{ $post->title }}
                 </div>
                 <div class="w-full font-light text-xs md:text-sm relative ">
-                    <p class="line-clamp-4">
+                    <p class="">
                         {{-- CONTENT POST --}}
-                        {{ $post->content }}
+                        {!! nl2br(e($post->content)) !!}
                         {{-- @foreach ($post->tag as $tag)
                             <a href="/tagar/{{ $tag->name }}" class="text-blue-500 italic">#{{ $tag->name }}</a>
                         @endforeach --}}
