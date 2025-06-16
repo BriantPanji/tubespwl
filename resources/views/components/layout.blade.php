@@ -128,7 +128,7 @@
                             <h1 class="font-medium text-sm group-hover:font-semibold truncate" x-text="post.title"></h1>
                             <p class="text-[.7rem] opacity-50 line-clamp-2 font-light group-hover:font-normal" x-text="post.content"></p>
                         </div>
-                        <img class="object-contain rounded-sm !aspect-square w-12 h-12" :src="`{{ env('IMAGEKIT_URL_ENDPOINT') }}${post.image}`" alt="">
+                        <img class="object-fit rounded-sm !aspect-square w-12 h-12" :src="`{{ env('IMAGEKIT_URL_ENDPOINT') }}${post.image}`" alt="">
                     </a>
                 </template>
 
@@ -176,21 +176,7 @@
     <x-footer></x-footer>
     <script src="{{ asset('js/swaldef.js') }}" defer></script>
     <script>
-
-        @if(session('clear_home_cache'))
-            sessionStorage.removeItem('cachedPosts');
-            sessionStorage.removeItem('cachedPage');
-            sessionStorage.removeItem('cachedLastPage');
-            sessionStorage.removeItem('cachedHasMorePages');
-            sessionStorage.removeItem('cacheTimestamp');
-            sessionStorage.removeItem('scrollPosition');
-            // Also remove 'justLeftHomePage' to ensure the next load of Home is completely fresh
-            sessionStorage.removeItem('justLeftHomePage');
-        // Consider if window.location.pathname === '/' (or home path) then window.location.reload();
-        // For now, just clearing cache. Home page init logic should handle fresh load.
-        @endif
-
-        if (sessionStorage.getItem('justLeftHomePage') !== `true`) {
+        function resetCache() {
             sessionStorage.removeItem('cachedPosts');
             sessionStorage.removeItem('cachedPage');
             sessionStorage.removeItem('cachedLastPage');
@@ -200,13 +186,33 @@
             sessionStorage.removeItem('justLeftHomePage');
         }
 
-        let lastPage = (new URL(document.referrer).pathname);
-        let nowPage = document.location.pathname;
+        @if(session('clear_home_cache'))
+            resetCache();
+        @endif
 
-        if ((lastPage === '/') || (lastPage === '/search') || lastPage.startsWith('/tagar')) {
-            sessionStorage.setItem('justLeftHomePage', 'true');
+        if (sessionStorage.getItem('justLeftHomePage') !== `true`) {
+            resetCache();
+        }
+
+        let lastPage = (new URL(document.referrer || document.location.href));
+        let nowPage = document.location;
+
+        if ((lastPage.pathname === '/') || (lastPage.pathname === '/search') || lastPage.pathname.startsWith('/tagar')) {
+            if (lastPage.pathname === '/search' && (nowPage.pathname === '/' || nowPage.pathname.startsWith('/tagar'))) {
+                resetCache();
+            } else {
+                sessionStorage.setItem('justLeftHomePage', 'true');
+            }
+
+
+            if (lastPage.pathname === '/search' && nowPage.pathname === '/search') {
+                if (lastPage.href !== nowPage.href) sessionStorage.removeItem('justLeftHomePage');
+                else sessionStorage.setItem('justLeftHomePage', 'true');
+            } else {
+                sessionStorage.setItem('justLeftHomePage', 'true');
+            }
         } else {
-            if (nowPage !== '/' || nowPage !== '/search' || lastPage.startsWith('/tagar')) {
+            if (nowPage !== '/' || nowPage !== '/search' || lastPage.pathname.startsWith('/tagar')) {
                 sessionStorage.removeItem('justLeftHomePage');
             }
         }

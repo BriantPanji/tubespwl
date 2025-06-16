@@ -9,6 +9,7 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Models\PostAttachment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\VoteNotification;
@@ -179,102 +180,85 @@ class PostController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->search;
-        $search = trim(strip_tags($search));
+        $search  = trim(strip_tags($request->input('search', '')));
+        $sortby  = $request->input('sortby', 'popularitas');
+        $orderBy = $request->input('orderby', 'ASC');
+        $orderBy = Str::upper($orderBy) === 'ASC' ? false : true;
 
         // History
         if ($search) {
             $history = session()->get('search_history', []);
-
-            // Masukkan ke awal array
             array_unshift($history, $search);
-
-            // Hilangkan duplikat
             $history = array_unique($history);
-
-            // Batasi jumlah history, misal 10 terakhir
             $history = array_slice($history, 0, 10);
-
-            // Simpan kembali ke session
             session(['search_history' => $history]);
         }
 
-        // $posts = DB::table('posts')->with('user', 'attachments', 'comments')->where('content', 'like', "%" . $search . "%")->get();
-//        $posts = Post::with('user', 'attachments', 'comments', 'tag')->where(function ($query) use ($search) {
-//            $query->where('title', 'like', "%{$search}%")
-//                ->orWhere('content', 'like', "%{$search}%")
-//                ->orWhere('location', 'like', "%{$search}%")
-//                ->orWhere('gmap_url', 'like', "%{$search}%")
-//                ->orWhere('place_name', 'like', "%{$search}%")
-//                ->orWhereHas('user', function ($query) use ($search) {
-//                    $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
-//                })
-//                ->orWhereHas('tag', function ($query) use ($search) {
-//                    $query->where('name', 'like', "%{$search}%");
-//                });
-//        })->withCount('upvotedBy')->get();
-
-        $user = Auth::user();
-
-        $posts = Post::with('user.badges', 'attachments', 'comments')
-            ->orderBy('created_at', 'desc')
+        $like = '%' . $search . '%';
+        $posts = Post::with(['user.badges', 'attachments', 'comments'])
             ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->where('title', 'like', "%$search%")
-            ->orWhere('content', 'like', "%{$search}%")
-            ->orWhere('location', 'like', "%{$search}%")
-            ->orWhere('gmap_url', 'like', "%{$search}%")
-            ->orWhere('place_name', 'like', "%{$search}%")
-            ->orWhereHas('user', function ($query) use ($search) {
-                $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
+            ->where(function ($q) use ($like, $search) {
+                $q->where('title', 'like', $like)
+                  ->orWhere('content', 'like', $like)
+                  ->orWhere('location', 'like', $like)
+                  ->orWhere('gmap_url', 'like', $like)
+                  ->orWhere('place_name', 'like', $like)
+                  ->orWhereHas('user', function ($q2) use ($like) {
+                      $q2->where('display_name', 'like', $like)
+                         ->orWhere('username', 'like', $like);
+                  })
+                  ->orWhereHas('tag', function ($q3) use ($like) {
+                      $q3->where('name', 'like', $like);
+                  });
             })
-            ->orWhereHas('tag', function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%");
-            })
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+        $user = Auth::user();
         $posts->getCollection()->transform(function ($post) use ($user) {
-            $score = ($post->upvoted_by_count * 3) +
-                ($post->downvoted_by_count * 1) -
-                ($post->comments_count * 2) +
-                ($post->bookmarks_count * 2);
+            $baseScore = ($post->upvoted_by_count * 3)
+                       - ($post->downvoted_by_count)
+                       - ($post->comments_count * 2)
+                       + ($post->bookmarks_count * 2);
+            $post->weighted_score = $baseScore;// + rand(0, 10);
 
-            $post->weighted_score = $score + rand(0, 10);
-
-            if (Auth::check()) {
-                $authedUser = Auth::user();
-                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
-                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
-                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+            if ($user) {
+                $post->upvoted_by_user     = $user->hasUpvotedPost($post);
+                $post->downvoted_by_user   = $user->hasDownvotedPost($post);
+                $post->bookmarked_by_user  = $user->hasBookmarkedPost($post);
             } else {
-                $post->upvoted_by_user = false;
-                $post->downvoted_by_user = false;
-                $post->bookmarked_by_user = false;
+                $post->upvoted_by_user     = false;
+                $post->downvoted_by_user   = false;
+                $post->bookmarked_by_user  = false;
             }
 
             $post->allow_edit = Gate::allows('edit-post', $post);
             return $post;
         });
 
-        $oneMinuteAgo = now()->subMinute();
-        $processedPosts = $posts->getCollection();
-
-        if ($user) {
-            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
-                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
-            })->sortByDesc('created_at');
-
-            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
-
-            $mergedPosts = $recentUserPosts->merge($otherPosts);
-        } else {
-            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
+        $collection = $posts->getCollection();
+        switch ($sortby) {
+            case 'upvotes':
+                $sorted = $collection->sortBy('upvoted_by_count', SORT_REGULAR, $orderBy);
+                break;
+            case 'comments':
+                $sorted = $collection->sortBy('comments_count', SORT_REGULAR, $orderBy);
+                break;
+            case 'title':
+                $sorted = $collection->sortBy('title', SORT_REGULAR, $orderBy);
+                break;
+            case 'popularitas':
+            default:
+                $sorted = $collection->sortByDesc('weighted_score');
+                break;
         }
-
-        // Replace the collection in the paginator instance
-        $posts->setCollection($mergedPosts->values());
-
+        $posts->setCollection($sorted->values());
+        // 6. Kirim data ke view
         return view('home', [
-            'posts' => $posts,
+            'posts'  => $posts,
+            'search' => $search,
+            'sortby' => $sortby,
+            'orderBy' => $orderBy,
         ]);
     }
 
