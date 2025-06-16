@@ -9,10 +9,12 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Models\PostAttachment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\VoteNotification;
 use Illuminate\Support\Facades\Validator;
+use ImageKit\ImageKit;
 
 class PostController extends Controller
 {
@@ -30,195 +32,11 @@ class PostController extends Controller
 
         $posts->getCollection()->transform(function ($post) use ($user) {
             $score = ($post->upvoted_by_count * 3) +
-                    ($post->downvoted_by_count * 1) -
-                    ($post->comments_count * 2) +
-                    ($post->bookmarks_count * 2);
-
-                $post->weighted_score = $score; // + rand(0, 10);
-
-                if (Auth::check()) {
-                    $authedUser = Auth::user();
-                    $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
-                    $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
-                    $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
-                } else {
-                    $post->upvoted_by_user = false;
-                    $post->downvoted_by_user = false;
-                    $post->bookmarked_by_user = false;
-                }
-
-                $post->allow_edit = Gate::allows('edit-post', $post);
-                return $post;
-            });
-
-        $oneMinuteAgo = now()->subMinute();
-        $processedPosts = $posts->getCollection();
-
-        if ($user) {
-            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
-                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
-            })->sortByDesc('created_at');
-
-            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
-
-            $mergedPosts = $recentUserPosts->merge($otherPosts);
-        } else {
-            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
-        }
-
-        // Replace the collection in the paginator instance
-        $posts->setCollection($mergedPosts->values());
-
-        $badges = User::with('badges')->get();
-
-
-        return view('home', [
-            'posts' => $posts,
-            'badges' => $badges,
-        ]);
-    }
-
-    public function loadMorePosts(Request $request)
-    {
-        $user = Auth::user();
-        $page = $request->page ?? 1;
-
-        $posts = Post::with('user.badges', 'attachments', 'comments')
-            ->orderBy('created_at', 'desc')
-            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->paginate(10, ['*'], 'page', $page);
-
-        $posts->getCollection()->transform(function ($post) use ($user) {
-            $score = ($post->upvoted_by_count * 3) +
                 ($post->downvoted_by_count * 1) -
                 ($post->comments_count * 2) +
                 ($post->bookmarks_count * 2);
 
-            $post->weighted_score = $score;//  + rand(0, 10);
-
-            if (Auth::check()) {
-                $authedUser = Auth::user(); // $user is already available in this method's scope, but using $authedUser to avoid conflict if any scope issue.
-                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
-                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
-                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
-            } else {
-                $post->upvoted_by_user = false;
-                $post->downvoted_by_user = false;
-                $post->bookmarked_by_user = false;
-            }
-
-            $post->allow_edit = Gate::allows('edit-post', $post);
-            return $post;
-        });
-
-        $oneMinuteAgo = now()->subMinute();
-        $processedPosts = $posts->getCollection();
-
-        if ($user) {
-            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
-                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
-            })->sortByDesc('created_at');
-
-            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
-
-            $mergedPosts = $recentUserPosts->merge($otherPosts);
-        } else {
-            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
-        }
-
-        // Replace the collection in the paginator instance
-        $posts->setCollection($mergedPosts->values());
-
-        return response()->json($posts);
-    }
-
-    public function loadRandomPosts(Request $request) {
-
-        $posts = Post::with(['attachments' => function ($query) {
-            $query->limit(1); // hanya ambil satu gambar
-        }, 'user'])
-            ->inRandomOrder()
-            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->limit(10)
-            ->get();
-
-        // Transformasi skor dan info tambahan
-        $transformed = $posts->map(function ($post) {
-            return [
-                'id' => $post->id,
-                'title' => $post->title,
-                'content' => $post->content,
-                'image' => $post->attachments->first()?->namafile ?? null, // pastikan ada relasi 'url' di Attachment model
-            ];
-        });
-
-        $sorted = $transformed->values();
-
-        return response()->json($sorted);
-    }
-
-    public function search(Request $request)
-    {
-        $search = $request->search;
-        $search = trim(strip_tags($search));
-
-        // History
-        if ($search) {
-            $history = session()->get('search_history', []);
-
-            // Masukkan ke awal array
-            array_unshift($history, $search);
-
-            // Hilangkan duplikat
-            $history = array_unique($history);
-
-            // Batasi jumlah history, misal 10 terakhir
-            $history = array_slice($history, 0, 10);
-
-            // Simpan kembali ke session
-            session(['search_history' => $history]);
-        }
-
-        // $posts = DB::table('posts')->with('user', 'attachments', 'comments')->where('content', 'like', "%" . $search . "%")->get();
-//        $posts = Post::with('user', 'attachments', 'comments', 'tag')->where(function ($query) use ($search) {
-//            $query->where('title', 'like', "%{$search}%")
-//                ->orWhere('content', 'like', "%{$search}%")
-//                ->orWhere('location', 'like', "%{$search}%")
-//                ->orWhere('gmap_url', 'like', "%{$search}%")
-//                ->orWhere('place_name', 'like', "%{$search}%")
-//                ->orWhereHas('user', function ($query) use ($search) {
-//                    $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
-//                })
-//                ->orWhereHas('tag', function ($query) use ($search) {
-//                    $query->where('name', 'like', "%{$search}%");
-//                });
-//        })->withCount('upvotedBy')->get();
-
-        $user = Auth::user();
-
-        $posts = Post::with('user.badges', 'attachments', 'comments')
-            ->orderBy('created_at', 'desc')
-            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->where('title', 'like', "%$search%")
-            ->orWhere('content', 'like', "%{$search}%")
-            ->orWhere('location', 'like', "%{$search}%")
-            ->orWhere('gmap_url', 'like', "%{$search}%")
-            ->orWhere('place_name', 'like', "%{$search}%")
-            ->orWhereHas('user', function ($query) use ($search) {
-                $query->where('display_name', 'like', "%{$search}%")->orWhere('username', 'like', "%{$search}%");
-            })
-            ->orWhereHas('tag', function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%");
-            })
-            ->paginate(10);
-
-        $posts->getCollection()->transform(function ($post) use ($user) {
-            $score = ($post->upvoted_by_count * 3) +
-                ($post->downvoted_by_count * 1) -
-                ($post->comments_count * 2) +
-                ($post->bookmarks_count * 2);
-
-            $post->weighted_score = $score + rand(0, 10);
+            $post->weighted_score = $score; // + rand(0, 10);
 
             if (Auth::check()) {
                 $authedUser = Auth::user();
@@ -253,8 +71,195 @@ class PostController extends Controller
         // Replace the collection in the paginator instance
         $posts->setCollection($mergedPosts->values());
 
+        $badges = User::with('badges')->get();
+
+
         return view('home', [
             'posts' => $posts,
+            'badges' => $badges,
+        ]);
+    }
+
+    public function loadMorePosts(Request $request)
+    {
+        $user = Auth::user();
+        $page = $request->input('page', 1);
+        $search = $request->input('search', null); // Get search query
+
+        $query = Post::with('user.badges', 'attachments', 'comments')
+            ->orderBy('created_at', 'desc')
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments']);
+
+        if ($search) {
+            $search = trim(strip_tags($search));
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('gmap_url', 'like', "%{$search}%")
+                    ->orWhere('place_name', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('display_name', 'like', "%{$search}%")
+                            ->orWhere('username', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('tag', function ($tagQuery) use ($search) {
+                        $tagQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $posts = $query->paginate(10, ['*'], 'page', $page);
+
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            // score calculation
+            $score = ($post->upvoted_by_count * 3) +
+                ($post->downvoted_by_count * 1) - // Assuming downvotes have a lesser negative impact or are just counted
+                ($post->comments_count * 2) + // Assuming comments have a positive impact
+                ($post->bookmarked_by_count * 2); // Assuming bookmarks have a positive impact (note: model uses bookmarkedBy, controller uses bookmarks_count)
+            // For consistency, ensure the count attribute is correct, e.g., $post->bookmarked_by_count
+
+            $post->weighted_score = $score;
+
+            // user-specific post data
+            if (Auth::check()) {
+                $authedUser = Auth::user();
+                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
+                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
+                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post); // Ensure this method exists and is accurate
+            } else {
+                $post->upvoted_by_user = false;
+                $post->downvoted_by_user = false;
+                $post->bookmarked_by_user = false;
+            }
+
+            $post->allow_edit = Gate::allows('edit-post', $post);
+            return $post;
+        });
+
+        $oneMinuteAgo = now()->subMinute();
+        $processedPosts = $posts->getCollection();
+
+        if ($user) {
+            $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
+                return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
+            })->sortByDesc('created_at');
+            $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
+            $mergedPosts = $recentUserPosts->merge($otherPosts);
+        } else {
+            $mergedPosts = $processedPosts->sortByDesc('weighted_score');
+        }
+
+        $posts->setCollection($mergedPosts->values());
+
+        return response()->json($posts);
+    }
+
+    public function loadRandomPosts(Request $request) {
+
+        $posts = Post::with(['attachments' => function ($query) {
+            $query->limit(1); // hanya ambil satu gambar
+        }, 'user'])
+            ->inRandomOrder()
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->limit(10)
+            ->get();
+
+        // Transformasi skor dan info tambahan
+        $transformed = $posts->map(function ($post) {
+            return [
+                'id' => $post->id,
+                'title' => $post->title,
+                'content' => $post->content,
+                'image' => $post->attachments->first()?->namafile ?? null, // pastikan ada relasi 'url' di Attachment model
+            ];
+        });
+
+        $sorted = $transformed->values();
+
+        return response()->json($sorted);
+    }
+
+    public function search(Request $request)
+    {
+        $search  = trim(strip_tags($request->input('search', '')));
+        $sortby  = $request->input('sortby', 'popularitas');
+        $orderBy = $request->input('orderby', 'ASC');
+        $orderBy = Str::upper($orderBy) === 'ASC' ? false : true;
+
+        // History
+        if ($search) {
+            $history = session()->get('search_history', []);
+            array_unshift($history, $search);
+            $history = array_unique($history);
+            $history = array_slice($history, 0, 10);
+            session(['search_history' => $history]);
+        }
+
+        $like = '%' . $search . '%';
+        $posts = Post::with(['user.badges', 'attachments', 'comments'])
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
+            ->where(function ($q) use ($like, $search) {
+                $q->where('title', 'like', $like)
+                  ->orWhere('content', 'like', $like)
+                  ->orWhere('location', 'like', $like)
+                  ->orWhere('gmap_url', 'like', $like)
+                  ->orWhere('place_name', 'like', $like)
+                  ->orWhereHas('user', function ($q2) use ($like) {
+                      $q2->where('display_name', 'like', $like)
+                         ->orWhere('username', 'like', $like);
+                  })
+                  ->orWhereHas('tag', function ($q3) use ($like) {
+                      $q3->where('name', 'like', $like);
+                  });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $user = Auth::user();
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            $baseScore = ($post->upvoted_by_count * 3)
+                       - ($post->downvoted_by_count)
+                       - ($post->comments_count * 2)
+                       + ($post->bookmarks_count * 2);
+            $post->weighted_score = $baseScore;// + rand(0, 10);
+
+            if ($user) {
+                $post->upvoted_by_user     = $user->hasUpvotedPost($post);
+                $post->downvoted_by_user   = $user->hasDownvotedPost($post);
+                $post->bookmarked_by_user  = $user->hasBookmarkedPost($post);
+            } else {
+                $post->upvoted_by_user     = false;
+                $post->downvoted_by_user   = false;
+                $post->bookmarked_by_user  = false;
+            }
+
+            $post->allow_edit = Gate::allows('edit-post', $post);
+            return $post;
+        });
+
+        $collection = $posts->getCollection();
+        switch ($sortby) {
+            case 'upvotes':
+                $sorted = $collection->sortBy('upvoted_by_count', SORT_REGULAR, $orderBy);
+                break;
+            case 'comments':
+                $sorted = $collection->sortBy('comments_count', SORT_REGULAR, $orderBy);
+                break;
+            case 'title':
+                $sorted = $collection->sortBy('title', SORT_REGULAR, $orderBy);
+                break;
+            case 'popularitas':
+            default:
+                $sorted = $collection->sortByDesc('weighted_score');
+                break;
+        }
+        $posts->setCollection($sorted->values());
+        // 6. Kirim data ke view
+        return view('home', [
+            'posts'  => $posts,
+            'search' => $search,
+            'sortby' => $sortby,
+            'orderBy' => $orderBy,
         ]);
     }
 
@@ -324,17 +329,32 @@ class PostController extends Controller
 
         $post->tag()->sync($hashtagIds);
 
+        $imageKit = new ImageKit(
+            config('app.imagekit.public_key'),
+            config('app.imagekit.private_key'),
+            config('app.imagekit.url_endpoint')
+        );
 
         foreach ($request->file('images', []) as $file) {
-            if ($file) {
-                $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('', $fileName, 'posts');
+            $filenya = base64_encode(file_get_contents($file->getRealPath()));
 
-                PostAttachment::create([
-                    'namafile' => $fileName,
-                    'post_id' => $post->id,
-                ]);
+            $namaFilenya = uniqid() . '.' . $file->getClientOriginalExtension();
+            $uploadnya = $imageKit->uploadFIle([
+                'file' => $filenya, // Get the file content
+                'fileName' => $namaFilenya,
+                'useUniqueFileName' => true,
+            ]);
+
+            if ($uploadnya->error !== null) {
+                return redirect()->back()->withErrors(['images' => 'Error uploading image: ' . $uploadnya->error]);
             }
+
+            PostAttachment::create([
+                'namafile' => $uploadnya->result->name,
+                'post_id' => $post->id,
+                'imgkit_id' => $uploadnya->result->fileId,
+            ]);
+
         }
 
         $user = Auth::user();
@@ -362,7 +382,7 @@ class PostController extends Controller
             $user->badges()->attach(16);
         }
 
-
+        session()->flash('clear_home_cache', 'true'); // Add this line
         return redirect('/')->with('success', 'Post created successfully');
     }
 
@@ -441,6 +461,7 @@ class PostController extends Controller
             'place_name' => $request->place_name,
         ]);
         $post->tag()->sync($hashtagIds);
+        session()->flash('clear_home_cache', 'true'); // Add this line
 
         return redirect('/')->with('success', 'Postingan berhasil diperbarui');
     }
@@ -451,11 +472,27 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         Gate::authorize('edit-post', $post);
-        $post->delete();
+        
+        $imageKit = new ImageKit(
+            config('app.imagekit.public_key'),
+            config('app.imagekit.private_key'),
+            config('app.imagekit.url_endpoint')
+        );
 
+        foreach ($post->attachments as $attachment) {
+            if ($attachment->namafile === 'blankimage.png') continue;
+            $hslnya = $imageKit->deleteFile($attachment->imgkit_id);
+            if ($hslnya->error) {
+                return response()->json([
+                    'message' => 'Error deleting image: ' . $hslnya->error->message
+                ], 500);
+            }
+        }
+        
+        $post->delete();
+        session()->flash('clear_home_cache', 'true'); // Add this line
         return redirect('/')->with('success', 'Post deleted successfully');
     }
-
 
     public function upvote(Request $request, Post $post)
     {
@@ -596,9 +633,9 @@ class PostController extends Controller
 
         $posts->getCollection()->transform(function ($post) {
             $score = ($post->upvoted_by_count * 3) +
-                        ($post->downvoted_by_count * 1) -
-                        ($post->comments_count * 2) +
-                        ($post->bookmarks_count * 2);
+                ($post->downvoted_by_count * 1) -
+                ($post->comments_count * 2) +
+                ($post->bookmarks_count * 2);
 
             $post->weighted_score = $score;// + rand(0, 10);
 

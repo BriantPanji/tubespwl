@@ -72,7 +72,7 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
     Route::delete('/post/{post}', [PostController::class, 'destroy'])->middleware('auth')->name('post.delete');
 
     // Search
-    Route::get('/search', [PostController::class, 'search']);
+    Route::get('/search', [PostController::class, 'search'])->name('search');
     Route::post('/search/delete-history', [PostController::class, 'delete_history']);
     Route::post('/search/delete-all-history', [PostController::class, 'delete_all_history']);
 

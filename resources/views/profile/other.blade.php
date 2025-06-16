@@ -17,7 +17,7 @@
             {{-- FOTO PROFIL --}}
             <div class="w-24 h-24 shrink-0">
                 <img class="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
-                    src="{{ asset('storage/avatars/' . $user->avatar) }}" alt="Foto Profil">
+                    src="{{ config('app.imagekit.url_endpoint') . $user->avatar }}" alt="Foto Profil">
             </div>
 
             {{-- USERNAME & BIO --}}
@@ -292,7 +292,7 @@
                 <a href="/post/{{ $post->id }}">
                     <div class="overflow-hidden">
                         <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-[1.1] overflow-hidden duration-300"
-                            src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}"
+                            src="{{ config('app.imagekit.url_endpoint') . $post->attachments[0]->namafile }}"
                             alt="Bookmark Image" />
                     </div>
 
