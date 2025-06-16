@@ -8,7 +8,8 @@
             <button @click="history.back()" class="absolute top-4 left-4 z-10 cursor-pointer">
                 <i class="fa-light fa-chevron-left xl:text-xl"></i>
             </button>
-            <small class="absolute right-4 top-4 text-xs opacity-50 ">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</small>
+            <small
+                class="absolute right-4 top-4 text-xs opacity-50 ">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</small>
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2 mt-10">
                     <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
@@ -49,8 +50,10 @@
                     class="absolute top-8 right-0 min-w-20 max-w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                     {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
                     @can('edit-post', $post)
-                        <button @click="window.location.href='/post/{{ $post->id }}/edit'" class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
-                        <button @click="
+                        <button @click="window.location.href='/post/{{ $post->id }}/edit'"
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Edit Post</button>
+                        <button
+                            @click="
                             Swal.fire({
                                 title: 'Hapus Postingan',
                                 text: 'Apakah anda yakin ingin menghapus postingan ini?',
@@ -85,7 +88,7 @@
                     @endcan
                     @auth
                         <button
-                        @click="
+                            @click="
                             Swal.fire({
                                 title: 'Laporkan Postingan',
                                 text: 'Berikan alasan anda!',
@@ -121,7 +124,7 @@
                                     });
                                 }
                             })"
-                        class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                     @endauth
                     @guest
                         <button @click="window.location.href = '/login'"
@@ -137,22 +140,22 @@
                     {{ $post->title }}
                 </div>
                 <div class="w-full font-light text-xs md:text-sm relative ">
-                    <p class="line-clamp-4">
+                    <p class="">
                         {{-- CONTENT POST --}}
-                        {{ $post->content }}
+                        {!! nl2br(e($post->content)) !!}
                         {{-- @foreach ($post->tag as $tag)
                             <a href="/tagar/{{ $tag->name }}" class="text-blue-500 italic">#{{ $tag->name }}</a>
                         @endforeach --}}
                     </p>
                     <section class="w-full h-7 mt-1 flex gap-1">
-                            @if ($post->tag)
-                                @foreach ($post->tag as $tag)
-                                    <a href="/tagar/{{ $tag->name }}"
-                                        class="text-blue-600 font-normal tracking-wide text-xs md:text-sm italic rounded-md hover:text-blue-500 hover:underline">
-                                        #{{ $tag->name }}
-                                    </a>
-                                @endforeach
-                            @endif
+                        @if ($post->tag)
+                            @foreach ($post->tag as $tag)
+                                <a href="/tagar/{{ $tag->name }}"
+                                    class="text-blue-600 font-normal tracking-wide text-xs md:text-sm italic rounded-md hover:text-blue-500 hover:underline">
+                                    #{{ $tag->name }}
+                                </a>
+                            @endforeach
+                        @endif
                     </section>
 
                     {{-- Place Name & URL Gmaaps --}}
@@ -182,7 +185,7 @@
                                 readonly>
                         </div>
 
-                        
+
                     </section>
 
                 </div>
@@ -211,16 +214,16 @@
                 @guest
 
                     {{-- ISI '/{DISINI}' DENGAN URI DARI DETAIL POSTINGAN INI --}}
-                    <div  class="flex w-[35%] md:w-[30%] justify-between">
+                    <div class="flex w-[35%] md:w-[30%] justify-between">
                         <span class="h-full flex items-center sm:w-[40%]">
 
                             <button @click="window.location.href = '/login'"
                                 class="text-2xl cursor-pointer hover:text-emerald-500"><i
                                     class="fa-light fa-up "></i></button>
 
-                                    <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
-                                        {{ $post->upvoted_by_count }}
-                                    </div>
+                            <div class="text-sm ml-2 truncate whitespace-nowrap overflow-hidden block">
+                                {{ $post->upvoted_by_count }}
+                            </div>
                         </span>
 
                         <button @click="window.location.href = '/login'"
@@ -358,8 +361,8 @@
                 <div class="">
                     <div class="flex justify-between items-center">
                         @auth
-                            <img src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}" class="w-[32px] rounded-full"
-                                alt="Foto User">
+                            <img src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}"
+                                class="w-[32px] rounded-full" alt="Foto User">
                         @else
                             <img src="{{ asset('img/blankprofile.png') }}" class="w-[32px] rounded-full"
                                 alt="Foto Default">
@@ -377,14 +380,16 @@
 
 
         {{-- Komentar --}}
-        <article x-data class="min-w-full max-w-full w-full min-h-16 pb-5 bg-sl-tertiary rounded-md flex flex-col gap-y-2">
+        <article x-data
+            class="min-w-full max-w-full w-full min-h-16 pb-5 bg-sl-tertiary rounded-md flex flex-col gap-y-2">
             <h1 class="mt-1 text-center text-[14px]">Komentar</h1>
 
             @forelse ($comments as $comment)
                 <div x-ref="comment_{{ $comment->id }}" class="mt-1 px-3">
                     <div class="flex gap-2.5 items-start">
-                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ asset('storage/avatars/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
-                            alt="Foto User">
+                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'"
+                            src="{{ asset('storage/avatars/' . $comment->user->avatar) }}"
+                            class="w-[32px] rounded-full mt-2 cursor-pointer" alt="Foto User">
                         <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
                             <div class="py-.5 px-2.5">
                                 <div class="flex justify-between items-center relative" x-data="{ showOption: false }">
@@ -397,7 +402,8 @@
                                         class="absolute top-5 right-0 w-25 h-auto bg-white/10 backdrop-blur-sm rounded-md shadow-lg flex flex-col gap-y-2 p-1 text-xs text-sl-text/90 z-50">
                                         {{-- QUERY LAPORKAN (REPORT POST) DISINI --}}
                                         @can('edit-comment', $comment)
-                                            <button @click="
+                                            <button
+                                                @click="
                                                 Swal.fire({
                                                     title: 'Hapus Komentar',
                                                     text: 'Apakah anda yakin ingin menghapus komentar ini?',
@@ -430,7 +436,7 @@
                                         @endcan
                                         @auth
                                             <button
-                                            @click="
+                                                @click="
                                                 Swal.fire({
                                                     title: 'Laporkan Komentar',
                                                     text: 'Berikan alasan anda!',
@@ -466,7 +472,7 @@
                                                         });
                                                     }
                                                 })"
-                                            class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
+                                                class="w-full h-fit cursor-pointer hover:bg-sl-base/30 rounded-md px-2 py-1">Laporkan</button>
                                         @endauth
                                         @guest
                                             <button @click="window.location.href = '/login'"
@@ -475,9 +481,10 @@
 
                                     </div>
                                 </div>
-                                <p class="text-sm font-extralight {{ $comment->user->badges->first() ? 'text-emerald-500' : 'text-gray-400' }}">
-                                {{ optional($comment->user->badges->first())->badge_name ?? ' ' }}
-                            </p>
+                                <p
+                                    class="text-sm font-extralight {{ $comment->user->badges->first() ? 'text-emerald-500' : 'text-gray-400' }}">
+                                    {{ optional($comment->user->badges->first())->badge_name ?? ' ' }}
+                                </p>
                                 <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
                                 <div class="flex justify-between mt-2">
                                     <div class="items-center text-sm opacity-50">
@@ -538,23 +545,25 @@
                                                 <i :class="upvoted ? 'fa-solid' : 'fa-light'" class="fa-up"></i>
                                             </button>
 
-                                            <div x-ref="voteCount" class="text-xs"> {{ $comment->upvoted_by_count }}</div>
+                                            <div x-ref="voteCount" class="text-xs"> {{ $comment->upvoted_by_count }}
+                                            </div>
                                         </div>
-                                        @endauth
-                                        @guest
+                                    @endauth
+                                    @guest
                                         <div class="flex items-center justify-end gap-2">
 
                                             <button @click="window.location.href = '/login'"
-                                            class="text-2xl cursor-pointer text-sl-text hover:text-red-700">
-                                            <i class="fa-light fa-down"></i>
+                                                class="text-2xl cursor-pointer text-sl-text hover:text-red-700">
+                                                <i class="fa-light fa-down"></i>
                                             </button>
 
                                             <button @click="window.location.href = '/login'"
-                                            class="text-2xl cursor-pointer text-sl-text hover:text-emerald-500">
-                                            <i class="fa-light fa-up"></i>
+                                                class="text-2xl cursor-pointer text-sl-text hover:text-emerald-500">
+                                                <i class="fa-light fa-up"></i>
                                             </button>
 
-                                            <div x-ref="voteCount" class="text-xs"> {{ $comment->upvoted_by_count }}</div>
+                                            <div x-ref="voteCount" class="text-xs"> {{ $comment->upvoted_by_count }}
+                                            </div>
                                         </div>
                                     @endguest
                                 </div>
@@ -562,10 +571,10 @@
                         </div>
                     </div>
                 </div>
-                @empty
-                    <p class="flex justify-center opacity-50 text-white text-xs font-light italic px-2 xl:text-base">
-                        Belum ada Komentar diposting.
-                    </p>
+            @empty
+                <p class="flex justify-center opacity-50 text-white text-xs font-light italic px-2 xl:text-base">
+                    Belum ada Komentar diposting.
+                </p>
             @endforelse
         </article>
 
