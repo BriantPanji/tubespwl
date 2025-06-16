@@ -8,7 +8,6 @@
             <button @click="history.back()" class="absolute top-4 left-4 z-10 cursor-pointer">
                 <i class="fa-light fa-chevron-left xl:text-xl"></i>
             </button>
-            <small class="absolute right-4 top-4 text-xs opacity-50 ">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</small>
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2 mt-10">
                     <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
@@ -132,6 +131,8 @@
 
             <section class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
                 {{-- URL MENUJU DETAIL POST INI --}}
+                <small class="text-xs opacity-50">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</small>
+
                 <div class="w-full h-full max-w-full max-h-full truncate font-bold text-base md:text-lg">
                     {{-- JUDUL POST --}}
                     {{ $post->title }}
@@ -193,7 +194,7 @@
                     @foreach ($post->attachments as $attachment)
                         <div class="swiper-slide h-full">
                             <img class="w-full h-full rounded-xl"
-                                src="{{ asset('storage/posts/' . $attachment->namafile) }}">
+                                src="{{ env('IMAGEKIT_URL_ENDPOINT') . '/' . $attachment->namafile }}">
                         </div>
                     @endforeach
                 </div>
