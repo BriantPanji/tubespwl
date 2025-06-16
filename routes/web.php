@@ -38,7 +38,7 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
         Route::delete('/admin/edit-badge/remove/{user}', [AdminController::class, 'removeBadge'])->name('admin.badge-remove');
     });
 
-// Notifikasi
+    // Notifikasi
     Route::get('/notification', [NotificationController::class, 'index']);
 
     // Post
@@ -124,6 +124,10 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
         return view('welcome');
     });
 
+    Route::get('/about', function () {
+        return view('about');
+    })->name('about');
+
     Route::get('/my/comments', function () {
         $comments = Auth::user()->comments()->with('post')->latest()->get();
         return view('dashboard.comment', compact('comments'));
@@ -147,10 +151,13 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
     })->middleware('auth')->name('profile.vote');
 });
 
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 //penjelasan badges
-Route::get('/badges',
- [\App\Http\Controllers\BadgeController::class,
-  'index'])->name('badges.index');
+Route::get(
+    '/badges',
+    [
+        \App\Http\Controllers\BadgeController::class,
+        'index'
+    ]
+)->name('badges.index');

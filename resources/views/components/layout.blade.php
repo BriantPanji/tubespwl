@@ -36,43 +36,54 @@
     @endif
     <x-header></x-header>
     @php
-        $navs =[
-            [ 'icon' => 'fa-house', 'text' => 'Beranda', 'route' => '/', ],
-            [ 'icon' => 'fa-user', 'text' => auth()->check() ? 'Profil' : 'Login', 'route' => auth()->check() ? route('profile') : route('login') ],
-            [ 'icon' => 'fa-square-plus', 'text' => 'Buat Postingan', 'route' => auth()->check() ? route('post.create') : route('login') ],
-            [ 'icon' => 'fa-rectangle-history', 'text' => 'Postingan Saya', 'route' => route('profile.post') ],
-            [ 'icon' => 'fa-comments', 'text' => 'Komentar Saya', 'route' => route('profile.comment') ],
-            [ 'icon' => 'fa-up', 'text' => 'Votingan Saya', 'route' => route('profile.vote') ],
-            [ 'icon' => 'fa-bookmark', 'text' => 'Tersimpan', 'route' => route('profile.bookmark') ],
-        ]
+        $navs = [
+            ['icon' => 'fa-house', 'text' => 'Beranda', 'route' => '/'],
+            [
+                'icon' => 'fa-user',
+                'text' => auth()->check() ? 'Profil' : 'Login',
+                'route' => auth()->check() ? route('profile') : route('login'),
+            ],
+            [
+                'icon' => 'fa-square-plus',
+                'text' => 'Buat Postingan',
+                'route' => auth()->check() ? route('post.create') : route('login'),
+            ],
+            ['icon' => 'fa-rectangle-history', 'text' => 'Postingan Saya', 'route' => route('profile.post')],
+            ['icon' => 'fa-comments', 'text' => 'Komentar Saya', 'route' => route('profile.comment')],
+            ['icon' => 'fa-up', 'text' => 'Votingan Saya', 'route' => route('profile.vote')],
+            ['icon' => 'fa-bookmark', 'text' => 'Tersimpan', 'route' => route('profile.bookmark')],
+            ['icon' => 'fa-users-gear', 'text' => 'About Us', 'route' => route('about')],
+        ];
     @endphp
 
     <div x-data="{ scrolled: false, lastScrollTop: 0, hideHeader: false }" x-init="scrolled = window.scrollY > 15;
-        lastScrollTop = window.scrollY;
-        window.addEventListener('scroll', () => {
-            scrolled = window.scrollY > 15;
-            let currentScroll = window.scrollY;
-            hideHeader = currentScroll > lastScrollTop && currentScroll > 50;
-            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // prevent negative
-        })"
-        class="flex w-full min-h-screen justify-center">
+    lastScrollTop = window.scrollY;
+    window.addEventListener('scroll', () => {
+        scrolled = window.scrollY > 15;
+        let currentScroll = window.scrollY;
+        hideHeader = currentScroll > lastScrollTop && currentScroll > 50;
+        lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // prevent negative
+    })" class="flex w-full min-h-screen justify-center">
         <aside
             :class="{
-                        '-translate-y-19': hideHeader,
-                        'translate-y-0': !hideHeader,
-                    }"
+                '-translate-y-19': hideHeader,
+                'translate-y-0': !hideHeader,
+            }"
             class="w-1/5 hidden lg:flex flex-col h-screen *:cursor-pointer bg-sl-base fixed border-r-[.5px] transition-all duration-300 border-r-neutral-500/20 p-4 left-0 z-1">
             @foreach ($navs as $nav)
-                <a href="{{ $nav['route'] }}" class="flex items-center gap-3 p-2 rounded  mb-4 {{ request()->is($nav['route']) ? 'bg-sl-tertiary hover:bg-neutral-500/20 ' : 'hover:bg-sl-tertiary' }}">
+                <a href="{{ $nav['route'] }}"
+                    class="flex items-center gap-3 p-2 rounded  mb-4 {{ request()->is($nav['route']) ? 'bg-sl-tertiary hover:bg-neutral-500/20 ' : 'hover:bg-sl-tertiary' }}">
                     <i class="fa-light {{ $nav['icon'] }} text-lg w-5 h-5"></i>
                     <span class="font-medium">{{ $nav['text'] }}</span>
                 </a>
             @endforeach
             @auth
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                    <button @click="
-                            (e) => {
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button
+                        @click="
+                            (e)
+=> {
                                 e.preventDefault();
                                 Swal.fire({
                                     title: 'Logout',
@@ -87,7 +98,9 @@
                                     }
                                 });
                             }
-                        " type="submit" class="flex items-center gap-3 p-2 rounded hover:bg-red-800/20 mb-4 w-full cursor-pointer">
+                        "
+                        type="submit"
+                        class="flex items-center gap-3 p-2 rounded hover:bg-red-800/20 mb-4 w-full cursor-pointer">
                         <i class="fa-light fa-right-from-bracket text-lg w-5 h-5"></i>
                         <span class=" font-medium">Logout</span>
                     </button>
@@ -95,33 +108,35 @@
             @endauth
         </aside>
 
-        <main class="w-full xs:w-3/4 sm:w-4/6 md:w-2/3 lg:w-1/2 xl:w-3/7  px-6 py-4 bg-sl-base text-sl-text flex flex-col gap-y-3 mb-50 md:mb-40">
+        <main
+            class="w-full xs:w-3/4 sm:w-4/6 md:w-2/3 lg:w-1/2 xl:w-3/7  px-6 py-4 bg-sl-base text-sl-text flex flex-col gap-y-3 mb-50 md:mb-40">
             {{ $slot }}
         </main>
 
         <aside
             :class="{
-                        '-translate-y-19': hideHeader,
-                        'translate-y-0': !hideHeader,
-{{--                        'h-[calc(100vh-5rem)]': hideHeader,--}}
-{{--                        'h-[calc(100vh-7.5rem)]': !hideHeader--}}
-                    }"
-{{--            class="w-1/5 hidden lg:flex top-24 flex-col border-l-neutral-700 border-l-[.5px] border-t-neutral-700 border-t-[.5px] border-b-neutral-700 border-b-[.5px] rounded-s-md bg-sl-base fixed right-0 p-4 transition-all duration-300"--}}
+                '-translate-y-19': hideHeader,
+                'translate-y-0': !hideHeader,
+                {{--                        'h-[calc(100vh-5rem)]': hideHeader, --}}
+                {{--                        'h-[calc(100vh-7.5rem)]': !hideHeader --}}
+            }"
+            {{--            class="w-1/5 hidden lg:flex top-24 flex-col border-l-neutral-700 border-l-[.5px] border-t-neutral-700 border-t-[.5px] border-b-neutral-700 border-b-[.5px] rounded-s-md bg-sl-base fixed right-0 p-4 transition-all duration-300" --}}
             class="w-1/5 hidden lg:flex h-screen flex-col border-l-neutral-700 border-l-[.5px] bg-sl-base text-sl-text fixed right-0 px-4 py-3 transition-all duration-300"
-            x-data="popularPostsSidebar"
-            x-init="checkScreenSizeAndLoad()"
-        >
+            x-data="popularPostsSidebar" x-init="checkScreenSizeAndLoad()">
             <h2 class="text-lg font-bold mb-4 text-sl-secondary">Suggestions</h2>
-            <div class="flex flex-col gap-3 divide-neutral-50/10 divide-y-[1px] overflow-y-auto h-full *:first:border-t-[.5px] *:first:border-t-neutral-700 customScrollbar *:last:border-b-[.5px] *:last:border-b-neutral-700 *:first:pt-3 *:pb-3 *:px-1">
+            <div
+                class="flex flex-col gap-3 divide-neutral-50/10 divide-y-[1px] overflow-y-auto h-full *:first:border-t-[.5px] *:first:border-t-neutral-700 customScrollbar *:last:border-b-[.5px] *:last:border-b-neutral-700 *:first:pt-3 *:pb-3 *:px-1">
                 <template x-for="(post, index) in posts" :key="post.id">
-                    <a :href="`/post/${post.id}`" class="flex items-center justify-between gap-1 cursor-pointer group hover:bg-sl-tertiary/30 *:select-none last:mb-30"
-{{--                       :class="Math.floor(index / 3) % 2 === 0 ? 'flex-row-reverse justify-between' : 'flex-row justify-between'"--}}
-                    >
+                    <a :href="`/post/${post.id}`"
+                        class="flex items-center justify-between gap-1 cursor-pointer group hover:bg-sl-tertiary/30 *:select-none last:mb-30"
+                        {{--                       :class="Math.floor(index / 3) % 2 === 0 ? 'flex-row-reverse justify-between' : 'flex-row justify-between'" --}}>
                         <div class="w-full max-w-[calc(100%-52px)]">
                             <h1 class="font-medium text-sm group-hover:font-semibold truncate" x-text="post.title"></h1>
-                            <p class="text-[.7rem] opacity-50 line-clamp-2 font-light group-hover:font-normal" x-text="post.content"></p>
+                            <p class="text-[.7rem] opacity-50 line-clamp-2 font-light group-hover:font-normal"
+                                x-text="post.content"></p>
                         </div>
-                        <img class="object-contain rounded-sm !aspect-square w-12 h-12" :src="`{{ env('IMAGEKIT_URL_ENDPOINT') }}${post.image}`" alt="">
+                        <img class="object-contain rounded-sm !aspect-square w-12 h-12"
+                            :src="`{{ env('IMAGEKIT_URL_ENDPOINT') }}${post.image}`" alt="">
                     </a>
                 </template>
 
