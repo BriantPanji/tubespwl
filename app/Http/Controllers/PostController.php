@@ -199,18 +199,18 @@ class PostController extends Controller
         $posts = Post::with(['user.badges', 'attachments', 'comments'])
             ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
             ->where(function ($q) use ($like, $search) {
-                $q->where('title', 'like', $like)
-                  ->orWhere('content', 'like', $like)
-                  ->orWhere('location', 'like', $like)
-                  ->orWhere('gmap_url', 'like', $like)
-                  ->orWhere('place_name', 'like', $like)
-                  ->orWhereHas('user', function ($q2) use ($like) {
-                      $q2->where('display_name', 'like', $like)
-                         ->orWhere('username', 'like', $like);
-                  })
-                  ->orWhereHas('tag', function ($q3) use ($like) {
-                      $q3->where('name', 'like', $like);
-                  });
+                $q->whereRaw('LOWER(title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(content) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(location) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(gmap_url) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(place_name) LIKE ?', [$like])
+                    ->orWhereHas('user', function ($q2) use ($like) {
+                        $q2->whereRaw('LOWER(display_name) LIKE ?', [$like])
+                            ->orWhereRaw('LOWER(username) LIKE ?', [$like]);
+                    })
+                    ->orWhereHas('tag', function ($q3) use ($like) {
+                        $q3->whereRaw('LOWER(name) LIKE ?', [$like]);
+                    });
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
