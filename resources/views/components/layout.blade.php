@@ -38,12 +38,13 @@
     @php
         $navs =[
             [ 'icon' => 'fa-house', 'text' => 'Beranda', 'route' => '/', ],
-            [ 'icon' => 'fa-user', 'text' => auth()->check() ? 'Profil' : 'Login', 'route' => auth()->check() ? route('profile') : route('login') ],
             [ 'icon' => 'fa-square-plus', 'text' => 'Buat Postingan', 'route' => auth()->check() ? route('post.create') : route('login') ],
             [ 'icon' => 'fa-rectangle-history', 'text' => 'Postingan Saya', 'route' => route('profile.post') ],
             [ 'icon' => 'fa-comments', 'text' => 'Komentar Saya', 'route' => route('profile.comment') ],
             [ 'icon' => 'fa-up', 'text' => 'Votingan Saya', 'route' => route('profile.vote') ],
             [ 'icon' => 'fa-bookmark', 'text' => 'Tersimpan', 'route' => route('profile.bookmark') ],
+            [ 'icon' => 'fa-shield', 'text' => 'Badge', 'route' => route('badges.index') ],
+            [ 'icon' => 'fa-user', 'text' => auth()->check() ? 'Profil' : 'Login', 'route' => auth()->check() ? route('profile') : route('login') ],
         ]
     @endphp
 
@@ -68,6 +69,12 @@
                     <span class="font-medium">{{ $nav['text'] }}</span>
                 </a>
             @endforeach
+            @can('admin')
+                <a href="{{ route('admin.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-sl-tertiary mb-4">
+                    <i class="fa-light fa-gear-code text-lg w-5 h-5"></i>
+                    <span class="font-medium">Admin</span>
+                </a>
+            @endcan
             @auth
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
@@ -168,6 +175,42 @@
 
     <x-footer></x-footer>
     <script src="{{ asset('js/swaldef.js') }}" defer></script>
+    <script>
+
+        @if(session('clear_home_cache'))
+            sessionStorage.removeItem('cachedPosts');
+            sessionStorage.removeItem('cachedPage');
+            sessionStorage.removeItem('cachedLastPage');
+            sessionStorage.removeItem('cachedHasMorePages');
+            sessionStorage.removeItem('cacheTimestamp');
+            sessionStorage.removeItem('scrollPosition');
+            // Also remove 'justLeftHomePage' to ensure the next load of Home is completely fresh
+            sessionStorage.removeItem('justLeftHomePage');
+        // Consider if window.location.pathname === '/' (or home path) then window.location.reload();
+        // For now, just clearing cache. Home page init logic should handle fresh load.
+        @endif
+
+        if (sessionStorage.getItem('justLeftHomePage') !== `true`) {
+            sessionStorage.removeItem('cachedPosts');
+            sessionStorage.removeItem('cachedPage');
+            sessionStorage.removeItem('cachedLastPage');
+            sessionStorage.removeItem('cachedHasMorePages');
+            sessionStorage.removeItem('cacheTimestamp');
+            sessionStorage.removeItem('scrollPosition');
+            sessionStorage.removeItem('justLeftHomePage');
+        }
+
+        let lastPage = (new URL(document.referrer).pathname);
+        let nowPage = document.location.pathname;
+
+        if ((lastPage === '/') || (lastPage === '/search') || lastPage.startsWith('/tagar')) {
+            sessionStorage.setItem('justLeftHomePage', 'true');
+        } else {
+            if (nowPage !== '/' || nowPage !== '/search' || lastPage.startsWith('/tagar')) {
+                sessionStorage.removeItem('justLeftHomePage');
+            }
+        }
+    </script>
 </body>
 
 </html>

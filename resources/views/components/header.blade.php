@@ -7,12 +7,12 @@ window.addEventListener('scroll', () => {
     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // prevent negative
 })"
     :class="{
-        '-translate-y-full': hideHeader,
-        'translate-y-0': !hideHeader,
+        '-translate-y-full border-b-transparent': hideHeader,
+        'translate-y-0 border-b-neutral-400/20': !hideHeader,
         'bg-sl-base/10 backdrop-blur-xs shadow-sm': scrolled,
-        'bg-sl-base shadow-none': !scrolled
+        'bg-sl-base shadow-none ': !scrolled
     }"
-    class="transition-all duration-300 min-w-full border-b-neutral-700 border-b-[.5px] !max-w-full w-full min-h-19 h-19 max-h-19 sticky top-0 z-100 flex items-center justify-between px-5 xs:px-10 lg:pr-20 xl:pr-32 2xl:pr-40">
+    class="transition-all duration-300 min-w-full  border-b-[.5px] !max-w-full w-full min-h-19 h-19 max-h-19 sticky top-0 z-100 flex items-center justify-between px-5 xs:px-10 lg:pr-20 xl:pr-32 2xl:pr-40">
 
     {{-- POPUP MODAL UNTUK KETIKA SEARCHBAR DITEKAN, KENAPA DIPISAH? BIAR GAMPANG AJA NGODINGNYA AWIKWOK --}}
     <div @click.outside="open=!open" x-show="open & !hideHeader" x-cloak

@@ -30,26 +30,26 @@ class PostController extends Controller
 
         $posts->getCollection()->transform(function ($post) use ($user) {
             $score = ($post->upvoted_by_count * 3) +
-                    ($post->downvoted_by_count * 1) -
-                    ($post->comments_count * 2) +
-                    ($post->bookmarks_count * 2);
+                ($post->downvoted_by_count * 1) -
+                ($post->comments_count * 2) +
+                ($post->bookmarks_count * 2);
 
-                $post->weighted_score = $score; // + rand(0, 10);
+            $post->weighted_score = $score; // + rand(0, 10);
 
-                if (Auth::check()) {
-                    $authedUser = Auth::user();
-                    $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
-                    $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
-                    $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
-                } else {
-                    $post->upvoted_by_user = false;
-                    $post->downvoted_by_user = false;
-                    $post->bookmarked_by_user = false;
-                }
+            if (Auth::check()) {
+                $authedUser = Auth::user();
+                $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
+                $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
+                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+            } else {
+                $post->upvoted_by_user = false;
+                $post->downvoted_by_user = false;
+                $post->bookmarked_by_user = false;
+            }
 
-                $post->allow_edit = Gate::allows('edit-post', $post);
-                return $post;
-            });
+            $post->allow_edit = Gate::allows('edit-post', $post);
+            return $post;
+        });
 
         $oneMinuteAgo = now()->subMinute();
         $processedPosts = $posts->getCollection();
@@ -81,26 +81,49 @@ class PostController extends Controller
     public function loadMorePosts(Request $request)
     {
         $user = Auth::user();
-        $page = $request->page ?? 1;
+        $page = $request->input('page', 1);
+        $search = $request->input('search', null); // Get search query
 
-        $posts = Post::with('user.badges', 'attachments', 'comments')
+        $query = Post::with('user.badges', 'attachments', 'comments')
             ->orderBy('created_at', 'desc')
-            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments'])
-            ->paginate(10, ['*'], 'page', $page);
+            ->withCount(['upvotedBy', 'downvotedBy', 'bookmarkedBy', 'comments']);
+
+        if ($search) {
+            $search = trim(strip_tags($search));
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('gmap_url', 'like', "%{$search}%")
+                    ->orWhere('place_name', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('display_name', 'like', "%{$search}%")
+                            ->orWhere('username', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('tag', function ($tagQuery) use ($search) {
+                        $tagQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $posts = $query->paginate(10, ['*'], 'page', $page);
 
         $posts->getCollection()->transform(function ($post) use ($user) {
+            // score calculation
             $score = ($post->upvoted_by_count * 3) +
-                ($post->downvoted_by_count * 1) -
-                ($post->comments_count * 2) +
-                ($post->bookmarks_count * 2);
+                ($post->downvoted_by_count * 1) - // Assuming downvotes have a lesser negative impact or are just counted
+                ($post->comments_count * 2) + // Assuming comments have a positive impact
+                ($post->bookmarked_by_count * 2); // Assuming bookmarks have a positive impact (note: model uses bookmarkedBy, controller uses bookmarks_count)
+            // For consistency, ensure the count attribute is correct, e.g., $post->bookmarked_by_count
 
-            $post->weighted_score = $score;//  + rand(0, 10);
+            $post->weighted_score = $score;
 
+            // user-specific post data
             if (Auth::check()) {
-                $authedUser = Auth::user(); // $user is already available in this method's scope, but using $authedUser to avoid conflict if any scope issue.
+                $authedUser = Auth::user();
                 $post->upvoted_by_user = $authedUser->hasUpvotedPost($post);
                 $post->downvoted_by_user = $authedUser->hasDownvotedPost($post);
-                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post);
+                $post->bookmarked_by_user = $authedUser->hasBookmarkedPost($post); // Ensure this method exists and is accurate
             } else {
                 $post->upvoted_by_user = false;
                 $post->downvoted_by_user = false;
@@ -118,15 +141,12 @@ class PostController extends Controller
             $recentUserPosts = $processedPosts->filter(function ($post) use ($user, $oneMinuteAgo) {
                 return $post->user_id === $user->id && $post->created_at > $oneMinuteAgo;
             })->sortByDesc('created_at');
-
             $otherPosts = $processedPosts->diff($recentUserPosts)->sortByDesc('weighted_score');
-
             $mergedPosts = $recentUserPosts->merge($otherPosts);
         } else {
             $mergedPosts = $processedPosts->sortByDesc('weighted_score');
         }
 
-        // Replace the collection in the paginator instance
         $posts->setCollection($mergedPosts->values());
 
         return response()->json($posts);
@@ -362,7 +382,7 @@ class PostController extends Controller
             $user->badges()->attach(16);
         }
 
-
+        session()->flash('clear_home_cache', 'true'); // Add this line
         return redirect('/')->with('success', 'Post created successfully');
     }
 
@@ -441,6 +461,7 @@ class PostController extends Controller
             'place_name' => $request->place_name,
         ]);
         $post->tag()->sync($hashtagIds);
+        session()->flash('clear_home_cache', 'true'); // Add this line
 
         return redirect('/')->with('success', 'Postingan berhasil diperbarui');
     }
@@ -453,6 +474,7 @@ class PostController extends Controller
         Gate::authorize('edit-post', $post);
         $post->delete();
 
+        session()->flash('clear_home_cache', 'true'); // Add this line
         return redirect('/')->with('success', 'Post deleted successfully');
     }
 
@@ -596,9 +618,9 @@ class PostController extends Controller
 
         $posts->getCollection()->transform(function ($post) {
             $score = ($post->upvoted_by_count * 3) +
-                        ($post->downvoted_by_count * 1) -
-                        ($post->comments_count * 2) +
-                        ($post->bookmarks_count * 2);
+                ($post->downvoted_by_count * 1) -
+                ($post->comments_count * 2) +
+                ($post->bookmarks_count * 2);
 
             $post->weighted_score = $score;// + rand(0, 10);
 
