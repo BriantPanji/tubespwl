@@ -8,24 +8,26 @@
                 <button type="button" class="cursor-pointer" @click="window.location.href = '{{ route('search', parameters: ['search' => $search, 'sortby' => request('sortby', 'popularitas'), 'orderby' => request('orderby', 'ASC') === 'ASC' ? 'DESC' : 'ASC'])}}'"><i class="fa-light {{ request('orderby', 'ASC') !== 'ASC' ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'}}"></i></button>
             @endif
         </div>
-        <div class="flex justify-center text-center gap-x-4">
+        <div class="flex justify-around text-center overflow-x-auto overflow-y-hidden max-w-full w-full customScrollbar">
+            <div class="flex justify-center text-center gap-x-4 min-w-fit">
+
                 <a href="{{ route('search', parameters: ['search' => $search, 'sortby' => 'popularitas', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='popularitas' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='popularitas' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Popularitas
                 </a>
                 <a href="{{ route('search', ['search' => $search, 'sortby' => 'upvotes', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='upvotes' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='upvotes' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Votes
                 </a>
                 <a href="{{ route('search', ['search' => $search, 'sortby' => 'comments', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='comments' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='comments' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Comments
                 </a>
                 <a href="{{ route('search', ['search' => $search, 'sortby' => 'title', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='title' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='title' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Title A→Z
                 </a>
-
+            </div>
         </div>
     </div>
     @else
