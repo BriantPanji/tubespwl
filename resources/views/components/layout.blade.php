@@ -202,6 +202,11 @@
         let lastPage = (new URL(document.referrer || document.location.href));
         let nowPage = document.location;
 
+
+        if (nowPage.pathname === '/search') {
+            resetCache();
+        }
+
         if ((lastPage.pathname === '/') || (lastPage.pathname === '/search') || lastPage.pathname.startsWith('/tagar')) {
             if (lastPage.pathname === '/search' && (nowPage.pathname === '/' || nowPage.pathname.startsWith('/tagar'))) {
                 resetCache();
