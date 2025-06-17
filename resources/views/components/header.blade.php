@@ -60,7 +60,7 @@ window.addEventListener('scroll', () => {
     <section x-data="{isNavOpen: false}" class="flex items-center justify-start min-w-[25%] relative">
         @guest
             <a href="/login" class="cursor-pointer"><img class="w-9 h-9 rounded-full object-cover"
-                    src="{{ config('app.imagekit.url_endpoint') . '/blankprofile.png' }}" alt="profilepicture.jpg"></a>
+                    src="{{ config('app.imagekit.url_endpoint') . 'blankprofile.png' }}" alt="profilepicture.jpg"></a>
         @endguest
         @auth
 

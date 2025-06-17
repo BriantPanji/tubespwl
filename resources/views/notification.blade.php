@@ -18,7 +18,7 @@
                         <div class="flex items-center gap-2">
                             <a href="/profile">
                                 <img class="w-9 rounded-full object-cover"
-                                    src="{{ config('app.imagekit.url_endpoint' . $notification->data['voter']['avatar']) }}"
+                                    src="{{ config('app.imagekit.url_endpoint') . $notification->data['voter']['avatar'] }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
@@ -29,7 +29,7 @@
 
                                 </div>
                                 <div class="w-[50px] h-[50px]">
-                                    <img src="{{ config('app.imagekit.url_endpoint' . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                    <img src="{{ config('app.imagekit.url_endpoint') . $notification->data['post_img'] }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
                                 </div>
                             </div>
                     </section>
@@ -42,7 +42,7 @@
                         <div class="flex items-center gap-2">
                             <a href="/profile">
                                 <img class="w-9 rounded-full object-cover"
-                                    src="{{ config('app.imagekit.url_endpoint' . $notification->data['voter']['avatar']) }}"
+                                    src="{{ config('app.imagekit.url_endpoint') . $notification->data['voter']['avatar'] }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
@@ -52,7 +52,7 @@
                                         <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
                                 </div>
                                 <div class="w-[50px] h-[50px]">
-                                    <img src="{{ config('app.imagekit.url_endpoint' . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                    <img src="{{ config('app.imagekit.url_endpoint') . $notification->data['post_img'] }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
                                 </div>
                             </div>
                     </section>
@@ -65,7 +65,7 @@
                         <div class="flex items-center gap-2">
                             <a href="/profile">
                                 <img class="w-9 rounded-full object-cover"
-                                    src="{{ config('app.imagekit.url_endpoint' . $notification->data['user']['avatar']) }}"
+                                    src="{{ config('app.imagekit.url_endpoint') . $notification->data['user']['avatar'] }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
@@ -75,7 +75,7 @@
                                         <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
                                 </div>
                                 <div class="w-[50px] h-[50px]">
-                                    <img src="{{ config('app.imagekit.url_endpoint' . $notification->data['post_img']) }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
+                                    <img src="{{ config('app.imagekit.url_endpoint') . $notification->data['post_img'] }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
                                 </div>
                             </div>
                     </section>

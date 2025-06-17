@@ -159,7 +159,7 @@
                     <div @click="window.location.href = `/post/${post.id}`"
                         class="max-w-[75%] h-full flex items-center gap-2 cursor-pointer">
                         <a :href="`/profile/${post.user.username}`"><img class="w-9 h-9 rounded-full object-cover"
-                                :src="`{{ config('app.imagekit.url_endpoint') }}/${post.user.avatar}`"
+                                :src="`{{ config('app.imagekit.url_endpoint') }}${post.user.avatar}`"
                                 :alt="`${post.user.username}'s avatar`"></a>
                         <div class="flex flex-col h-full justify-center">
                             <a :href="post.user ? `/profile/${post.user.username}` : '#'"
@@ -288,7 +288,7 @@
                 <section @click="window.location.href = `/post/${post.id}`" class="w-full h-auto cursor-pointer"
                     x-show="post.attachments && post.attachments.length > 0">
                     <img class="!aspect-video rounded-xl object-cover w-full h-auto bg-neutral-600/50"
-                        :src="`{{ config('app.imagekit.url_endpoint') }}/${post.attachments[0].namafile}`"
+                        :src="`{{ config('app.imagekit.url_endpoint') }}${post.attachments[0].namafile}`"
                         onerror="this.style.display='none';"> {{-- Hide if image fails to load --}}
                 </section>
                 <section

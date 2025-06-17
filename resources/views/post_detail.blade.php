@@ -371,7 +371,7 @@
                             <img src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}" class="w-[32px] rounded-full"
                                 alt="Foto User">
                         @else
-                            <img src="{{ config('app.imagekit.url_endpoint') . '/blankprofile.png' }}" class="w-[32px] rounded-full"
+                            <img src="{{ config('app.imagekit.url_endpoint') . 'blankprofile.png' }}" class="w-[32px] rounded-full"
                                 alt="Foto Default">
                         @endauth
                         <input type="text" name="content" id="comment"
