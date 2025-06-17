@@ -1,6 +1,14 @@
     <x-layout>
 
-        {{-- @dd($comments) --}}
+        @if (session('bct'))
+        <script>
+            Swal.fire({
+                title: "Berhasil",
+                text: "{{ session()->get('success') }}",
+                icon: "success"
+            });
+        </script>
+    @endif
         <x-slot:title>Detail Postingan</x-slot:title>
 
         <article
@@ -8,11 +16,10 @@
             <button @click="history.back()" class="absolute top-4 left-4 z-10 cursor-pointer">
                 <i class="fa-light fa-chevron-left xl:text-xl"></i>
             </button>
-            <small class="absolute right-4 top-4 text-xs opacity-50 ">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</small>
             <section x-data="{ showOption: false }" class="w-full min-h-12 flex items-center justify-between relative">
                 <div class="max-w-[75%] h-full flex items-center gap-2 mt-10">
                     <a href="/profile/{{ $post->user->username }}"><img class="w-9 h-9 rounded-full"
-                            src="{{ asset('storage/avatars/' . $post->user->avatar) }}"></a>
+                            src="{{ config('app.imagekit.url_endpoint') . $post->user->avatar }}"></a>
                     {{-- FOTO PROFIL USER --}}
                     <div class="flex flex-col h-full justify-center">
                         <a href="/profile/{{ $post->user->username }}"
@@ -28,7 +35,7 @@
                             @endif
 
                         </a>
-                        <div href="" class="text-[.65rem] lg:text-xs text-emerald-500/70">
+                        <div class="text-[.65rem] lg:text-xs" style="color: {{ optional($post->user->badges->first())->badge_color ?? '#6b7280' }}">
                             @php
                                 $firstBadge = $post->user->badges->first();
                             @endphp
@@ -67,7 +74,8 @@
                                             _token: '{{ csrf_token() }}'
                                         }
                                     })
-                                    .then(() => {
+                                    .then((res) => {
+                                        console.log(res);   
                                         Swal.fire('Berhasil!', 'Postingan berhasil dihapus!', 'success')
                                         .then(() => {
                                             window.location.href = '/';
@@ -132,14 +140,16 @@
 
             <section class="w-full min-h-12 !h-auto flex flex-col justify-start items-start " x-cloak>
                 {{-- URL MENUJU DETAIL POST INI --}}
+                <small class="text-xs opacity-50">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</small>
+
                 <div class="w-full h-full max-w-full max-h-full truncate font-bold text-base md:text-lg">
                     {{-- JUDUL POST --}}
                     {{ $post->title }}
                 </div>
                 <div class="w-full font-light text-xs md:text-sm relative ">
-                    <p class="line-clamp-4">
+                    <p class="">
                         {{-- CONTENT POST --}}
-                        {{ $post->content }}
+                        {!! nl2br(e($post->content)) !!}
                         {{-- @foreach ($post->tag as $tag)
                             <a href="/tagar/{{ $tag->name }}" class="text-blue-500 italic">#{{ $tag->name }}</a>
                         @endforeach --}}
@@ -193,7 +203,7 @@
                     @foreach ($post->attachments as $attachment)
                         <div class="swiper-slide h-full">
                             <img class="w-full h-full rounded-xl"
-                                src="{{ asset('storage/posts/' . $attachment->namafile) }}">
+                                src="{{ config('app.imagekit.url_endpoint') . $attachment->namafile }}">
                         </div>
                     @endforeach
                 </div>
@@ -358,10 +368,10 @@
                 <div class="">
                     <div class="flex justify-between items-center">
                         @auth
-                            <img src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}" class="w-[32px] rounded-full"
+                            <img src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}" class="w-[32px] rounded-full"
                                 alt="Foto User">
                         @else
-                            <img src="{{ asset('img/blankprofile.png') }}" class="w-[32px] rounded-full"
+                            <img src="{{ config('app.imagekit.url_endpoint') . 'blankprofile.png' }}" class="w-[32px] rounded-full"
                                 alt="Foto Default">
                         @endauth
                         <input type="text" name="content" id="comment"
@@ -383,7 +393,7 @@
             @forelse ($comments as $comment)
                 <div x-ref="comment_{{ $comment->id }}" class="mt-1 px-3">
                     <div class="flex gap-2.5 items-start">
-                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ asset('storage/avatars/' . $comment->user->avatar) }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
+                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ config('app.imagekit.url_endpoint') . $comment->user->avatar }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
                             alt="Foto User">
                         <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
                             <div class="py-.5 px-2.5">
@@ -475,7 +485,9 @@
 
                                     </div>
                                 </div>
-                                <p class="text-sm font-extralight {{ $comment->user->badges->first() ? 'text-emerald-500' : 'text-gray-400' }}">
+                                <p class="text-sm font-extralight" 
+                                    style="color: {{ optional($comment->user->badges->first())->badge_color ?? '#6b7280' }}"    
+                                >
                                 {{ optional($comment->user->badges->first())->badge_name ?? ' ' }}
                             </p>
                                 <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>

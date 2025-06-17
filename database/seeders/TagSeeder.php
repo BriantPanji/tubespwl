@@ -14,11 +14,23 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        $tags = Tag::factory()->count(3)->create();
-        $posts = Post::all();
+        $names = [
+            'hidden_gem',      
+            'kuliner',         
+            'sejarah',         
+            'alam',            
+            'instagramable',   
+            'budget_friendly', 
+            'romantis',        
+            'mistis',          
+            'budaya',          
+            'hiburan',          
+            'edukasi',         
+            'petualangan',      
+        ];
 
-        foreach ($posts as $post) {
-            $post->tag()->attach($tags->random(2));
+        foreach ($names as $name) {
+            Tag::create(['name' => $name]);
         }
     }
 }

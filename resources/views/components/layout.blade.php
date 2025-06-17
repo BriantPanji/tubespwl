@@ -36,24 +36,16 @@
     @endif
     <x-header></x-header>
     @php
-        $navs = [
-            ['icon' => 'fa-house', 'text' => 'Beranda', 'route' => '/'],
-            [
-                'icon' => 'fa-user',
-                'text' => auth()->check() ? 'Profil' : 'Login',
-                'route' => auth()->check() ? route('profile') : route('login'),
-            ],
-            [
-                'icon' => 'fa-square-plus',
-                'text' => 'Buat Postingan',
-                'route' => auth()->check() ? route('post.create') : route('login'),
-            ],
-            ['icon' => 'fa-rectangle-history', 'text' => 'Postingan Saya', 'route' => route('profile.post')],
-            ['icon' => 'fa-comments', 'text' => 'Komentar Saya', 'route' => route('profile.comment')],
-            ['icon' => 'fa-up', 'text' => 'Votingan Saya', 'route' => route('profile.vote')],
-            ['icon' => 'fa-bookmark', 'text' => 'Tersimpan', 'route' => route('profile.bookmark')],
-            ['icon' => 'fa-users-gear', 'text' => 'About Us', 'route' => route('about')],
-        ];
+        $navs =[
+            [ 'icon' => 'fa-house', 'text' => 'Beranda', 'route' => '/', ],
+            [ 'icon' => 'fa-square-plus', 'text' => 'Buat Postingan', 'route' => auth()->check() ? route('post.create') : route('login') ],
+            [ 'icon' => 'fa-rectangle-history', 'text' => 'Postingan Saya', 'route' => route('profile.post') ],
+            [ 'icon' => 'fa-comments', 'text' => 'Komentar Saya', 'route' => route('profile.comment') ],
+            [ 'icon' => 'fa-up', 'text' => 'Votingan Saya', 'route' => route('profile.vote') ],
+            [ 'icon' => 'fa-bookmark', 'text' => 'Tersimpan', 'route' => route('profile.bookmark') ],
+            [ 'icon' => 'fa-shield', 'text' => 'Badge', 'route' => route('badges.index') ],
+            [ 'icon' => 'fa-user', 'text' => auth()->check() ? 'Profil' : 'Login', 'route' => auth()->check() ? route('profile') : route('login') ],
+        ] 
     @endphp
 
     <div x-data="{ scrolled: false, lastScrollTop: 0, hideHeader: false }" x-init="scrolled = window.scrollY > 15;
@@ -77,6 +69,12 @@
                     <span class="font-medium">{{ $nav['text'] }}</span>
                 </a>
             @endforeach
+            @can('admin')
+                <a href="{{ route('admin.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-sl-tertiary mb-4">
+                    <i class="fa-light fa-gear-code text-lg w-5 h-5"></i>
+                    <span class="font-medium">Admin</span>
+                </a>
+            @endcan
             @auth
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
@@ -134,9 +132,8 @@
                             <h1 class="font-medium text-sm group-hover:font-semibold truncate" x-text="post.title"></h1>
                             <p class="text-[.7rem] opacity-50 line-clamp-2 font-light group-hover:font-normal"
                                 x-text="post.content"></p>
-                        </div>
-                        <img class="object-contain rounded-sm !aspect-square w-12 h-12"
-                            :src="`{{ env('IMAGEKIT_URL_ENDPOINT') }}${post.image}`" alt="">
+                        </div> 
+                        <img class="object-fit rounded-sm !aspect-square w-12 h-12" :src="`{{ env('IMAGEKIT_URL_ENDPOINT') }}${post.image}`" alt=""> 
                     </a>
                 </template>
 
@@ -183,6 +180,48 @@
 
     <x-footer></x-footer>
     <script src="{{ asset('js/swaldef.js') }}" defer></script>
+    <script>
+        function resetCache() {
+            sessionStorage.removeItem('cachedPosts');
+            sessionStorage.removeItem('cachedPage');
+            sessionStorage.removeItem('cachedLastPage');
+            sessionStorage.removeItem('cachedHasMorePages');
+            sessionStorage.removeItem('cacheTimestamp');
+            sessionStorage.removeItem('scrollPosition');
+            sessionStorage.removeItem('justLeftHomePage');
+        }
+
+        @if(session('clear_home_cache'))
+            resetCache();
+        @endif
+
+        if (sessionStorage.getItem('justLeftHomePage') !== `true`) {
+            resetCache();
+        }
+
+        let lastPage = (new URL(document.referrer || document.location.href));
+        let nowPage = document.location;
+
+        if ((lastPage.pathname === '/') || (lastPage.pathname === '/search') || lastPage.pathname.startsWith('/tagar')) {
+            if (lastPage.pathname === '/search' && (nowPage.pathname === '/' || nowPage.pathname.startsWith('/tagar'))) {
+                resetCache();
+            } else {
+                sessionStorage.setItem('justLeftHomePage', 'true');
+            }
+
+
+            if (lastPage.pathname === '/search' && nowPage.pathname === '/search') {
+                if (lastPage.href !== nowPage.href) sessionStorage.removeItem('justLeftHomePage');
+                else sessionStorage.setItem('justLeftHomePage', 'true');
+            } else {
+                sessionStorage.setItem('justLeftHomePage', 'true');
+            }
+        } else {
+            if (nowPage !== '/' || nowPage !== '/search' || lastPage.pathname.startsWith('/tagar')) {
+                sessionStorage.removeItem('justLeftHomePage');
+            }
+        }
+    </script>
 </body>
 
 </html>

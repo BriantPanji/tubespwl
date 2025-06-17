@@ -34,13 +34,13 @@
                     {{-- @dd($post->attachments->first()->namafile) --}}
 
 
-                    <a href="/post/{{ $post->id }}">
-                        <div class="overflow-hidden">
-                            <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-[1.1] overflow-hidden duration-300"
-                                src="{{ asset('storage/posts/' . $post->attachments[0]->namafile) }}"
-                                alt="Bookmark Image" />
-                        </div>
-                    </a>
+                <a href="/post/{{ $post->id }}">
+                    <div class="overflow-hidden">
+                        <img class="size-27 rounded-md xl:size-40 object-cover hover:scale-[1.1] overflow-hidden duration-300"
+                         src="{{ config('app.imagekit.url_endpoint') . $post->attachments[0]->namafile }}"
+                         alt="Bookmark Image" />
+                    </div>
+                </a> 
 
                 @empty
                     <p class="text-white text-xs font-light italic px-2 xl:text-base">

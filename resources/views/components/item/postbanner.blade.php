@@ -1,11 +1,11 @@
 <article @click="window.location.assign('/post/add')"
     class=" min-h-2 h-16 bg-sl-tertiary rounded-md flex items-center justify-between px-3 gap-3 *:cursor-pointer w-full">
     @auth
-        <img class="w-9 h-9 rounded-full" src="{{ asset('storage/avatars/' . auth()->user()->avatar) }}">
+        <img class="w-9 h-9 rounded-full" src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}">
     @endauth
 
     @guest
-        <img class="w-9 h-9 rounded-full" src="{{ asset('img/blankprofile.png') }}">
+        <img class="w-9 h-9 rounded-full" src="{{ config('app.imagekit.url_endpoint') . 'blankprofile.png' }}">
     @endguest
 
     <input type="text" class="w-full h-9 rounded bg-white/8 px-3 text-xs" readonly

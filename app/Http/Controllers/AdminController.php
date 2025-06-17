@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
+use ImageKit\ImageKit;
 
 class AdminController extends Controller
 {
@@ -106,6 +107,23 @@ class AdminController extends Controller
 
     public function deleteUser(Request $request, User $user)
     {
+        if ($user->avatar != 'blankprofile.png') {
+            if (!$user->avatar_imgkit_id) {
+                return response()->json(["error" => "Gagal menghapus akun user: ID ImageKit tidak ditemukan."], 500);
+            }
+            $imageKit = new ImageKit(
+                config('app.imagekit.public_key'),
+                config('app.imagekit.private_key'),
+                config('app.imagekit.url_endpoint')
+            );
+
+            $hslnya = $imageKit->deleteFile($user->avatar_imgkit_id);
+
+            if ($hslnya->error) {
+                return response()->json(["error" => "Gagal menghapus akun user: " . $hslnya->error], 500);
+            }
+        }
+
         $user->delete();
 
         return redirect()->back()->with('success', 'User has been deleted.');

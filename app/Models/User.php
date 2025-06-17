@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'is_admin',
         'avatar',
+        'avatar_imgkit_id'
     ];
 
     /**
@@ -58,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function badges()
     {
-        return $this->belongsToMany(Badge::class, 'badge_pivots', 'user_id', 'badge_id');
+        return $this->belongsToMany(Badge::class, 'badge_pivots', 'user_id', 'badge_id')->orderBy('point', 'desc');
     }
     public function hasBadge(Badge $badge)
     {

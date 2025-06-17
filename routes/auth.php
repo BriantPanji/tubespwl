@@ -33,6 +33,9 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('/email/verify', function () {
+        if (Auth::user()->hasVerifiedEmail()) {
+            return redirect('/')->with('message', 'Email Anda sudah terverifikasi.');
+        }
         return view('auth.verify-email');
     })->name('verification.notice');
 

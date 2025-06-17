@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Auth\Events\Registered;
+use ImageKit\ImageKit;
 
 class RegisterUserController extends Controller
 {
@@ -70,7 +71,7 @@ class RegisterUserController extends Controller
             'display_name' => ['required', 'alpha_space'],
             'username' => ['required', 'unique:users,username,' . $user->id, 'regex:/^[a-zA-Z0-9._-]+$/'],
             'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // avatar tidak wajib
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'], // avatar tidak wajib
         ]);
 
 
@@ -90,10 +91,30 @@ class RegisterUserController extends Controller
 
         // Cek apakah ada avatar yang di-upload
         if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('', 'avatars');
-            $user->update([
-                'avatar' => $avatarPath, // Simpan path avatar baru
+            // $avatarPath = $request->file('avatar')->store('', 'avatars');
+            $imageKit = new ImageKit(
+                config('app.imagekit.public_key'),
+                config('app.imagekit.private_key'),
+                config('app.imagekit.url_endpoint')
+            );
+            $image = base64_encode(file_get_contents($request->file('avatar')));
+            $imageName = uniqid('avatar_') . '.' . $request->file('avatar')->getClientOriginalExtension();
+
+            $uploadnya = $imageKit->uploadFIle([
+                'file' => $image, // Get the file content
+                'fileName' => $imageName,
+                'useUniqueFileName' => false,
             ]);
+
+            if ($uploadnya->error) {
+                return redirect()->back()->withErrors(['avatar' => 'Gagal mengunggah avatar: ' . $uploadnya->error->message]);
+            }
+
+            $user->update([
+                'avatar' => $uploadnya->result->name, // Simpan path avatar baru
+                'avatar_imgkit_id' => $uploadnya->result->fileId, // Simpan path avatar baru
+            ]);
+
         }
 
         // Setelah berhasil, redirect ke halaman edit profile dengan pesan sukses

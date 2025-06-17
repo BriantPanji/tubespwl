@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('post_attachments', function (Blueprint $table) {
             $table->string('namafile');
+            $table->string('imgkit_id')->nullable();
             $table->foreignUlid('post_id')->references('id')->on('posts')->onDelete('cascade');
         });
     }
