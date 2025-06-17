@@ -5,7 +5,7 @@
     @endauth
 
     @guest
-        <img class="w-9 h-9 rounded-full" src="{{ config('app.imagekit.url_endpoint') . '/blankprofile.png' }}">
+        <img class="w-9 h-9 rounded-full" src="{{ config('app.imagekit.url_endpoint') . 'blankprofile.png' }}">
     @endguest
 
     <input type="text" class="w-full h-9 rounded bg-white/8 px-3 text-xs" readonly

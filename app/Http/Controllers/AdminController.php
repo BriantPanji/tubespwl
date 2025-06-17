@@ -108,6 +108,9 @@ class AdminController extends Controller
     public function deleteUser(Request $request, User $user)
     {
         if ($user->avatar != 'blankprofile.png') {
+            if (!$user->avatar_imgkit_id) {
+                return response()->json(["error" => "Gagal menghapus akun user: ID ImageKit tidak ditemukan."], 500);
+            }
             $imageKit = new ImageKit(
                 config('app.imagekit.public_key'),
                 config('app.imagekit.private_key'),

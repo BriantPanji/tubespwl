@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            ['display_name' => 'Sutanto', 'username' => 'sutanto', 'email' => 'sutanto@example.com'],
-            ['display_name' => 'Feri',    'username' => 'feri',    'email' => 'feri@example.com'],
-            ['display_name' => 'Delrico', 'username' => 'delrico', 'email' => 'delrico@example.com'],
-            ['display_name' => 'Panji',   'username' => 'panji',   'email' => 'panji@example.com'],
-            ['display_name' => 'Andreas', 'username' => 'andreas', 'email' => 'andreas@example.com'],
+            ['display_name' => 'Sutanto', 'username' => 'sutanto', 'email' => 'sutanto@example.com', 'avatar' => 'blankprofile.png'],
+            ['display_name' => 'Feri',    'username' => 'feri',    'email' => 'feri@example.com', 'avatar' => 'blankprofile.png'],
+            ['display_name' => 'Delrico', 'username' => 'delrico', 'email' => 'delrico@example.com', 'avatar' => 'blankprofile.png'],
+            ['display_name' => 'Panji Ganteng',   'username' => 'panjikun',   'email' => 'panji@example.com', 'avatar' => 'avatar_panjay.jpg'],
+            ['display_name' => 'Andreas', 'username' => 'andreas', 'email' => 'andreas@example.com', 'avatar' => 'blankprofile.png'],
         ];
 
         foreach($users as $user){
@@ -31,8 +31,8 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
                 'is_admin'     => true,
                 'is_banned'    => false,
-                'avatar'       => 'blankprofile.png',
-                'password'     => Hash::make('password123'),
+                'avatar'       => $user['avatar'],
+                'password'     => Hash::make('pass123'),
             ]);
         }
 

@@ -8,24 +8,26 @@
                 <button type="button" class="cursor-pointer" @click="window.location.href = '{{ route('search', parameters: ['search' => $search, 'sortby' => request('sortby', 'popularitas'), 'orderby' => request('orderby', 'ASC') === 'ASC' ? 'DESC' : 'ASC'])}}'"><i class="fa-light {{ request('orderby', 'ASC') !== 'ASC' ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'}}"></i></button>
             @endif
         </div>
-        <div class="flex justify-center text-center gap-x-4">
+        <div class="flex justify-around text-center overflow-x-auto overflow-y-hidden max-w-full w-full customScrollbar">
+            <div class="flex justify-center text-center gap-x-4 min-w-fit">
+
                 <a href="{{ route('search', parameters: ['search' => $search, 'sortby' => 'popularitas', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='popularitas' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='popularitas' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Popularitas
                 </a>
                 <a href="{{ route('search', ['search' => $search, 'sortby' => 'upvotes', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='upvotes' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='upvotes' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Votes
                 </a>
                 <a href="{{ route('search', ['search' => $search, 'sortby' => 'comments', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='comments' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='comments' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Comments
                 </a>
                 <a href="{{ route('search', ['search' => $search, 'sortby' => 'title', 'orderby' => request('orderby', 'ASC')]) }}"
-                class="w-1/4 px-3 py-1 rounded {{ $sortby=='title' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
+                    class="w-full min-w-fit flex items-center justify-center px-3 py-1 rounded whitespace-nowrap {{ $sortby=='title' ? 'bg-sl-primary text-white' : 'bg-sl-quinary' }} hover:bg-sl-base">
                     Title A→Z
                 </a>
-
+            </div>
         </div>
     </div>
     @else
@@ -159,7 +161,7 @@
                     <div @click="window.location.href = `/post/${post.id}`"
                         class="max-w-[75%] h-full flex items-center gap-2 cursor-pointer">
                         <a :href="`/profile/${post.user.username}`"><img class="w-9 h-9 rounded-full object-cover"
-                                :src="`{{ config('app.imagekit.url_endpoint') }}/${post.user.avatar}`"
+                                :src="`{{ config('app.imagekit.url_endpoint') }}${post.user.avatar}`"
                                 :alt="`${post.user.username}'s avatar`"></a>
                         <div class="flex flex-col h-full justify-center">
                             <a :href="post.user ? `/profile/${post.user.username}` : '#'"
@@ -167,7 +169,9 @@
                                 <span
                                     x-text="post.user ? (post.user.display_name ? post.user.display_name : post.user.username) : 'Pengguna Anonim'"></span>
                             </a>
-                            <div class="text-[.65rem] lg:text-xs text-emerald-500/70">
+                            <div class="text-[.65rem] lg:text-xs" 
+                                :style="`color: ${post.user && post.user.badges && post.user.badges.length > 0 ? post.user.badges[0].badge_color : '#6b7280'};`"
+                                >
                                 <span x-show="post.user && post.user.badges && post.user.badges.length > 0"
                                     x-text="post.user ? (post.user.badges && post.user.badges.length > 0 ? post.user.badges[0].badge_name : '') : ''"></span>
                             </div>
@@ -285,8 +289,8 @@
                 </section>
                 <section @click="window.location.href = `/post/${post.id}`" class="w-full h-auto cursor-pointer"
                     x-show="post.attachments && post.attachments.length > 0">
-                    <img class="!aspect-video rounded-xl object-cover w-full h-auto"
-                        :src="`{{ config('app.imagekit.url_endpoint') }}/${post.attachments[0].namafile}`"
+                    <img class="!aspect-video rounded-xl object-cover w-full h-auto bg-neutral-600/50"
+                        :src="`{{ config('app.imagekit.url_endpoint') }}${post.attachments[0].namafile}`"
                         onerror="this.style.display='none';"> {{-- Hide if image fails to load --}}
                 </section>
                 <section

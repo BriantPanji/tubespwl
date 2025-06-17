@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AssignBadge;
 use App\Http\Middleware\BannedUser;
 use App\Http\Middleware\EmailMustVerify;
 use Illuminate\Foundation\Application;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
            'is_admin' => IsAdmin::class,
            'not_banned' => BannedUser::class,
            'email_verified' => EmailMustVerify::class,
+           'assign_badge' => AssignBadge::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

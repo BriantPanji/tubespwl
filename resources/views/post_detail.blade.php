@@ -35,7 +35,7 @@
                             @endif
 
                         </a>
-                        <div href="" class="text-[.65rem] lg:text-xs text-emerald-500/70">
+                        <div class="text-[.65rem] lg:text-xs" style="color: {{ optional($post->user->badges->first())->badge_color ?? '#6b7280' }}">
                             @php
                                 $firstBadge = $post->user->badges->first();
                             @endphp
@@ -371,7 +371,7 @@
                             <img src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}" class="w-[32px] rounded-full"
                                 alt="Foto User">
                         @else
-                            <img src="{{ config('app.imagekit.url_endpoint') . '/blankprofile.png' }}" class="w-[32px] rounded-full"
+                            <img src="{{ config('app.imagekit.url_endpoint') . 'blankprofile.png' }}" class="w-[32px] rounded-full"
                                 alt="Foto Default">
                         @endauth
                         <input type="text" name="content" id="comment"
@@ -485,7 +485,9 @@
 
                                     </div>
                                 </div>
-                                <p class="text-sm font-extralight {{ $comment->user->badges->first() ? 'text-emerald-500' : 'text-gray-400' }}">
+                                <p class="text-sm font-extralight" 
+                                    style="color: {{ optional($comment->user->badges->first())->badge_color ?? '#6b7280' }}"    
+                                >
                                 {{ optional($comment->user->badges->first())->badge_name ?? ' ' }}
                             </p>
                                 <p class="font-extralight mt-2 leading-tight">{{ $comment->content }}</p>
