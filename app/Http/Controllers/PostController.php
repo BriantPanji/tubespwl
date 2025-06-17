@@ -71,7 +71,9 @@ class PostController extends Controller
         // Replace the collection in the paginator instance
         $posts->setCollection($mergedPosts->values());
 
-        $badges = User::with('badges')->get();
+        $badges = User::with(['badges' => function($q) {
+            $q->orderBy('point', 'asc');
+        }])->get();
 
 
         return view('home', [

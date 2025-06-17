@@ -167,7 +167,9 @@
                                 <span
                                     x-text="post.user ? (post.user.display_name ? post.user.display_name : post.user.username) : 'Pengguna Anonim'"></span>
                             </a>
-                            <div class="text-[.65rem] lg:text-xs text-emerald-500/70">
+                            <div class="text-[.65rem] lg:text-xs" 
+                                :style="`color: ${post.user && post.user.badges && post.user.badges.length > 0 ? post.user.badges[0].badge_color : '#6b7280'};`"
+                                >
                                 <span x-show="post.user && post.user.badges && post.user.badges.length > 0"
                                     x-text="post.user ? (post.user.badges && post.user.badges.length > 0 ? post.user.badges[0].badge_name : '') : ''"></span>
                             </div>

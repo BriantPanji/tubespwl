@@ -15,12 +15,12 @@ class TagSeeder extends Seeder
     public function run(): void
     {
         $names = [
-            'hidden gem',      
+            'hidden_gem',      
             'kuliner',         
             'sejarah',         
             'alam',            
             'instagramable',   
-            'budget friendly', 
+            'budget_friendly', 
             'romantis',        
             'mistis',          
             'budaya',          

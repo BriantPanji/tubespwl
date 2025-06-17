@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('badge_desc', 128);
             $table->string('badge_color', 7);
             $table->string('badge_icon', 128);
+            $table->integer('point')->default(0);
         });
     }
 
