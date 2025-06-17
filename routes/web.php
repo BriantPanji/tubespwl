@@ -42,7 +42,7 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
     Route::get('/notification', [NotificationController::class, 'index']);
 
     // Post
-    Route::get('/', [PostController::class, 'index']);
+    Route::get('/', [PostController::class, 'index'])->middleware('assign_badge');
     Route::get('/load-more-posts', [PostController::class, 'loadMorePosts'])->name('posts.loadMore');
     Route::get('/load-random-posts', [PostController::class, 'loadRandomPosts'])->name('posts.loadRandom');
     Route::get('/post/add', [PostController::class, 'create'])->name('post.create')->middleware('auth');
@@ -98,7 +98,7 @@ Route::middleware(['email_verified', 'not_banned'])->group(function () {
             'postVoteCount' => $postVoteCount,
             'bookmarkCount' => $bookmarkCount,
         ]);
-    })->middleware('auth')->name('profile');
+    })->middleware(['auth', 'assign_badge'])->name('profile');
 
 
     // Route untuk tampilkan form edit profile

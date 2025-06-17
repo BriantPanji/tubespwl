@@ -196,11 +196,11 @@ class BadgeSeeder extends Seeder
             Badge::create($badge);
         }
 
-        $badges = Badge::all();
-        $users = User::all();
+        // $badges = Badge::all();
+        // $users = User::all();
 
-        foreach ($users as $user) {
-            $user->badges()->attach($badges->random(20));
-        }
+        // foreach ($users as $user) {
+        //     $user->badges()->attach($badges->random(20));
+        // }
     }
 }

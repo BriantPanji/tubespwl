@@ -287,7 +287,7 @@
                 </section>
                 <section @click="window.location.href = `/post/${post.id}`" class="w-full h-auto cursor-pointer"
                     x-show="post.attachments && post.attachments.length > 0">
-                    <img class="!aspect-video rounded-xl object-cover w-full h-auto"
+                    <img class="!aspect-video rounded-xl object-cover w-full h-auto bg-neutral-600/50"
                         :src="`{{ config('app.imagekit.url_endpoint') }}/${post.attachments[0].namafile}`"
                         onerror="this.style.display='none';"> {{-- Hide if image fails to load --}}
                 </section>
