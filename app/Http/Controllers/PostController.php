@@ -483,6 +483,7 @@ class PostController extends Controller
 
         foreach ($post->attachments as $attachment) {
             if ($attachment->namafile === 'blankimage.png') continue;
+            if (!$attachment->imgkit_id) continue; // Skip if imgkit_id is not set
             $hslnya = $imageKit->deleteFile($attachment->imgkit_id);
             if ($hslnya->error) {
                 return response()->json([
