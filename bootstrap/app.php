@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
            'not_banned' => BannedUser::class,
            'email_verified' => EmailMustVerify::class,
         ]);
+
+        $middleware->web(append: [
+            \App\Http\Middleware\AssignBadgeMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

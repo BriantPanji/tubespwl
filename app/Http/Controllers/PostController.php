@@ -360,29 +360,29 @@ class PostController extends Controller
         }
 
         $user = Auth::user();
-        $postCount = $user->posts()->count();
+        // $postCount = $user->posts()->count(); // Post count logic moved to middleware
 
-        //Badge untuk jumlah postingan
-        if ($postCount >= 50 && !$user->badges->contains(12)) {
-            $user->badges()->attach(12);
-        } elseif ($postCount >= 25 && !$user->badges->contains(11)) {
-            $user->badges()->attach(11);
-        } elseif ($postCount >= 10 && !$user->badges->contains(10)) {
-            $user->badges()->attach(10);
-        } elseif ($postCount == 1 && !$user->badges->contains(1)) {
-            // == 1 karena post barusan baru saja dibuat
-            $user->badges()->attach(1);
-        }
+        //Badge untuk jumlah postingan // Logic moved to middleware
+        // if ($postCount >= 50 && !$user->badges->contains(12)) {
+        //     $user->badges()->attach(12);
+        // } elseif ($postCount >= 25 && !$user->badges->contains(11)) {
+        //     $user->badges()->attach(11);
+        // } elseif ($postCount >= 10 && !$user->badges->contains(10)) {
+        //     $user->badges()->attach(10);
+        // } elseif ($postCount == 1 && !$user->badges->contains(1)) {
+        //     // == 1 karena post barusan baru saja dibuat
+        //     $user->badges()->attach(1);
+        // }
 
-        // Badge untuk jumlah foto
-        $photoCount = PostAttachment::whereIn('post_id', $user->posts->pluck('id'))->count();
-        if ($photoCount >= 50 && !$user->badges->contains(18)) {
-            $user->badges()->attach(18);
-        } elseif ($photoCount >= 25 && !$user->badges->contains(17)) {
-            $user->badges()->attach(17);
-        } elseif ($photoCount >= 10 && !$user->badges->contains(16)) {
-            $user->badges()->attach(16);
-        }
+        // Badge untuk jumlah foto // Logic moved to middleware
+        // $photoCount = PostAttachment::whereIn('post_id', $user->posts->pluck('id'))->count();
+        // if ($photoCount >= 50 && !$user->badges->contains(18)) {
+        //     $user->badges()->attach(18);
+        // } elseif ($photoCount >= 25 && !$user->badges->contains(17)) {
+        //     $user->badges()->attach(17);
+        // } elseif ($photoCount >= 10 && !$user->badges->contains(16)) {
+        //     $user->badges()->attach(16);
+        // }
 
         session()->flash('clear_home_cache', 'true'); // Add this line
         return redirect('/')->with('success', 'Post created successfully');
@@ -532,16 +532,16 @@ class PostController extends Controller
             $post->user->notify(new VoteNotification($user, $post));
         }
 
-        // Badge untuk jumlah votingan
-        $totalVotes = $user->votedPost()->count();
-
-        if ($totalVotes >= 100 && !$user->badges->contains(21)) {
-            $user->badges()->attach(21);
-        } elseif ($totalVotes >= 50 && !$user->badges->contains(20)) {
-            $user->badges()->attach(20);
-        } elseif ($totalVotes >= 20 && !$user->badges->contains(19)) {
-            $user->badges()->attach(19);
-        }
+        // Badge untuk jumlah votingan // Logic moved to middleware
+        // $totalVotes = $user->votedPost()->count();
+        //
+        // if ($totalVotes >= 100 && !$user->badges->contains(21)) {
+        //     $user->badges()->attach(21);
+        // } elseif ($totalVotes >= 50 && !$user->badges->contains(20)) {
+        //     $user->badges()->attach(20);
+        // } elseif ($totalVotes >= 20 && !$user->badges->contains(19)) {
+        //     $user->badges()->attach(19);
+        // }
 
         $post->refresh();
         return response()->json([
