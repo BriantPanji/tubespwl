@@ -129,10 +129,16 @@ class CommentController extends Controller
     }
     public function destroy(Request $request, Comment $comment)
     {
+        // DB::table('notifications')
+        //     ->where('notifiable_id', $comment->user_id)
+        //     ->where('type', CommentNotification::class)
+        //     ->whereJsonContains('data->comment_id', $comment->id)
+        //     ->delete();
+        // $receiverId = $comment->post->user_id;
+
         DB::table('notifications')
-            ->where('notifiable_id', $comment->user_id)
             ->where('type', CommentNotification::class)
-            ->whereJsonContains('data->comment_id', $comment->id)
+            ->where('data->comment_id', $comment->id)
             ->delete();
 
         Gate::authorize('edit-comment', $comment);
