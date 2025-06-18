@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
             Log::error('Generic exception during email verification: ' . $e->getMessage());
             return response('Error during verification.', 500); // Or rethrow $e
         }
-    })->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+    })->middleware(['throttle:6,1'])->name('verification.verify');
 
 
     Route::post('/email/verification-notification', function (Request $request) {
