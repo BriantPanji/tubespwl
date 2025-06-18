@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\CommentNotification;
@@ -63,6 +64,13 @@ class CommentController extends Controller
     {
         $user = Auth::user();
 
+        DB::table('notifications')
+            ->where('notifiable_id', $comment->user_id)
+            ->where('type', VoteCommentNotification::class)
+            ->whereJsonContains('data->voter->username', $user->username)
+            ->whereJsonContains('data->comment_id', $comment->id)
+            ->delete();
+
         if ($user->hasDownvotedComment($comment)) {
             $user->votedComments()->detach($comment);
             $user->votedComments()->attach($comment, ['is_upvoted' => true]);
@@ -121,7 +129,14 @@ class CommentController extends Controller
     }
     public function destroy(Request $request, Comment $comment)
     {
+        DB::table('notifications')
+            ->where('notifiable_id', $comment->user_id)
+            ->where('type', CommentNotification::class)
+            ->whereJsonContains('data->comment_id', $comment->id)
+            ->delete();
+
         Gate::authorize('edit-comment', $comment);
+
 
         $comment->delete();
 

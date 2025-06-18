@@ -53,7 +53,6 @@ class VoteNotification extends Notification
             'post_id' => $this->post->id,
             'post_title' => $this->post->title,
             'post_img' => $this->post->attachments[0]->namafile,
-            'post_created_at' => $this->post->created_at,
             'voter' => [
                 'username' => $this->voter->username,
                 'display_name' => $this->voter->display_name,

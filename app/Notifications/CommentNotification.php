@@ -52,7 +52,6 @@ class CommentNotification extends Notification
             'message' => "berkomentar:",
             'comment_id' => $this->comment->id,
             'comment_content' => $this->comment->content,
-            'comment_created_at' => $this->comment->created_at,
             'post_id' => $this->comment->post_id,
             'post_title' => $this->comment->post->title,
             'post_img' => $this->comment->post->attachments[0]->namafile,

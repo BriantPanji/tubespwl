@@ -16,16 +16,16 @@
                     class="md:max-w-full w-full min-h-16 h-auto rounded-md flex flex-col p-3">
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
-                            <a href="/profile">
+                            <a href="/profile/{{ $notification->data['voter']['username'] }}">
                                 <img class="w-9 rounded-full object-cover"
                                     src="{{ config('app.imagekit.url_endpoint') . $notification->data['voter']['avatar'] }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
                                 <div class="ml-3">
-                                    <div class="text-xs whitespace-pre flex">
+                                    <div class="text-xs whitespace-pre flex truncate max-w-[150px] md:max-w-[100%]">
                                         <p class="font-bold">{{ $notification->data['voter']['display_name']}}</p> {{ $notification->data['message'] }} </div>
-                                    <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['post_created_at'])->diffForHumans() }}</p>
+                                    <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</p>
 
                                 </div>
                                 <div class="w-[50px] h-[50px]">
@@ -40,16 +40,16 @@
                     class="md:max-w-full w-full min-h-16 h-auto rounded-md flex flex-col p-3">
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
-                            <a href="/profile">
+                            <a href="/profile/{{ $notification->data['voter']['username'] }}">
                                 <img class="w-9 rounded-full object-cover"
                                     src="{{ config('app.imagekit.url_endpoint') . $notification->data['voter']['avatar'] }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
                                 <div class="ml-3">
-                                    <div class="text-sm whitespace-pre flex">
+                                    <div class="text-xs whitespace-pre flex truncate max-w-[150px] md:max-w-[100%]">
                                         <p class="font-bold">{{ $notification->data['voter']['display_name']}}</p> {{ $notification->data['message'] }} Anda "{{ Str::limit($notification->data['comment_content'], 15) }}" </div>
-                                        <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
+                                        <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</p>
                                 </div>
                                 <div class="w-[50px] h-[50px]">
                                     <img src="{{ config('app.imagekit.url_endpoint') . $notification->data['post_img'] }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
@@ -63,16 +63,16 @@
                     class="md:max-w-full w-full min-h-16 h-auto rounded-md flex flex-col p-3">
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
-                            <a href="/profile">
+                            <a href="/profile/{{ $notification->data['user']['username'] }}">
                                 <img class="w-9 rounded-full object-cover"
                                     src="{{ config('app.imagekit.url_endpoint') . $notification->data['user']['avatar'] }}"
                                     alt="Avatar">
                             </a>
                             <div class="flex items-center justify-between w-full text-left md:ml-0 md:flex-row md:items-center">
                                 <div class="ml-3">
-                                    <div class="text-sm whitespace-pre flex">
+                                    <div class="text-xs whitespace-pre flex truncate max-w-[150px] md:max-w-[100%]">
                                         <p class="font-bold">{{ $notification->data['user']['display_name']}}</p> {{ $notification->data['message'] }} "{{ Str::limit($notification->data['comment_content'], 15) }}" </div>
-                                        <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->data['comment_created_at'])->diffForHumans() }}</p>
+                                        <p class="text-sm font-extralight opacity-70">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</p>
                                 </div>
                                 <div class="w-[50px] h-[50px]">
                                     <img src="{{ config('app.imagekit.url_endpoint') . $notification->data['post_img'] }}" class="object-cover w-[100%] h-[50px] rounded-md" alt="">
