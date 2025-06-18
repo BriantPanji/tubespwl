@@ -17,7 +17,7 @@
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
                             <a href="/profile/{{ $notification->data['voter']['username'] }}">
-                                <img class="w-9 rounded-full object-cover"
+                                <img class="w-9 rounded-full object-cover !aspect-square"
                                     src="{{ config('app.imagekit.url_endpoint') . $notification->data['voter']['avatar'] }}"
                                     alt="Avatar">
                             </a>
@@ -41,7 +41,7 @@
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
                             <a href="/profile/{{ $notification->data['voter']['username'] }}">
-                                <img class="w-9 rounded-full object-cover"
+                                <img class="w-9 !aspect-square rounded-full object-cover"
                                     src="{{ config('app.imagekit.url_endpoint') . $notification->data['voter']['avatar'] }}"
                                     alt="Avatar">
                             </a>
@@ -64,7 +64,7 @@
                     <section class="cursor-pointer">
                         <div class="flex items-center gap-2">
                             <a href="/profile/{{ $notification->data['user']['username'] }}">
-                                <img class="w-9 rounded-full object-cover"
+                                <img class="w-9 !aspect-square rounded-full object-cover"
                                     src="{{ config('app.imagekit.url_endpoint') . $notification->data['user']['avatar'] }}"
                                     alt="Avatar">
                             </a>

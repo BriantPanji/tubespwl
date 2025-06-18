@@ -64,7 +64,7 @@ window.addEventListener('scroll', () => {
         @endguest
         @auth
 
-            <button @dblclick="window.location.href='/profile'" @click="isNavOpen = !isNavOpen" class="cursor-pointer lg:!cursor-default"><img class="w-9 h-9 rounded-full hover:shadow-sm shadow-sl-text"
+            <button @dblclick="window.location.href='/profile'" @click="isNavOpen = !isNavOpen" class="cursor-pointer lg:!cursor-default"><img class="w-9 h-9 rounded-full !aspect-square hover:shadow-sm shadow-sl-text"
                     src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}" alt="profilepicture.jpg"></button>
         @endauth
         <a href="/" class="cursor-pointer"><img class="h-9 max-h-9" src="{{ asset('img/logo/sudutlain_wm.png') }}"
