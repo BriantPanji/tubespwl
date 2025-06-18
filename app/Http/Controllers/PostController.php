@@ -71,7 +71,7 @@ class PostController extends Controller
         // Replace the collection in the paginator instance
         $posts->setCollection($mergedPosts->values());
 
-        $badges = User::with(['badges' => function($q) {
+        $badges = User::with(['badges' => function ($q) {
             $q->orderBy('point', 'asc');
         }])->get();
 
@@ -156,7 +156,8 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
-    public function loadRandomPosts(Request $request) {
+    public function loadRandomPosts(Request $request)
+    {
 
         $posts = Post::with(['attachments' => function ($query) {
             $query->limit(1); // hanya ambil satu gambar
@@ -220,10 +221,10 @@ class PostController extends Controller
         $user = Auth::user();
         $posts->getCollection()->transform(function ($post) use ($user) {
             $baseScore = ($post->upvoted_by_count * 3)
-                       - ($post->downvoted_by_count)
-                       - ($post->comments_count * 2)
-                       + ($post->bookmarks_count * 2);
-            $post->weighted_score = $baseScore;// + rand(0, 10);
+                - ($post->downvoted_by_count)
+                - ($post->comments_count * 2)
+                + ($post->bookmarks_count * 2);
+            $post->weighted_score = $baseScore; // + rand(0, 10);
 
             if ($user) {
                 $post->upvoted_by_user     = $user->hasUpvotedPost($post);
@@ -356,7 +357,6 @@ class PostController extends Controller
                 'post_id' => $post->id,
                 'imgkit_id' => $uploadnya->result->fileId,
             ]);
-
         }
 
         $user = Auth::user();
@@ -400,11 +400,11 @@ class PostController extends Controller
         $comments = Comment::with('user')->withCount('upvotedBy')->where('post_id', $postId)->get();
 
         if ($user) {
-            $userComments = $comments->filter(function($c) use ($user) {
+            $userComments = $comments->filter(function ($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('created_at');
 
-            $otherComments = $comments->reject(function($c) use ($user) {
+            $otherComments = $comments->reject(function ($c) use ($user) {
                 return $c->user_id === $user->id;
             })->sortByDesc('upvoted_by_count');
 
@@ -474,7 +474,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         Gate::authorize('edit-post', $post);
-        
+
         $imageKit = new ImageKit(
             config('app.imagekit.public_key'),
             config('app.imagekit.private_key'),
@@ -491,7 +491,7 @@ class PostController extends Controller
                 ], 500);
             }
         }
-        
+
         $post->delete();
         session()->flash('clear_home_cache', 'true'); // Add this line
         return redirect('/')->with('success', 'Post deleted successfully');
@@ -500,6 +500,13 @@ class PostController extends Controller
     public function upvote(Request $request, Post $post)
     {
         $user = Auth::user();
+
+        DB::table('notifications')
+            ->where('notifiable_id', $post->user_id)
+            ->where('type', VoteNotification::class)
+            ->whereJsonContains('data->voter->username', $user->username)
+            ->whereJsonContains('data->post_id', $post->id)
+            ->delete();
 
         if ($user->hasDownvotedPost($post)) {
             $user->votedPost()->detach($post);
@@ -640,7 +647,7 @@ class PostController extends Controller
                 ($post->comments_count * 2) +
                 ($post->bookmarks_count * 2);
 
-            $post->weighted_score = $score;// + rand(0, 10);
+            $post->weighted_score = $score; // + rand(0, 10);
 
             if (Auth::check()) {
                 $authedUser = Auth::user();
@@ -676,5 +683,4 @@ class PostController extends Controller
             // 'badges' => $badges, // $badges variable is not defined in this method currently
         ]);
     }
-
 }
