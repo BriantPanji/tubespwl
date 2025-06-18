@@ -368,7 +368,7 @@
                 <div class="">
                     <div class="flex justify-between items-center">
                         @auth
-                            <img src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}" class="w-[32px] rounded-full"
+                            <img src="{{ config('app.imagekit.url_endpoint') . auth()->user()->avatar }}" class="w-[32px] !aspect-square rounded-full"
                                 alt="Foto User">
                         @else
                             <img src="{{ config('app.imagekit.url_endpoint') . 'blankprofile.png' }}" class="w-[32px] rounded-full"
@@ -393,7 +393,7 @@
             @forelse ($comments as $comment)
                 <div x-ref="comment_{{ $comment->id }}" class="mt-1 px-3">
                     <div class="flex gap-2.5 items-start">
-                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ config('app.imagekit.url_endpoint') . $comment->user->avatar }}" class="w-[32px] rounded-full mt-2 cursor-pointer"
+                        <img @click="window.location.href = '/profile/{{ $comment->user->username }}'" src="{{ config('app.imagekit.url_endpoint') . $comment->user->avatar }}" class="w-[32px] rounded-full mt-2 !aspect-square cursor-pointer"
                             alt="Foto User">
                         <div class="w-full px-1 bg-[#42394a] rounded-md p-2" id="comment-{{ $comment->id }}">
                             <div class="py-.5 px-2.5">
