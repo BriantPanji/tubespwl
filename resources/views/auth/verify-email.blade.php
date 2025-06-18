@@ -52,7 +52,7 @@
             <div class="flex justify-between items-center mt-4 gap-4">
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <button type="submit" class="bg-sl-base rounded-md py-2 px-4 hover:bg-sl-primary/90">
+                    <button type="submit" class="bg-sl-base rounded-md py-2 px-4 hover:bg-sl-primary/90 cursor-pointer">
                         Kirim Ulang Link Verifikasi
                     </button>
                 </form>
@@ -60,7 +60,7 @@
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit"
-                        class="w-full bg-sl-base/50 hover:bg-red-900 font-semibold  text-sl-text/90 px-4 py-2 rounded-md">
+                        class="w-full bg-sl-base/50 hover:bg-red-900 font-semibold  text-sl-text/90 px-4 py-2 rounded-md cursor-pointer">
                         Kembali
                     </button>
                 </form>
