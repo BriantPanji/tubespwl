@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
            'email_verified' => EmailMustVerify::class,
            'assign_badge' => AssignBadge::class,
         ]);
+
+    // Trust all proxies
+    $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
